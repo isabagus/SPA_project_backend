@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->id("id_student");
-            $table->string("year_academy");
-            $table->string("id_mentors");
-            $table->string("name_student");
-            $table->string("nis");
-            $table->string("gender");
-            $table->string("address");
-            $table->string("email")->unique();
+            $table->id('id_student');
+            $table->string('year_academy');
+            $table->string('id_mentors');
+            $table->string('name_student');
+            $table->string('nis');
+            $table->string('gender');
+            $table->string('address');
+            $table->string('email')->unique();
             $table->timestamps();
         });
     }

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string("id_teacher");
             $table->string("sub_module");
 
-            $table->foreign('id_subject')->references('id_subject')->on('subjects');
-            $table->foreign('id_teacher')->references('id_teacher')->on('teachers');
+            $table->foreignId('id_subject')->references('id_subject')->on('subjects');
+            $table->foreignId('id_teacher')->references('id_teacher')->on('teachers');
         });
     }
 

@@ -3,8 +3,9 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Striped Table</h4>
-                <p class="card-description"> Add class <code>.table-striped</code>
+                <h4 class="card-title">List Users</h4>
+                <p class="card-description">Add Users:
+                     <a href="admin/user/create"> Form input</a>
                 </p>
                 <div class="table-responsive">
                     <table class="table table-striped">

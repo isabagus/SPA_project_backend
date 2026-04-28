@@ -17,9 +17,9 @@
             </a>
             <div class="collapse" id="form-elements">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Generate Report</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.create')}}">Generate Report</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Preview Report</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.index')}}">Preview Report</a>
                     </li>
                 </ul>
             </div>
@@ -72,7 +72,7 @@
             </a>
             <div class="collapse" id="auth">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> List Accounts </a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('admin.users.index')}}"> List Accounts </a></li>
                     <li class="nav-item"> <a class="nav-link" href="pages/samples/blank-page.html"> Register Account </a></li>
                 </ul>
             </div>

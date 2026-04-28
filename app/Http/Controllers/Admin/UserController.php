@@ -11,7 +11,10 @@ class UserController extends Controller
     {
         return view('layouts.users.index');
     }
-    public function create() {}
+    public function create() {
+        return view('layouts.users.create');
+
+    }
     public function store() {}
     public function update() {}
     public function edit() {}

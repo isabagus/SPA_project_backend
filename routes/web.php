@@ -11,6 +11,6 @@ Route::get('/template', function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('dashboard', DashboardController::class);
-    Route::resource('user', UserController::class);
+    Route::resource('users', UserController::class);
   
 });

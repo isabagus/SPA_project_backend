@@ -5,15 +5,6 @@
             <div class="card-body">
                 <h4 class="card-title">User Form Input</h4>
                 <p class="card-description"> Add User </p>
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
                 <form class="forms-sample">
                     <div class="form-group">
                         <label for="exampleInputName1">Name</label>

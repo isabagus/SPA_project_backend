@@ -21,5 +21,18 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+
+        // Student::factory()->create([
+        //     'year_academy' => '2026',
+        //     'id_mentors' => '1',
+        //     'name_student' => 'Student 1',
+        //     'nis' => '123456789',
+        //     'gender' => 'Male',
+        //     'address' => '123 Main St',
+        //     'photo' => 'student1.jpg',
+        //     'email' => 'student1@gmail.com',
+        // ]);
     }
 }
+

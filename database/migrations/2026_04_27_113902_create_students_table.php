@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('nis');
             $table->string('gender');
             $table->string('address');
+            $table->string('photo');
             $table->string('email')->unique();
             $table->timestamps();
         });

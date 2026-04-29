@@ -3,7 +3,7 @@
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">User Form Input</h4>
+                <h4 class="card-title">Subject Form Input</h4>
                 <p class="card-description"> Add User </p>
                 <form class="forms-sample">
                     <div class="form-group">

@@ -24,6 +24,22 @@
             </div>
         </li>
         <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#students" aria-expanded="false"
+                aria-controls="students">
+                <i class="menu-icon mdi mdi-account-multiple"></i>
+                <span class="menu-title">Students</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="students">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Generate Student</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">Preview Student</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
                 <i class="menu-icon mdi mdi-chart-line"></i>
                 <span class="menu-title">Charts</span>

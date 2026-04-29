@@ -286,7 +286,7 @@
               </a>
               <div class="collapse" id="icons">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"> <a class="nav-link" href="pages/icons/font-awesome.html">Font Awesome</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="asset/src/assets/pages/icons/font-awesome.html">Font Awesome</a></li>
                 </ul>
               </div>
             </li>

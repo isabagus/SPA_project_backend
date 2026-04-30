@@ -5,16 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class StudentController extends Controller
+class SubjectController extends Controller
 {
     public function index()
     {
-        return view('layouts.students.index');
+        return view('layouts.subjects.index');
     }
 
+     public function detail()
+    {
+        return view('layouts.subjects.detail');
+    }
+    
     public function create()
     {
-        return view('layouts.students.create');
+        return view('layouts.subject.create');
     }
     public function update()
     {

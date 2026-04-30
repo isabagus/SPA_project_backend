@@ -12,16 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->id('id_student');
-            $table->string('year_academy');
-            $table->string('id_mentors');
+            $table->id('student_id');
+            $table->date('academic_year');
+            $table->foreignId('mentor_id')->constrained('mentors', 'mentor_id');
             $table->string('name_student');
             $table->string('nis');
             $table->string('gender');
             $table->string('address');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->string('email')->unique();
             $table->timestamps();
+        });
+
+        Schema::table('students', function (Blueprint $table) {
+            $table->foreign('academic_year')->references('academic_year')->on('academic_years')->onDelete('cascade');
         });
     }
 

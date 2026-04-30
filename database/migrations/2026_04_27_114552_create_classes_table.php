@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('classes', function (Blueprint $table) {
-            $table->string('level_class');
+            $table->string('level_class', 13)->primary();
             $table->timestamps();
         });
     }

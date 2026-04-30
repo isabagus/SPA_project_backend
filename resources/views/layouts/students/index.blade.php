@@ -4,9 +4,16 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">List Students</h4>
-            <p class="card-description"><a href="#" class="btn btn-success btn-sm"><i class="mdi mdi-plus">Add Student</i> </a> 
+            <p class="card-description"><a href="#" class="btn btn-success text-white btn-sm"><i class="mdi mdi-plus"></i> Add Student</a> 
             </p> 
-          
+          {{-- Form Search --}}
+          <form action="{{ route('admin.students.index')}}" class="d-flex col-md-4" >
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search data student" id="searchInput">
+                <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+            </div>
+          </form>
+
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>

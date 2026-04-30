@@ -34,9 +34,9 @@
                                     1
                                 </td>
                                 <td class="py-1">
-                                    Tutus Praningki
+                                    Reza Rahardian
                                 </td>
-                                <td> Praningki86@gmail.com </td>
+                                <td> udin88@gmail.com </td>
                                 <td>
                                     <div class="badge badge-opacity-success me-3">Teacher</div>
                                 </td>

@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('details_subject', function (Blueprint $table) {
-            $table->string('id_subject');
-            $table->string('id_teacher');
-            $table->string('sub_module');
+            // $table->string('subject_id');
+            // $table->string('teacher_id');
+            $table->foreignId('subject_id')->references('subject_id')->on('subjects');
+            $table->foreignId('teacher_id')->references('teacher_id')->on('teachers');
+            $table->string('sub_module', 255);
+        });
 
-            $table->foreignId('id_subject')->references('id_subject')->on('subjects');
-            $table->foreignId('id_teacher')->references('id_teacher')->on('teachers');
+        Schema::table('details_subject', function (Blueprint $table) {
         });
     }
 

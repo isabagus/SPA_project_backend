@@ -35,10 +35,8 @@
           <div class="content-wrapper">
             <div class="row">
               <div class="col-sm-12">
-                <div class="home-tab">
                     {{-- List button --}}
                   @yield('content')
-                </div>
               </div>
             </div>
           </div>

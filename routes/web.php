@@ -20,6 +20,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('dashboard', DashboardController::class);
     Route::resource('users', UserController::class);
     Route::resource('students', StudentController::class);
+    Route::resource('subjects', SubjectController::class);
 });
 
 require __DIR__ . '/auth.php';

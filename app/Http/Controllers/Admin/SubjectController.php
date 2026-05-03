@@ -12,15 +12,15 @@ class SubjectController extends Controller
         return view('layouts.subjects.index');
     }
 
-    public function create() {
-        return view('layouts.subjects.create');
-    }
-   
      public function detail()
     {
         return view('layouts.subjects.detail');
     }
     
+    public function create()
+    {
+        return view('layouts.subjects.create');
+    }
     public function update()
     {
 
@@ -33,5 +33,4 @@ class SubjectController extends Controller
     {
 
     }
-
 }

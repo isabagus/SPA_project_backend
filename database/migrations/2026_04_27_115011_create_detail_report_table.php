@@ -18,8 +18,6 @@ return new class extends Migration
             $table->text('description');
             $table->timestamps();
         });
-        Schema::table('details_report', function (Blueprint $table) {
-        });
     }
 
     /**

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('academic_years', function (Blueprint $table) {
-              $table->string('academic_year', 20)->primary();
+        Schema::create('roles', function (Blueprint $table) {
+            $table->string('role')->primary();
         });
     }
 
@@ -21,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('academic_years');
+        Schema::dropIfExists('roles');
     }
 };

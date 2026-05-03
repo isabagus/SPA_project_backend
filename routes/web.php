@@ -9,7 +9,8 @@ use App\Http\Controllers\Admin\SubjectController;
 
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    // return ['Laravel' => app()->version()];
+    return view('layouts.dashboard.index');
 });
 
 Route::get('/template', function () {

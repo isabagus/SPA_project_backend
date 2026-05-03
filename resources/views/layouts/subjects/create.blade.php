@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Subject Form Input</h4>
-                <p class="card-description"> Add User </p>
+                <p class="card-description"> Add Subject </p>
                 <form class="forms-sample">
                     <div class="form-group">
                         <label for="exampleInputName1">Name</label>

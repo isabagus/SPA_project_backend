@@ -19,8 +19,6 @@ return new class extends Migration
             $table->string('sub_module', 255);
         });
 
-        Schema::table('details_subject', function (Blueprint $table) {
-        });
     }
 
     /**

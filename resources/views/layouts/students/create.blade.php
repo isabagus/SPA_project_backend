@@ -1,102 +1,3 @@
-<<<<<<< HEAD
-    @extends('base')
-    @section('content')
-        <div class="row">
-            <div class="col-md-6 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                        <h4 class="card-title">Student Profile</h4>
-                        <p class="card-description"> Basic form layout </p>
-                        <form class="forms-sample">
-                            <div class="form-group">
-                                <label for="exampleInputUsername1">Username</label>
-                                <input type="text" class="form-control" id="exampleInputUsername1" placeholder="Username">
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputEmail1">Email address</label>
-                                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputPassword1">Password</label>
-                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleInputConfirmPassword1">Confirm Password</label>
-                                <input type="password" class="form-control" id="exampleInputConfirmPassword1"
-                                    placeholder="Password">
-                            </div>
-                            <div class="form-check form-check-flat form-check-primary">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input"> Remember me </label>
-                            </div>
-                            <button type="submit" class="btn btn-primary me-2">Submit</button>
-                            <button class="btn btn-light">Cancel</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Horizontal Form</h4>
-                        <p class="card-description"> Horizontal form layout </p>
-                        <form class="forms-sample">
-                            <div class="form-group row">
-                                <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Email</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="exampleInputUsername2"
-                                        placeholder="Username">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="exampleInputEmail2" class="col-sm-3 col-form-label">Email</label>
-                                <div class="col-sm-9">
-                                    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Email">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="exampleInputMobile" class="col-sm-3 col-form-label">Mobile</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="exampleInputMobile"
-                                        placeholder="Mobile number">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Password</label>
-                                <div class="col-sm-9">
-                                    <input type="password" class="form-control" id="exampleInputPassword2"
-                                        placeholder="Password">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="exampleInputConfirmPassword2" class="col-sm-3 col-form-label">Re Password</label>
-                                <div class="col-sm-9">
-                                    <input type="password" class="form-control" id="exampleInputConfirmPassword2"
-                                        placeholder="Password">
-                                </div>
-                            </div>
-                            <div class="form-check form-check-flat form-check-primary">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input"> Remember me </label>
-                            </div>
-                            <button type="submit" class="btn btn-primary me-2">Submit</button>
-                            <button class="btn btn-light">Cancel</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endsection
-=======
 @extends('base')
 @section('content')
     <div class="col-12 grid-margin stretch-card">
@@ -113,49 +14,50 @@
                         </ul>
                     </div>
                 @endif
-                <form class="forms-sample">
+                <form class="forms-sample" method="POST" action="{{ route('admin.students.store') }}">
+                    @csrf
                     <div class="form-group">
-                        <label for="exampleInputName1">Name</label>
-                        <input type="text" class="form-control" id="exampleInputName1" placeholder="Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail3">Email address</label>
-                        <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword4">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword4" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleSelectGender">Gender</label>
-                        <select class="form-select" id="exampleSelectGender">
-                            <option>Male</option>
-                            <option>Female</option>
+                        <label for="academic_year">Academic Year</label>
+                        <select class="form-select" id="academic_year" name="academic_year" required>
+                            <option value="">Select Academic Year</option>
+                            @foreach ($academic_years as $year)
+                                <option value="{{ $year->academic_year }}" {{ old('academic_year') == $year->academic_year ? 'selected' : '' }}>{{ $year->academic_year }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>File upload</label>
-                        <input type="file" name="img[]" class="file-upload-default">
-                        <div class="input-group col-xs-12">
-                            <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
-                            <span class="input-group-append">
-                                <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
-                            </span>
-                        </div>
+                        <label for="mentor_id">Mentor</label>
+                        <select class="form-select" id="mentor_id" name="mentor_id" required>
+                            <option value="">Select Mentor</option>
+                            @foreach ($mentors as $mentor)
+                                <option value="{{ $mentor->mentor_id }}" {{ old('mentor_id') == $mentor->mentor_id ? 'selected' : '' }}>{{ $mentor->name_mentor }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputCity1">City</label>
-                        <input type="text" class="form-control" id="exampleInputCity1" placeholder="Location">
+                        <label for="name_student">Name Student</label>
+                        <input type="text" class="form-control" id="name_student" name="name_student" value="{{ old('name_student') }}" placeholder="Name Student" required>
                     </div>
                     <div class="form-group">
-                        <label for="exampleTextarea1">Textarea</label>
-                        <textarea class="form-control" id="exampleTextarea1" rows="4"></textarea>
+                        <label for="gender">Gender</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea class="form-control" id="address" name="address" placeholder="Address" rows="4" required>{{ old('address') }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" placeholder="Phone Number" required>
                     </div>
                     <button type="submit" class="btn btn-primary me-2">Submit</button>
-                    <button class="btn btn-light">Cancel</button>
+                    <a href="{{ route('admin.students.index') }}" class="btn btn-light">Cancel</a>
                 </form>
             </div>
         </div>
     </div>
 @endsection()
->>>>>>> 54c2d1b8e3839cac0a07e8feb8d33836ea605ce2

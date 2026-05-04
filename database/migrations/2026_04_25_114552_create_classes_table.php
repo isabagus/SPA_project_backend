@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('details_report', function (Blueprint $table) {
-            $table->foreignId('report_id')->constrained('reports', 'report_id');
+        Schema::create('classes', function (Blueprint $table) {
+            $table->string('level_class', 13)->primary();
             $table->foreignId('mentor_id')->constrained('mentors', 'mentor_id');
-            $table->foreignId('subject_id')->constrained('subjects', 'subject_id');
-            $table->text('description');
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('details_report');
+        Schema::dropIfExists('class');
     }
 };

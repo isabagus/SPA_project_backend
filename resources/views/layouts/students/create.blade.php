@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Student Form Input</h4>
-                <p class="card-description"> Add Student </p>
+                <p class="card-description"> Add Multiple Students </p>
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -14,50 +14,148 @@
                         </ul>
                     </div>
                 @endif
-                <form class="forms-sample" method="POST" action="{{ route('admin.students.store') }}">
+                <form class="forms-sample" id="bulkStudentForm" method="POST" action="{{ route('admin.students.store') }}">
                     @csrf
-                    <div class="form-group">
-                        <label for="academic_year">Academic Year</label>
-                        <select class="form-select" id="academic_year" name="academic_year" required>
-                            <option value="">Select Academic Year</option>
-                            @foreach ($academic_years as $year)
-                                <option value="{{ $year->academic_year }}" {{ old('academic_year') == $year->academic_year ? 'selected' : '' }}>{{ $year->academic_year }}</option>
-                            @endforeach
-                        </select>
+                    
+                    <div id="student-forms-container">
+                        <!-- Single Student Block -->
+                        <div class="student-block border p-3 mb-3 position-relative rounded">
+                            <h5 class="mb-3 student-title">Data Siswa 1</h5>
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-student-btn" style="display: none;"><i class="fa fa-times"></i> Hapus</button>
+                            
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label>Academic Year</label>
+                                    <select class="form-select" name="academic_year[]" required>
+                                        <option value="">Select Academic Year</option>
+                                        @foreach ($academic_years as $year)
+                                            <option value="{{ $year->academic_year }}">{{ $year->academic_year }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>Level Class</label>
+                                    <select class="form-select" name="level_class[]" required>
+                                        <option value="">Select Level Class</option>
+                                        @foreach ($level_classes as $class)
+                                            <option value="{{ $class->level_class }}">{{ $class->level_class }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>Mentor</label>
+                                    <select class="form-select" name="mentor_id[]" required>
+                                        <option value="">Select Mentor</option>
+                                        @foreach ($mentors as $mentor)
+                                            <option value="{{ $mentor->mentor_id }}">{{ $mentor->name_mentor }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label>Name Student</label>
+                                    <input type="text" class="form-control" name="name_student[]" placeholder="Name Student" required>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>Gender</label>
+                                    <select class="form-select" name="gender[]" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>Religion</label>
+                                    <select class="form-select" name="religion_name[]" required>
+                                        <option value="">Select Religion</option>
+                                        @foreach ($religions as $religion)
+                                            <option value="{{ $religion->religion_name }}">{{ $religion->religion_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea class="form-control" name="address[]" placeholder="Address" rows="2" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" class="form-control" name="phone_number[]" placeholder="Phone Number" required>
+                            </div>
+                        </div>
+                        <!-- End Single Student Block -->
                     </div>
-                    <div class="form-group">
-                        <label for="mentor_id">Mentor</label>
-                        <select class="form-select" id="mentor_id" name="mentor_id" required>
-                            <option value="">Select Mentor</option>
-                            @foreach ($mentors as $mentor)
-                                <option value="{{ $mentor->mentor_id }}" {{ old('mentor_id') == $mentor->mentor_id ? 'selected' : '' }}>{{ $mentor->name_mentor }}</option>
-                            @endforeach
-                        </select>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <button type="button" class="btn btn-success" id="add-student-btn">
+                            <i class="fa fa-plus"></i> Tambah Form Siswa
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="name_student">Name Student</label>
-                        <input type="text" class="form-control" id="name_student" name="name_student" value="{{ old('name_student') }}" placeholder="Name Student" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <select class="form-select" id="gender" name="gender" required>
-                            <option value="">Select Gender</option>
-                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
-                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Address</label>
-                        <textarea class="form-control" id="address" name="address" placeholder="Address" rows="4" required>{{ old('address') }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone_number">Phone Number</label>
-                        <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" placeholder="Phone Number" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary me-2">Submit</button>
+
+                    <hr>
+
+                    <button type="submit" class="btn btn-primary me-2">Submit All Students</button>
                     <a href="{{ route('admin.students.index') }}" class="btn btn-light">Cancel</a>
                 </form>
             </div>
         </div>
     </div>
-@endsection()
+
+    <!-- JavaScript for Dynamic Forms -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('student-forms-container');
+            const addBtn = document.getElementById('add-student-btn');
+            
+            // Template untuk form input dinamis 
+            const templateBlock = container.querySelector('.student-block').cloneNode(true);
+            
+            // Mereset value input template form
+            templateBlock.querySelectorAll('input').forEach(input => input.value = '');
+            templateBlock.querySelectorAll('select').forEach(select => select.value = '');
+            templateBlock.querySelectorAll('textarea').forEach(textarea => textarea.value = '');
+            templateBlock.querySelector('.remove-student-btn').style.display = 'inline-block';
+            
+            function updateTitlesAndButtons() {
+                const blocks = container.querySelectorAll('.student-block');
+                blocks.forEach((block, index) => {
+                    block.querySelector('.student-title').textContent = 'Data Siswa ' + (index + 1);
+                    
+                    // logic show button delete if more than 1 form
+                    const removeBtn = block.querySelector('.remove-student-btn');
+                    if (blocks.length > 1) {
+                        removeBtn.style.display = 'inline-block';
+                    } else {
+                        removeBtn.style.display = 'none';
+                    }
+                });
+            }
+
+            addBtn.addEventListener('click', function() {
+                const newBlock = templateBlock.cloneNode(true);
+                
+                // Add event listener to new remove button
+                newBlock.querySelector('.remove-student-btn').addEventListener('click', function() {
+                    newBlock.remove();
+                    updateTitlesAndButtons();
+                });
+                
+                container.appendChild(newBlock);
+                updateTitlesAndButtons();
+            });
+
+            // Add event listener to the initial remove button
+            container.querySelector('.remove-student-btn').addEventListener('click', function(e) {
+                const block = e.target.closest('.student-block');
+                if (container.querySelectorAll('.student-block').length > 1) {
+                    block.remove();
+                    updateTitlesAndButtons();
+                }
+            });
+        });
+    </script>
+@endsection

@@ -48,7 +48,8 @@
                                 <option value="">-- Select Student --</option>
                                 @foreach($students as $student)
                                     <option value="{{ $student->student_id }}" {{ old('student_id') == $student->student_id ? 'selected' : '' }}>
-                                        {{ $student->name_student }} ({{ $student->nis }})
+                                        {{ $student->name_student }}
+                                         {{-- ({{ $student->nis }}) --}}
                                     </option>
                                 @endforeach
                             </select>

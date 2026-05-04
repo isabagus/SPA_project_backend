@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subjects', function (Blueprint $table) {
-           $table->id('subject_id')->primary();
-            $table->string('term');
+            $table->id('subject_id')->primary();
+            $table->string('category_subject', 100);
+            $table->string('term', 20);
             $table->string('name_subject');
+
+            $table->foreign('category_subject')->references('category_subject')->on('categories_subject')->onDelete('cascade');
+            $table->foreign('term')->references('term')->on('terms')->onDelete('cascade');
         });
     }
 

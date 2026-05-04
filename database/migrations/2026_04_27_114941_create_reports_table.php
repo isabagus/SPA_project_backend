@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id('report_id');
-            // $table->string('student_id');
+            $table->string('academic_year', 12);
+            $table->foreignId('mentor_id')->constrained('mentors', 'mentor_id')->onDelete('cascade');
             $table->foreignId('student_id')->constrained('students', 'student_id')->onDelete('cascade');
-            $table->date('year_academy');
+            $table->foreign('academic_year')->references('academic_year')->on('academic_years')->onDelete('cascade');
+            $table->float('average_value');
+            $table->integer('attendance');
+            $table->text('description');
             $table->timestamps();
-        });
-        Schema::table('reports', function (Blueprint $table) {
+
         });
     }
 

@@ -25,10 +25,10 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-     protected $fillable = [
-        'username', 
-        'email', 
-        'password', 
+    protected $fillable = [
+        'username',
+        'email',
+        'password',
         'role',
         'phone_number',
         'profile_picture',
@@ -39,9 +39,17 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-     public function parent()
+    public function parent()
     {
         return $this->hasOne(Parents::class, 'user_id', 'user_id');
+    }
+    public function mentor()
+    {
+        return $this->hasOne(Mentor::class, 'user_id', 'user_id');
+    }
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class, 'user_id', 'user_id');
     }
 
     protected function casts(): array

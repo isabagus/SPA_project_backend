@@ -15,4 +15,14 @@ class AcademicYear extends Model
     protected $fillable = [
         'academic_year',
     ];
+
+    public function students()
+    {
+       return  $this->hasMany(Student::class, 'academic_year', 'academic_year');
+    }
+
+    public function reports()
+    {
+       return  $this->hasMany(Reports::class, 'academic_year', 'academic_year');
+    }
 }

@@ -15,24 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            AcademicYearSeeder::class,
+            ClassSeeder::class,
+            MentorSeeder::class,
+            ReligionSeeder::class,
         ]);
-
-
-        // Student::factory()->create([
-        //     'year_academy' => '2026',
-        //     'id_mentors' => '1',
-        //     'name_student' => 'Student 1',
-        //     'nis' => '123456789',
-        //     'gender' => 'Male',
-        //     'address' => '123 Main St',
-        //     'photo' => 'student1.jpg',
-        //     'email' => 'student1@gmail.com',
-        // ]);
     }
 }
 

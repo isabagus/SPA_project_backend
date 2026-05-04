@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('classes', function (Blueprint $table) {
-            $table->string('level_class', 13)->primary();
+        Schema::create('mentors', function (Blueprint $table) {
+            $table->id('mentor_id');
+            $table->foreignId('user_id')->constrained('users','user_id');
+            $table->string('name', 255);
+            $table->string('nip', 23);
+            $table->string('phone_number', 15);
             $table->timestamps();
+
         });
     }
 
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('class');
+        Schema::dropIfExists('mentors');
     }
 };

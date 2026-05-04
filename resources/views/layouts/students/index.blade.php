@@ -28,27 +28,33 @@
                                 <th> Level Class </th>
                                 <th> Religion </th>
                                 <th> Gender </th>
-                                <th> Parent </th>
                                 <th> Year Academy </th>
-                                {{-- <th> Mentor </th> --}}
+                                <th>Parent</th>
+                                <th> Mentor </th>
+                                <th>Address</th>
+                                <th> Phone Number </th>
                                 <th> Actions </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $i = 1;  ?>  
+                            <?php $i = 1; ?>
                             @foreach ($students as $st)
                                 <tr>
                                     <td>{{ $i++ }}</td>
                                     <td> {{ $st->name_student }} </td>
+                                    <td> {{ $st->level_class }} </td>
+                                    <td> {{ $st->religion_name }} </td>
                                     <td> {{ $st->gender }}</td>
-                                    <td> {{ $st->address }}</td>
                                     <td> {{ $st->academic_year }} </td>
+                                    <td> -- </td>
                                     <td> {{ $st->mentor ? $st->mentor->name_mentor : '-' }} </td>
+                                    <td> {{ $st->address }} </td>
                                     <td> {{ $st->phone_number }} </td>
                                     <td>
                                         <a href="{{route('admin.students.edit', $st->student_id)}}" class="btn btn-primary text-white"> Edit</a>
                                         {{-- <button type="button" class="btn btn-primary text-white">Edit</button> --}}
-                                        <form action="{{ route('admin.students.destroy', $st->student_id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('admin.students.destroy', $st->student_id) }}"
+                                            method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"

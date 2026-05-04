@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Student;
 use App\Models\AcademicYear;
 use App\Models\Mentor;
+use App\Models\LevelClass;
+use App\Models\Religion;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -26,33 +28,43 @@ class StudentController extends Controller
     {
         $academic_years = AcademicYear::all();
         $mentors = Mentor::all();
-        return view('layouts.students.create', compact('academic_years', 'mentors'));
+        $level_classes = LevelClass::all();
+        $religions = Religion::all();
+        return view('layouts.students.create', compact('academic_years', 'mentors', 'level_classes', 'religions'));
     }
 
     public function store(Request $request)
     {
-
         $request->validate([
-            'academic_year' => 'required|string|exists:academic_years,academic_year',
-            'mentor_id'     => 'required|exists:mentors,mentor_id',
-            'name_student'  => 'required|string|max:100',
-            'gender'        => 'required|string|max:15',
-            'address'       => 'required|string|max:255',
-            'phone_number'  => 'required|string|max:15',
+            'academic_year.*' => 'required|string|exists:academic_years,academic_year',
+            'level_class.*'   => 'required|string|exists:level_classes,level_class',
+            'religion_name.*' => 'required|string|exists:religions,religion_name',
+            'mentor_id.*'     => 'required|exists:mentors,mentor_id',
+            'name_student.*'  => 'required|string|max:100',
+            'gender.*'        => 'required|string|max:15',
+            'address.*'       => 'required|string|max:255',
+            'phone_number.*'  => 'required|string|max:15',
         ]);
 
+        DB::beginTransaction();
         try {
-            Student::create([
-                'academic_year' => $request->academic_year,
-                'mentor_id'     => $request->mentor_id,
-                'name_student'  => $request->name_student,
-                'gender'        => $request->gender,
-                'address'       => $request->address,
-                'phone_number'  => $request->phone_number,
-            ]);
+            foreach ($request->name_student as $index => $name) {
+                Student::create([
+                    'academic_year' => $request->academic_year[$index],
+                    'level_class'   => $request->level_class[$index],
+                    'religion_name' => $request->religion_name[$index],
+                    'mentor_id'     => $request->mentor_id[$index],
+                    'name_student'  => $name,
+                    'gender'        => $request->gender[$index],
+                    'address'       => $request->address[$index],
+                    'phone_number'  => $request->phone_number[$index],
+                ]);
+            }
 
+            DB::commit();
             return redirect()->route('admin.students.index')->with('success', 'Data siswa berhasil disimpan!');
         } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Gagal menyimpan data: ' . $e->getMessage())->withInput();
         }
     }
@@ -62,13 +74,17 @@ class StudentController extends Controller
         $data = Student::findOrFail($id);
         $academic_years = AcademicYear::all();
         $mentors = Mentor::all();
-        return view('layouts.students.edit', compact('data', 'academic_years', 'mentors'));
+        $level_classes = LevelClass::all();
+        $religions = Religion::all();
+        return view('layouts.students.edit', compact('data', 'academic_years', 'mentors', 'level_classes', 'religions'));
     }
     
     public function update(Request $request, $id) 
     {
         $request->validate([
-            'academic_year' => 'required|date|exists:academic_years,academic_year',
+            'academic_year' => 'required|string|exists:academic_years,academic_year',
+            'level_class'   => 'required|string|exists:level_classes,level_class',
+            'religion_name' => 'required|string|exists:religions,religion_name',
             'mentor_id'     => 'required|exists:mentors,mentor_id',
             'name_student'  => 'required|string|max:100',
             'gender'        => 'required|string|max:15',
@@ -81,6 +97,8 @@ class StudentController extends Controller
             
             $student->update([
                 'academic_year' => $request->academic_year,
+                'level_class'   => $request->level_class,
+                'religion_name' => $request->religion_name,
                 'mentor_id'     => $request->mentor_id,
                 'name_student'  => $request->name_student,
                 'gender'        => $request->gender,

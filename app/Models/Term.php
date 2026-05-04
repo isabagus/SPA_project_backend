@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Term extends Model
 {
     use HasFactory;
-
+    protected $table = 'term';
     protected $primaryKey = 'term_id';
 
     protected $fillable = [
@@ -24,4 +24,9 @@ class Term extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class, 'term', 'term');
+    }
 }

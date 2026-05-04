@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mentors', function (Blueprint $table) {
-            $table->id('mentor_id');
-            $table->foreignId('user_id')->constrained('users','user_id');
-            $table->string('name_mentor');
-            $table->string('nip', 23);
-            $table->string('phone_number', 15);
+        Schema::create('categories_subject', function (Blueprint $table) {
+            // $table->id();
+            $table->string('category_subject',25)->primary();
             $table->timestamps();
-
         });
     }
 
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mentors');
+        Schema::dropIfExists('categories_subject');
     }
 };

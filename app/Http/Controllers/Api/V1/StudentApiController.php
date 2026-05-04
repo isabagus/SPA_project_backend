@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\StudentResource;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -14,12 +15,7 @@ class StudentApiController extends Controller
     public function index()
     {
         $students = Student::all();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Daftar data students',
-            'data'    => $students
-        ], 200);
+        return StudentResource::collection($students);
     }
 
     /**
@@ -27,11 +23,14 @@ class StudentApiController extends Controller
      */
     public function store(Request $request)
     {
+        $data = $request->validate([
+            'academic_year' => 'required',
+            'nis' => 'required'
+        ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Endpoint store student siap digunakan'
-        ], 201);
+        $student = Student::create($data);
+
+        return new StudentResource($student);
     }
 
     /**
@@ -41,18 +40,20 @@ class StudentApiController extends Controller
     {
         $student = Student::find($id);
 
+        return new StudentResource($student);
+        
         if (!$student) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data student tidak ditemukan',
             ], 404);
+        } else {
+            return response()->json([
+                'success' => true,
+                'message' => 'Detail data student',
+                'data'    => $student
+            ], 200);
         }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Detail data student',
-            'data'    => $student
-        ], 200);
     }
 
     /**

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id('subject_id')->primary();
-            $table->string('category_subject', 100);
+            $table->string('category_subject', 150);
             $table->string('term', 20);
             $table->string('name_subject');
 

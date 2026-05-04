@@ -22,7 +22,8 @@
                             <select class="form-select" name="user_id" id="user_id" required>
                                 <option value="">Pilih User</option>
                                 @foreach ($users as $user)
-                                    <option value="{{ $user->user_id }}">{{ $user->username }} ({{ $user->email }})</option>
+                                    <option value="{{ $user->user_id }}">{{ $user->username }} ({{ $user->email }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -30,11 +31,13 @@
                     <div class="row mb-3">
                         <div class="col-md-6 form-group">
                             <label for="name">Nama Guru</label>
-                            <input type="text" class="form-control" name="name" id="name" placeholder="Nama Guru" required>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Nama Guru"
+                                required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label for="phone_number">Nomor Telepon</label>
-                            <input type="text" class="form-control" name="phone_number" id="phone_number" placeholder="Nomor Telepon" required>
+                            <input type="text" class="form-control" name="phone_number" id="phone_number"
+                                placeholder="Nomor Telepon" required>
                         </div>
                     </div>
                     {{-- Jika ingin menambah relasi ke subject, bisa tambahkan di sini --}}

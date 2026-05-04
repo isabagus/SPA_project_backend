@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->string('level_class', 13)->primary();
-            $table->foreignId('mentor_id')->constrained('mentors', 'mentor_id');
-            $table->timestamps();
+            $table->foreignId('mentor_id')->nullable()->constrained('mentors', 'mentor_id');
         });
     }
 
@@ -23,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('class');
+        Schema::dropIfExists('classes');
     }
 };

@@ -6,14 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subject extends Model
 {
-    protected $table = 'categories_subject';
-    protected $primaryKey = 'category_subject';
-    protected $keyType = 'string';
-    public $incrementing = false;
-    protected $guarded = [];
+    protected $table = 'subjects';
+    protected $primaryKey = 'subject_id';
+    protected $fillable = ['category_subject', 'term', 'name_subject'];
+    public $timestamps = false; // Karena di migrasi tidak ada timestamps
 
-    public function subjects()
+    public function category()
     {
-        return $this->hasMany(Subject::class, 'category_subject', 'category_subject');
+        return $this->belongsTo(CategorySubject::class, 'category_subject', 'category_subject');
+    }
+
+    public function term_data()
+    {
+        return $this->belongsTo(Term::class, 'term', 'term');
     }
 }

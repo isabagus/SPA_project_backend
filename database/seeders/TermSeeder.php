@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Term;
 
@@ -16,9 +15,10 @@ class TermSeeder extends Seeder
        $terms = ['Term 1', 'Term 2', 'Term 3', 'Term 4'];
 
         foreach ($terms as $term) {
-            Term::table('term')->insert([
-                'term' => $term,
-            ]);
+            Term::updateOrCreate(
+                ['term' => $term],
+                ['term' => $term]
+            );
         }
     }
 }

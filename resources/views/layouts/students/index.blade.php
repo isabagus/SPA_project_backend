@@ -7,7 +7,7 @@
                 {{-- <p class="card-description"><a href="#" class="btn btn-success text-white btn-sm"><i class="mdi mdi-plus"></i> Add Student</a> 
                  --}}
                 <p class="card-description">Add Subject:
-                    <a href=" {{ route('admin.subjects.create') }}"> Form input</a>
+                    <a href=" {{ route('admin.students.create') }}"> Form input</a>
                 </p>
                 </p>
                 {{-- Form Search --}}

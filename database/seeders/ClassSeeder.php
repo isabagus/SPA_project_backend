@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\LevelClass;
 
@@ -16,9 +15,10 @@ class ClassSeeder extends Seeder
         $classes = ['Year 1', 'Year 2'];
 
         foreach ($classes as $class) {
-            LevelClass::table('class')->insert([
-                'level_class' => $class,
-            ]);
+            LevelClass::updateOrCreate(
+                ['level_class' => $class],
+                ['level_class' => $class]
+            );
         }
     }
 }

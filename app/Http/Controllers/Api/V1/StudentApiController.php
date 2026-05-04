@@ -36,7 +36,7 @@ class StudentApiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Student $id)
     {
         $student = Student::find($id);
 
@@ -73,7 +73,6 @@ class StudentApiController extends Controller
      */
     public function destroy(string $id)
     {
-        // Contoh implementasi destroy
         return response()->json([
             'success' => true,
             'message' => 'Endpoint destroy student siap digunakan'

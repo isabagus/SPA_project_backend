@@ -11,6 +11,7 @@ class ReportDetail extends Model
     protected $fillable = [
         'report_id',
         'subject_id',
+        'score',
         'description_subject',
     ];
 

@@ -1,25 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Reports;
+use App\Models\ReportDetail;
 use Illuminate\Http\Request;
 
-class TeacherController extends Controller
+class ReportApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('layouts.teachers.index');
-    }
-
-    public function create()
-    {
-        $users = User::all();
-        return view('layouts.teachers.create', compact('users'));
+        $reports = Reports::all();
+        // return ReportResource::collection($reports);
     }
 
     /**

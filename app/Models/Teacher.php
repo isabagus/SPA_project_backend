@@ -13,4 +13,13 @@ class Teacher extends Model
         'name',
         'phone_number',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'details_subject', 'teacher_id', 'subject_id');
+    }
 }

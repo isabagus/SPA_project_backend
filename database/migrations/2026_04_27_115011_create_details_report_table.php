@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('details_report', function (Blueprint $table) {
             $table->foreignId('report_id')->constrained('reports', 'report_id');
-            // $table->foreignId('mentor_id')->constrained('mentors', 'mentor_id');
             $table->foreignId('subject_id')->constrained('subjects', 'subject_id');
+            $table->decimal('score', 5, 2);
             $table->text('description_subject');
             $table->timestamps();
         });

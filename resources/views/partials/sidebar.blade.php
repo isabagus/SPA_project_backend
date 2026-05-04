@@ -64,9 +64,9 @@
             </a>
             <div class="collapse" id="teachers">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Generate Teacher</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.create')}}">Generate Teacher</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">Preview Teacher</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.index') }}">Preview Teacher</a>
                     </li>
                 </ul>
             </div>

@@ -38,7 +38,7 @@
                         </thead>
                         <tbody>
                             <?php $i = 1; ?>
-                            @foreach ($students as $st)
+                            @forelse ($students as $st)
                                 <tr>
                                     <td>{{ $i++ }}</td>
                                     <td> {{ $st->name_student }} </td>
@@ -51,7 +51,8 @@
                                     <td> {{ $st->address }} </td>
                                     <td> {{ $st->phone_number }} </td>
                                     <td>
-                                        <a href="{{route('admin.students.edit', $st->student_id)}}" class="btn btn-warning text-white"> Edit</a>
+                                        <a href="{{ route('admin.students.edit', $st->student_id) }}"
+                                            class="btn btn-warning text-white"> Edit</a>
                                         <form action="{{ route('admin.students.destroy', $st->student_id) }}"
                                             method="POST" class="d-inline">
                                             @csrf
@@ -62,11 +63,13 @@
                                                 Delete
                                             </button>
                                         </form>
-
-
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="5">No data available</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

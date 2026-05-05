@@ -80,9 +80,9 @@
             </a>
             <div class="collapse" id="parents">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.create')}}">Add Parent</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.parents.create')}}">Add Parent</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">List Parent</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.parents.index') }}">List Parent</a>
                     </li>
                 </ul>
             </div>

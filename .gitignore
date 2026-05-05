@@ -1,6 +1,9 @@
 *.log
 .DS_Store
 .env
+.ai
+.claude
+boost.json
 .env.backup
 .env.production
 .phpactor.json

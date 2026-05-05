@@ -34,7 +34,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Generate Student</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">Preview Student</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.index') }}">Preview Student</a>
                     </li>
                 </ul>
             </div>

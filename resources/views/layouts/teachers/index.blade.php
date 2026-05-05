@@ -31,7 +31,7 @@
                         </thead>
                         <tbody>
                             <?php $i = 1; ?>
-                            @foreach ($teachers as $st)
+                            @forelse ($teachers as $st)
                                 <tr>
                                     <td>{{ $i++ }}</td>
                                     <td> {{ $st->name }} </td>
@@ -52,7 +52,11 @@
                                         </form>
                                     </td>
                                 </tr>
-                            @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="5">No data available</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

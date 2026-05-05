@@ -17,26 +17,29 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th> Category (Header) </th>
-                                <th> Subject (Item) </th>
-                                <th> Term </th>
+                                <th> Name Mentor</th>
+                                <th> Email </th>
+                                <th>Phone Number</th>
                                 <th> Action </th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($subjects as $subject)
+                            @forelse ($mentors as $mentor)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td><strong>{{ $subject->category_subject }}</strong></td>
-                                    <td>{{ $subject->name_subject }}</td>
-                                    <td>{{ $subject->term }}</td>
+                                    <td>{{ $mentor->name }}</td>
+                                    <td>{{ $mentor->emailMentor ?? '-' }}</td>
+                                    <td>{{ $mentor->phone_number }}</td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}" class="btn btn-warning btn-sm text-white">Edit</a>
-                                            <form action="{{ route('admin.subjects.destroy', $subject->subject_id) }}" method="POST" onsubmit="return confirm('Delete this subject?')">
+                                            <a href="{{ route('admin.mentors.edit', $mentor->mentor_id) }}"
+                                                class="btn btn-warning btn-sm text-white">Edit</a>
+                                            <form action="{{ route('admin.mentors.destroy', $mentor->mentor_id) }}"
+                                                method="POST" onsubmit="return confirm('Delete this mentor?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm text-white">Delete</button>
+                                                <button type="submit"
+                                                    class="btn btn-danger btn-sm text-white">Delete</button>
                                             </form>
                                         </div>
                                     </td>

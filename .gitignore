@@ -3,6 +3,7 @@
 .env
 .ai
 .claude
+CLAUDE.md
 boost.json
 .env.backup
 .env.production

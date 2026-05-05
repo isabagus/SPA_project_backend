@@ -21,12 +21,11 @@ Route::prefix('v1')->group(function () {
         // Portal Utama untuk Next.js (Teacher, Parent, Mentor)
         Route::get('/auth/check', [UserPortalController::class, 'checkAuth']);
 
-        Route::middleware('role:subject_teacher|mentor|parent')->group(function () {
-            Route::get('/portal/profile', [UserPortalController::class, 'getProfile']);
+        Route::middleware('role:teacher|mentor|parent')->group(function () {
+            Route::get('report-card', [UserPortalController::class, 'getReportCard']);
         });
 
-        // Khusus Guru (Input Nilai)
-        Route::middleware('role:subject_teacher')->group(function () {
+        Route::middleware('role:teacher')->group(function () {
             Route::get('/portal/teacher/students/{subject_id}', [UserPortalController::class, 'getStudentsBySubject']);
             Route::post('/portal/teacher/submit-score', [UserPortalController::class, 'submitStudentScore']);
         });

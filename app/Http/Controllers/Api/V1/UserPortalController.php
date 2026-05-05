@@ -53,7 +53,7 @@ class UserPortalController extends Controller
                     ]
                 ]);
 
-            case 'subject_teacher':
+            case 'teacher':
                 $teacher = $user->teacher;
                 if (!$teacher) return response()->json(['message' => 'Teacher record not found'], 404);
 
@@ -77,7 +77,7 @@ class UserPortalController extends Controller
     public function getStudentsBySubject(Request $request, $subject_id)
     {
         $user = $request->user();
-        if ($user->role !== 'subject_teacher') {
+        if ($user->role !== 'teacher') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -106,7 +106,7 @@ class UserPortalController extends Controller
     public function submitStudentScore(Request $request)
     {
         $user = $request->user();
-        if ($user->role !== 'subject_teacher') {
+        if ($user->role !== 'teacher') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -153,7 +153,7 @@ class UserPortalController extends Controller
             case 'admin':
                 $permissions = ['manage_users', 'manage_students', 'manage_subjects', 'view_all_reports'];
                 break;
-            case 'subject_teacher':
+            case 'teacher':
                 $permissions = ['view_my_subjects', 'input_scores'];
                 break;
             case 'mentor':

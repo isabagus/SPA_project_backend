@@ -17,9 +17,10 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th> Category (Header) </th>
-                                <th> Subject (Item) </th>
+                                <th> Subjects </th>
+                                <th> Sub Subject </th>
                                 <th> Term </th>
+                                <th> Details </th>
                                 <th> Action </th>
                             </tr>
                         </thead>
@@ -32,11 +33,11 @@
                                     <td>{{ $subject->term }}</td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}" class="btn btn-warning btn-sm text-white">Edit</a>
-                                            <form action="{{ route('admin.subjects.destroy', $subject->subject_id) }}" method="POST" onsubmit="return confirm('Delete this subject?')">
+                                            <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}" class="btn btn-warning text-white">Edit</a>
+                                            <form action="{{ route('admin.subjects.destroy', $subject->subject_id) }}" method="POST" onsubmit="return confirm('Delete this subject {{$subject->name_subject}}?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm text-white">Delete</button>
+                                                <button type="submit" class="btn btn-danger text-white">Delete</button>
                                             </form>
                                         </div>
                                     </td>

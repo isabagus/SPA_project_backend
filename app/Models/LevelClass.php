@@ -10,6 +10,7 @@ class LevelClass extends Model
     protected $primaryKey = 'level_class';
     public $incrementing = false; // Karena 'Year 1' adalah string, bukan auto-increment
     protected $keyType = 'string';
+    public $timestamps = false;
     
     protected $fillable = [
         'level_class',

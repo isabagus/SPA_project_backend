@@ -25,6 +25,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('subjects', SubjectController::class);
     Route::resource('teachers', TeacherController::class);
     Route::resource('mentors', MentorController::class);
+    Route::resource('reports', ReportController::class);
 });
 
 require __DIR__ . '/auth.php';

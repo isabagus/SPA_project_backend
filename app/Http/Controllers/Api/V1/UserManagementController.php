@@ -64,7 +64,7 @@ class UserManagementController extends Controller
                 'username' => $data['username'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'role' => ($data['type'] === 'teacher') ? 'subject_teacher' : $data['type'],
+                'role' => $data['type'],
                 'phone_number' => $data['phone_number'] ?? null,
             ]);
 

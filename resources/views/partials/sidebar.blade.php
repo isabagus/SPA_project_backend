@@ -1,7 +1,7 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="{{ route('admin.dashboard.index')}}">
                 <i class="mdi mdi-grid-large menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
             </a>
@@ -16,9 +16,9 @@
             </a>
             <div class="collapse" id="form-elements">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Generate Report</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.create')}}">Generate Report</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Preview Report</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.index')}}">Preview Report</a>
                     </li>
                 </ul>
             </div>
@@ -32,9 +32,9 @@
             </a>
             <div class="collapse" id="mentors">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Generate Student</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.create')}}">Add Mentor</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.index') }}">Preview Student</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.index') }}">Preview Mentor</a>
                     </li>
                 </ul>
             </div>
@@ -48,7 +48,7 @@
             </a>
             <div class="collapse" id="students">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.create') }}">Generate Student</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.create') }}">Add Student</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">Preview Student</a>
                     </li>
@@ -64,7 +64,7 @@
             </a>
             <div class="collapse" id="teachers">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.create')}}">Generate Teacher</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.create')}}">Add Teacher</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.index') }}">Preview Teacher</a>
                     </li>
@@ -80,7 +80,7 @@
             </a>
             <div class="collapse" id="parents">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Generate Parent</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.create')}}">Add Parent</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">Preview Parent</a>
                     </li>

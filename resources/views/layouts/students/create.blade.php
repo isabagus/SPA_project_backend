@@ -47,7 +47,7 @@
                                     <select class="form-select" name="mentor_id[]" required>
                                         <option value="">Select Mentor</option>
                                         @foreach ($mentors as $mentor)
-                                            <option value="{{ $mentor->mentor_id }}">{{ $mentor->name_mentor }}</option>
+                                            <option value="{{ $mentor->mentor_id }}">{{ $mentor->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

@@ -37,7 +37,7 @@ class StudentController extends Controller
     {
         $request->validate([
             'academic_year.*' => 'required|string|exists:academic_years,academic_year',
-            'level_class.*'   => 'required|string|exists:level_classes,level_class',
+            'level_class.*'   => 'required|string|exists:classes,level_class',
             'religion_name.*' => 'required|string|exists:religions,religion_name',
             'mentor_id.*'     => 'required|exists:mentors,mentor_id',
             'name_student.*'  => 'required|string|max:100',
@@ -83,7 +83,7 @@ class StudentController extends Controller
     {
         $request->validate([
             'academic_year' => 'required|string|exists:academic_years,academic_year',
-            'level_class'   => 'required|string|exists:level_classes,level_class',
+            'level_class'   => 'required|string|exists:classes,level_class',
             'religion_name' => 'required|string|exists:religions,religion_name',
             'mentor_id'     => 'required|exists:mentors,mentor_id',
             'name_student'  => 'required|string|max:100',

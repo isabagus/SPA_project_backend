@@ -47,7 +47,7 @@
                                     <td>{{ $user->phone_number ?? '-' }}</td>
                                     <td class="text-center align-middle">
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('admin.users.edit', $user->user_id) }}" class="btn btn-primary text-white">Edit</a>
+                                            <a href="{{ route('admin.users.edit', $user->user_id) }}" class="btn btn-warning text-white">Edit</a>
                                             <form action="{{ route('admin.users.destroy', $user->user_id) }}" method="POST" onsubmit="return confirm('Delete this user {{$user->username}}?')">
                                                 @csrf
                                                 @method('DELETE')

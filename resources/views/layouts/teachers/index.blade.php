@@ -44,7 +44,7 @@
                                     <td class="text-center align-middle">
                                         <div class="d-flex justify-content-center gap-2">
                                             <a href="{{ route('admin.teachers.edit', $teacher->teacher_id) }}"
-                                                class="btn btn-primary text-white"> Edit</a>
+                                                class="btn btn-warning text-white"> Edit</a>
                                             <form action="{{ route('admin.teachers.destroy', $teacher->teacher_id) }}" method="POST"
                                                 class="d-inline" onsubmit="return confirm('Are you sure you want to delete this teacher {{$teacher->name}}?')">
                                                 @csrf

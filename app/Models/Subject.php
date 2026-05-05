@@ -8,7 +8,7 @@ class Subject extends Model
 {
     protected $table = 'subjects';
     protected $primaryKey = 'subject_id';
-    protected $fillable = ['category_subject', 'term', 'name_subject'];
+    protected $fillable = ['category_subject', 'term'];
     public $timestamps = false; // Karena di migrasi tidak ada timestamps
 
     public function category()

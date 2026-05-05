@@ -11,5 +11,6 @@ class DetailSubject extends Model
     protected $fillable = [
         'subject_id',
         'teacher_id',
+        'name_subject'
     ];
 }

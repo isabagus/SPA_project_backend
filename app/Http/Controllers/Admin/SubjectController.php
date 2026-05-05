@@ -50,6 +50,11 @@ class SubjectController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $subject = Subject::findOrFail($id);
+        return view('layouts.subjects.detail', compact('subject'));
+    }
     public function edit($id)
     {
         $subject = Subject::findOrFail($id);

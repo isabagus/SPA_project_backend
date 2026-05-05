@@ -18,7 +18,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.create')}}">Generate Report</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.index')}}">Preview Report</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.index')}}">List Report</a>
                     </li>
                 </ul>
             </div>
@@ -34,7 +34,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.create')}}">Add Mentor</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.index') }}">Preview Mentor</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.index') }}">List Mentor</a>
                     </li>
                 </ul>
             </div>
@@ -50,7 +50,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.create') }}">Add Student</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">Preview Student</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">List Student</a>
                     </li>
                 </ul>
             </div>
@@ -66,7 +66,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.create')}}">Add Teacher</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.index') }}">Preview Teacher</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.teachers.index') }}">List Teacher</a>
                     </li>
                 </ul>
             </div>
@@ -82,7 +82,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.create')}}">Add Parent</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">Preview Parent</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.students.index') }}">List Parent</a>
                     </li>
                 </ul>
             </div>
@@ -98,7 +98,7 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.subjects.create')}}">Add Subject</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.subjects.index') }}">Preview Subject</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.subjects.index') }}">List Subject</a>
                     </li>
                 </ul>
             </div>

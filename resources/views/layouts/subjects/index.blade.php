@@ -31,10 +31,19 @@
                                     <td><strong>{{ $subject->category_subject }}</strong></td>
                                     <td>{{ $subject->name_subject }}</td>
                                     <td>{{ $subject->term }}</td>
+                                    <td class="text-center align-middle">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="{{ route('admin.subjects.show', $subject->subject_id) }}"
+                                                class="btn btn-primary text-white">Detail</a>
+                                        </div>
+                                    </td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}" class="btn btn-warning text-white">Edit</a>
-                                            <form action="{{ route('admin.subjects.destroy', $subject->subject_id) }}" method="POST" onsubmit="return confirm('Delete this subject {{$subject->name_subject}}?')">
+                                            <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}"
+                                                class="btn btn-warning text-white">Edit</a>
+                                            <form action="{{ route('admin.subjects.destroy', $subject->subject_id) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Delete this subject {{ $subject->name_subject }}?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger text-white">Delete</button>

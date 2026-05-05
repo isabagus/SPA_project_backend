@@ -96,6 +96,8 @@ class UserController extends Controller
         
         DB::transaction(function () use ($user) {
             $user->parent()->delete();
+            $user->mentor()->delete();
+            $user->teacher()->delete();
             $user->delete();
         });
 

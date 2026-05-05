@@ -51,8 +51,7 @@
                                     <td> {{ $st->address }} </td>
                                     <td> {{ $st->phone_number }} </td>
                                     <td>
-                                        <a href="{{route('admin.students.edit', $st->student_id)}}" class="btn btn-primary text-white"> Edit</a>
-                                        {{-- <button type="button" class="btn btn-primary text-white">Edit</button> --}}
+                                        <a href="{{route('admin.students.edit', $st->student_id)}}" class="btn btn-warning text-white"> Edit</a>
                                         <form action="{{ route('admin.students.destroy', $st->student_id) }}"
                                             method="POST" class="d-inline">
                                             @csrf

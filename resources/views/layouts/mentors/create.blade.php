@@ -19,12 +19,27 @@
                 <form class="forms-sample" method="POST" action="{{ route('admin.mentors.store') }}">
                     @csrf
                     <div class="form-group">
-                        <label for="name">Name Mentor</label>
-                        <input type="text" name="name" class="form-control" id="name" placeholder="Mentor Name" value="{{ old('username') }}">
+                        <label for="user_id">Select User Account</label>
+                        <select name="user_id" class="form-control" id="user_id" required>
+                            <option value="">-- Select User --</option>
+                            @foreach ($usersMentor as $user)
+                                <option value="{{ $user->user_id }}" {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
+                                    {{ $user->username }} ({{ $user->email }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name_mentor">Name Mentor</label>
+                        <input type="text" name="name_mentor" class="form-control" id="name_mentor" placeholder="Mentor Name" value="{{ old('name_mentor') }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nip">NIP</label>
+                        <input type="text" name="nip" class="form-control" id="nip" placeholder="NIP" value="{{ old('nip') }}">
                     </div>
                     <div class="form-group">
                         <label for="phone_number">Phone Number</label>
-                        <input type="phone_number" name="phone_number" class="form-control" id="phone_number" placeholder="Email" value="{{ old('email') }}">
+                        <input type="text" name="phone_number" class="form-control" id="phone_number" placeholder="Phone Number" value="{{ old('phone_number') }}">
                     </div>
 
                     <button type="submit" class="btn btn-primary me-2">Submit</button>

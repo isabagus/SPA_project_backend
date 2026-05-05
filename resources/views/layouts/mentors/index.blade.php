@@ -28,7 +28,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $mentor->name }}</td>
-                                    <td>{{ $mentor->emailMentor ?? '-' }}</td>
+                                    <td>{{ $mentor->user->email ?? '-' }}</td>
                                     <td>{{ $mentor->phone_number }}</td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">

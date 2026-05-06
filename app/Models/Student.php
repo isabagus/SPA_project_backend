@@ -8,7 +8,7 @@ class Student extends Model
 {
     protected $table = 'students';
     protected $primaryKey = 'student_id';
-    public $incrementing = false;
+    public $incrementing = true;
     protected $fillable = [
         'academic_year',
         'level_class',
@@ -35,9 +35,14 @@ class Student extends Model
         return $this->belongsTo(Religion::class, 'religion_name', 'religion_name');
     }
 
-    public function parents()
+    public function mentor()
     {
-        return $this->hasMany(Parents::class, 'student_id', 'student_id');
+        return $this->belongsTo(Mentor::class, 'mentor_id', 'mentor_id');
+    }
+
+    public function parent()
+    {
+        return $this->hasOne(Parents::class, 'student_id', 'student_id');
     }
 
     public function reports()

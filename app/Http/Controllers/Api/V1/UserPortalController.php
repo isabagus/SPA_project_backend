@@ -88,9 +88,6 @@ class UserPortalController extends Controller
         if (!$subject) {
             return response()->json(['message' => 'You do not teach this subject'], 403);
         }
-
-        // Ambil murid (bisa disesuaikan logic pengambilannya, misal berdasarkan kelas)
-        // Di sini saya ambil semua murid sebagai contoh awal
         $students = Student::all(); 
 
         return response()->json([
@@ -100,9 +97,6 @@ class UserPortalController extends Controller
         ]);
     }
 
-    /**
-     * Guru menginput nilai untuk murid tertentu pada mapel tertentu
-     */
     public function submitStudentScore(Request $request)
     {
         $user = $request->user();
@@ -118,13 +112,11 @@ class UserPortalController extends Controller
         ]);
 
         $teacher = $user->teacher;
-        
-        // Validasi guru mengajar mapel ini
+    
         if (!$teacher->subjects()->where('subjects.subject_id', $data['subject_id'])->exists()) {
             return response()->json(['message' => 'You do not teach this subject'], 403);
         }
 
-        // Simpan nilai
         $reportDetail = ReportDetail::updateOrCreate(
             ['report_id' => $data['report_id'], 'subject_id' => $data['subject_id']],
             [
@@ -140,10 +132,6 @@ class UserPortalController extends Controller
         ]);
     }
 
-    /**
-     * Mengecek status autentikasi dan mengembalikan daftar izin (permissions)
-     * Sangat berguna untuk RBAC di Frontend Next.js
-     */
     public function checkAuth(Request $request)
     {
         $user = $request->user();

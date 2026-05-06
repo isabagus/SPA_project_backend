@@ -33,5 +33,5 @@ Route::prefix('v1')->group(function () {
         // Student Management (jika diakses via API)
         Route::apiResource('students', StudentApiController::class);
         Route::apiResource('users-management', UserManagementController::class);
-    });
+        });
 });

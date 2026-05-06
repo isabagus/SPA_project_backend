@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('category_subject', 150);
             $table->string('term', 20);
             // $table->string('name_subject');
-
             $table->foreign('category_subject')->references('category_subject')->on('categories_subject')->onDelete('cascade');
             $table->foreign('term')->references('term')->on('terms')->onDelete('cascade');
         });

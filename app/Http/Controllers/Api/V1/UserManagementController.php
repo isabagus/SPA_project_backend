@@ -41,60 +41,6 @@ class UserManagementController extends Controller
 
     /**
      * Simpan User baru (Mentor, Teacher, atau Parent)
-     */
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'type' => ['required', Rule::in(['mentor', 'teacher', 'parent'])],
-            'username' => 'required|string|unique:users,username',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-            'phone_number' => 'nullable|string|max:15',
-            // Field khusus masing-masing role
-            'name' => 'required_if:type,teacher|string|max:255',
-            'name_mentor' => 'required_if:type,mentor|string|max:255',
-            'nip' => 'nullable|string|max:23',
-            'name_parent' => 'required_if:type,parent|string|max:150',
-            'student_id' => 'required_if:type,parent|exists:students,student_id',
-        ]);
-
-        return DB::transaction(function () use ($data) {
-            // 1. Create User Account
-            $user = User::create([
-                'username' => $data['username'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'role' => $data['type'],
-                'phone_number' => $data['phone_number'] ?? null,
-            ]);
-
-            // 2. Create Role Details
-            if ($data['type'] === 'mentor') {
-                $detail = $user->mentor()->create([
-                    'name_mentor' => $data['name_mentor'],
-                    'nip' => $data['nip'] ?? null,
-                    'phone_number' => $data['phone_number'] ?? '',
-                ]);
-                return new MentorResource($detail->load('user'));
-            } 
-            
-            if ($data['type'] === 'teacher') {
-                $detail = $user->teacher()->create([
-                    'name' => $data['name'],
-                    'phone_number' => $data['phone_number'] ?? '',
-                ]);
-                return new TeacherResource($detail->load('user'));
-            } 
-            
-            if ($data['type'] === 'parent') {
-                $detail = $user->parent()->create([
-                    'name_parent' => $data['name_parent'],
-                    'student_id' => $data['student_id'],
-                ]);
-                return new ParentResource($detail->load(['user', 'student']));
-            }
-        });
-    }
 
     /**
      * Menampilkan detail satu user

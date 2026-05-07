@@ -19,8 +19,12 @@ class StudentResource extends JsonResource
             'academic_year' => $this->academic_year,
             'level_class' => $this->level_class,
             'religion_name' => $this->religion_name,
-            'mentor_id' => $this->mentor_id,
+            'mentor' => [
+                'name_mentor' => $this->mentor->name_mentor ?? "No Mentor Assigned",
+                'nip' => $this->mentor->nip ?? "-",
+            ],
             'name_student' => $this->name_student,
+            'parent_name' => $this->parent->name_parent ?? "No Parent Data",
             'gender' => $this->gender,
             'address' => $this->address,
             'phone_number' => $this->phone_number,

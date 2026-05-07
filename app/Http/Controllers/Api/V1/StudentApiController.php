@@ -9,68 +9,63 @@ use Illuminate\Http\Request;
 
 class StudentApiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         $students = Student::all();
-        return StudentResource::collection($students);
+        return response()->json([
+            'message' => 'Student Data List',
+            'success' => true,
+            'data' => StudentResource::collection($students),
+
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'academic_year' => 'required',
-            'nis' => 'required'
-        ]);
+        try {
+            $data = $request->validate([
+                'academic_year' => 'required',
+                'level_class'   => 'required',
+                'religion_name' => 'required',
+                'name_student'  => 'required',
+                'gender'        => 'required',
+                'address'       => 'required',
+                'phone_number'  => 'required',
+                'mentor_id'     => 'nullable' 
+            ]);
 
-        $student = Student::create($data);
+            $student = Student::create($data);
 
-        return new StudentResource($student);
+            return response()->json([
+                'success' => true,
+                'data'    => new StudentResource($student)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Student $id)
+    public function show(Student $student)
     {
-        $student = Student::find($id);
-
-        return new StudentResource($student);
-        
-        if (!$student) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data student tidak ditemukan',
-            ], 404);
-        } else {
-            return response()->json([
-                'success' => true,
-                'message' => 'Detail data student',
-                'data'    => $student
-            ], 200);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        // Contoh implementasi update
         return response()->json([
             'success' => true,
-            'message' => 'Endpoint update student siap digunakan'
+            'message' => 'Detail data student',
+            'data'    => new StudentResource($student),
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function update(Request $request, string $id)
+    {
+        
+    }
+    
     public function destroy(string $id)
     {
         return response()->json([

@@ -9,12 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rubric_categories', function (Blueprint $table) {
-            $table->id('rubric_id'); // PK Integer
+            $table->id('rubric_id'); 
             $table->foreignId('teacher_id')->constrained('teachers', 'teacher_id')->onDelete('cascade'); // Guru pengampu rubrik
-            $table->foreign('subject_id')->references('subject_id')->on('subjects')->onDelete('cascade');
-            $table->string('term', 20); // Term rubrik (Term 1, Term 2, dll)
-            $table->string('rubric_name', 100); // "Shapes and Patterns", "Numbers To 20", dll
-            // $table->foreign('teacher_id')->references('teacher_id')->on('teachers')->onDelete('cascade');
+            $table->foreignId('subject_id')->constrained('subjects', 'subject_id')->onDelete('cascade');
+            $table->string('term', 20);
+            $table->string('rubric_name', 100);
             $table->foreign('term')->references('term')->on('terms')->onDelete('cascade');
             $table->timestamps();
         });

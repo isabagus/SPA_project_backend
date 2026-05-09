@@ -18,7 +18,6 @@ Route::prefix('v1')->group(function () {
         });
         Route::post('/logout', [AuthController::class, 'logout']);
 
-        // Portal Utama untuk Next.js (Teacher, Parent, Mentor)
         Route::get('/auth/check', [UserPortalController::class, 'checkAuth']);
 
         Route::middleware('role:teacher|mentor|parent')->group(function () {
@@ -30,7 +29,6 @@ Route::prefix('v1')->group(function () {
             Route::post('/portal/teacher/submit-score', [UserPortalController::class, 'submitStudentScore']);
         });
 
-        // Student Management (jika diakses via API)
         Route::apiResource('students', StudentApiController::class);
         Route::apiResource('users-management', UserManagementController::class);
     });

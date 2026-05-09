@@ -15,7 +15,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -23,8 +22,7 @@ class AuthController extends Controller
 
 
         $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (!$user || ! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email atau Password salah.'
@@ -34,7 +32,7 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         $token = $user->createToken('nextjs_auth_token')->plainTextToken;
-
+                
         return response()->json([
             'success' => true,
             'message' => 'Login success',

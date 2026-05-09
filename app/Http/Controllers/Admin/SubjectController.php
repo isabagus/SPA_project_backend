@@ -15,7 +15,6 @@ class SubjectController extends Controller
 
     public function index()
     {
-        // Urutkan berdasarkan Tahun (level_class) dan kemudian berdasarkan Term
         $subjects = Subject::with('class')
             ->orderBy('level_class', 'asc')
             ->orderBy('term', 'asc')
@@ -26,7 +25,6 @@ class SubjectController extends Controller
 
     public function show($id)
     {
-        // Load rubrik beserta gurunya
         $subject = Subject::with(['rubrics.teacher', 'class'])->findOrFail($id);
         return view('layouts.subjects.detail', compact('subject'));
     }
@@ -113,7 +111,6 @@ class SubjectController extends Controller
                         'term'        => $request->term,
                     ]);
                 } else {
-
                     RubricCategory::create([
                         'subject_id'  => $subject->subject_id,
                         'rubric_name' => $data['name'],

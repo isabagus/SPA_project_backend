@@ -14,7 +14,6 @@ class ReportApiController extends Controller
      */
     public function index()
     {
-        $reports = Reports::all();
         // return ReportResource::collection($reports);
     }
 

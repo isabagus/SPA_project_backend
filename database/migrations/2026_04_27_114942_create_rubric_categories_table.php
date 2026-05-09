@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('rubric_categories', function (Blueprint $table) {
             $table->id('rubric_id'); // PK Integer
             $table->foreignId('teacher_id')->constrained('teachers', 'teacher_id')->onDelete('cascade'); // Guru pengampu rubrik
+            $table->foreign('subject_id')->references('subject_id')->on('subjects')->onDelete('cascade');
             $table->string('term', 20); // Term rubrik (Term 1, Term 2, dll)
             $table->string('rubric_name', 100); // "Shapes and Patterns", "Numbers To 20", dll
-            
             // $table->foreign('teacher_id')->references('teacher_id')->on('teachers')->onDelete('cascade');
             $table->foreign('term')->references('term')->on('terms')->onDelete('cascade');
             $table->timestamps();

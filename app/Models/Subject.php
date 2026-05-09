@@ -8,16 +8,29 @@ class Subject extends Model
 {
     protected $table = 'subjects';
     protected $primaryKey = 'subject_id';
-    protected $fillable = ['category_subject', 'term'];
-    public $timestamps = false; // Karena di migrasi tidak ada timestamps
+    
+    // Tambahkan class_id ke dalam fillable
+    protected $fillable = [
+        'category_subject',
+        'term',
+        'level_class'
+    ];
 
-    public function category()
+    /**
+     * Relasi ke Laporan
+     */
+    public function reports()
     {
-        return $this->belongsTo(CategorySubject::class, 'category_subject', 'category_subject');
+        return $this->hasMany(Reports::class, 'subject_id', 'subject_id');
     }
 
-    public function term_data()
+    public function class()
     {
-        return $this->belongsTo(Term::class, 'term', 'term');
+        return $this->belongsTo(LevelClass::class, 'level_class', 'level_class');
+    }
+
+    public function rubrics()
+    {
+        return $this->hasMany(RubricCategory::class, 'subject_id', 'subject_id');
     }
 }

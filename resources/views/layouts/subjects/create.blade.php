@@ -1,121 +1,144 @@
 @extends('base')
+
 @section('content')
-    <div class="col-12 grid-margin stretch-card">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Subject Form Input</h4>
-                <p class="card-description"> Add Multiple Subjects under one Category </p>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Subject Form Input</h4>
+            <p class="card-description text-muted">Add Multiple Subjects under one Category</p>
+
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('admin.subjects.store') }}" method="POST">
+                @csrf
                 
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                <div class="row mb-3">
+                    <div class="col-md-6 form-group">
+                        <label class="mb-2 fw-bold">Subject Category (Header)</label>
+                        <select class="form-select" name="category_subject" required>
+                            <option value="">Select Subject</option>
+                            @foreach ($subjects as $sub)
+                                <option value="{{ $sub->category_subject }}">{{ $sub->category_subject }}</option>
                             @endforeach
-                        </ul>
+                        </select>
                     </div>
-                @endif
-
-                <form class="forms-sample" method="POST" action="{{ route('admin.subjects.store') }}">
-                    @csrf
-                    
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>Subject Category (Header)</label>
-                            <select class="form-select" name="category_subject" required>
-                                <option value="">Select Subject</option>
-                                @foreach ($categories as $cat)
-                                    <option value="{{ $cat->category_subject }}">{{ $cat->category_subject }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Term</label>
-                            <select class="form-select" name="term" required>
-                                <option value="">Select Term</option>
-                                @foreach ($terms as $t)
-                                    <option value="{{ $t->term }}">{{ $t->term }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <div class="col-md-6 form-group">
+                        <label class="mb-2 fw-bold">Term</label>
+                        <select class="form-select" name="term" required>
+                            <option value="">Select Term</option>
+                            @foreach ($terms as $t)
+                                <option value="{{ $t->term }}">{{ $t->term }}</option>
+                            @endforeach
+                        </select>
                     </div>
+                </div>
 
-                    <hr>
-                    <h5 class="mb-3">Assessment Items (Sub-Subjects)</h5>
+                <div class="form-group mb-4">
+                    <label class="mb-2 fw-bold">Year / Class</label>
+                    <select name="class_id" class="form-select" required>
+                        <option value="Year 1">Year 1</option>
+                        <option value="Year 2">Year 2</option>
+                    </select>
+                </div>
 
-                    <div id="subject-items-container">
-                        <!-- Single Subject Block -->
-                        <div class="subject-block border p-3 mb-3 position-relative rounded">
-                            <h6 class="mb-3 item-title">Subject 1</h6>
-                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-item-btn" style="display: none;"><i class="fa fa-times"></i> Hapus</button>
-                            
-                            <div class="form-group mb-0">
-                                <label>Name Subject / Item Penilaian</label>
-                                <input type="text" class="form-control" name="name_subject[]" placeholder="Contoh: Observing / Physical Education" required>
+                <hr>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold">Rubric Criteria</h5>
+                    <button type="button" class="btn btn-primary btn-sm" id="add-rubric">
+                        <i class="fa fa-plus me-1"></i> Add Rubric
+                    </button>
+                </div>
+
+                <div id="rubrics-container">
+                    <div class="card border mb-3 rubric-item">
+                        <div class="card-body bg-white"> <!-- Mengubah bg-light menjadi bg-white -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-secondary rubric-number">Rubric 1</span>
+                                <button type="button" class="btn btn-danger btn-sm remove-rubric">Hapus</button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8 form-group mb-0">
+                                    <label class="small fw-bold mb-2">Name Subject / Item Penilaian</label>
+                                    <input type="text" name="rubrics[0][name]" class="form-control" placeholder="Contoh: Shapes and Patterns" required>
+                                </div>
+                                <div class="col-md-4 form-group mb-0">
+                                    <label class="small fw-bold mb-2">Teacher</label>
+                                    <select name="rubrics[0][teacher_id]" class="form-select" required>
+                                        @foreach($teachers as $teacher)
+                                            <option value="{{ $teacher->teacher_id }}">{{ $teacher->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <button type="button" class="btn btn-success" id="add-subject-btn">
-                            <i class="fa fa-plus"></i> Add Subject Form
-                        </button>
-                    </div>
-
-                    <div class="mt-4 border-top pt-3">
-                        <button type="submit" class="btn btn-primary me-2">Submit All Subjects</button>
-                        <a href="{{ route('admin.subjects.index') }}" class="btn btn-light">Cancel</a>
-                    </div>
-                </form>
-            </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success me-2">Simpan Semua Data</button>
+                    <a href="{{ route('admin.subjects.index') }}" class="btn btn-light border">Batal</a>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.getElementById('subject-items-container');
-            const addBtn = document.getElementById('add-subject-btn');
-            
-            function updateTitlesAndButtons() {
-                const blocks = container.querySelectorAll('.subject-block');
-                blocks.forEach((block, index) => {
-                    block.querySelector('.item-title').textContent = 'Subject ' + (index + 1);
-                    
-                    const removeBtn = block.querySelector('.remove-item-btn');
-                    if (blocks.length > 1) {
-                        removeBtn.style.display = 'inline-block';
-                    } else {
-                        removeBtn.style.display = 'none';
-                    }
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('rubrics-container');
+    const addButton = document.getElementById('add-rubric');
+    let rubricCount = 1;
+
+    addButton.addEventListener('click', function() {
+        rubricCount++;
+        const newRubric = document.createElement('div');
+        newRubric.className = 'card border mb-3 rubric-item';
+        // Pastikan template literal JS ini juga menggunakan bg-white dan margin label yang sama
+        newRubric.innerHTML = `
+            <div class="card-body bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge bg-secondary rubric-number">Rubric ${rubricCount}</span>
+                    <button type="button" class="btn btn-danger btn-sm remove-rubric">Hapus</button>
+                </div>
+                <div class="row">
+                    <div class="col-md-8 form-group mb-0">
+                        <label class="small fw-bold mb-2">Name Rubric / Item Penilaian</label>
+                        <input type="text" name="rubrics[${rubricCount-1}][name]" class="form-control" placeholder="Contoh: Item Baru" required>
+                    </div>
+                    <div class="col-md-4 form-group mb-0">
+                        <label class="small fw-bold mb-2">Teacher</label>
+                        <select name="rubrics[${rubricCount-1}][teacher_id]" class="form-select" required>
+                            @foreach($teachers as $teacher)
+                                <option value="{{ $teacher->teacher_id }}">{{ $teacher->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>`;
+        container.appendChild(newRubric);
+    });
+
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-rubric')) {
+            const items = document.querySelectorAll('.rubric-item');
+            if (items.length > 1) {
+                e.target.closest('.rubric-item').remove();
+                // Update numbers
+                document.querySelectorAll('.rubric-number').forEach((el, i) => {
+                    el.textContent = `Subject ${i + 1}`;
                 });
             }
-
-            addBtn.addEventListener('click', function() {
-                // Clone the first block as template
-                const firstBlock = container.querySelector('.subject-block');
-                const newBlock = firstBlock.cloneNode(true);
-                
-                // Clear input value
-                newBlock.querySelector('input').value = '';
-                
-                // Add event listener to new remove button
-                newBlock.querySelector('.remove-item-btn').addEventListener('click', function() {
-                    newBlock.remove();
-                    updateTitlesAndButtons();
-                });
-                
-                container.appendChild(newBlock);
-                updateTitlesAndButtons();
-            });
-
-            // Add event listener to the initial remove button
-            container.querySelector('.remove-item-btn').addEventListener('click', function(e) {
-                const block = e.target.closest('.subject-block');
-                if (container.querySelectorAll('.subject-block').length > 1) {
-                    block.remove();
-                    updateTitlesAndButtons();
-                }
-            });
-        });
-    </script>
+        }
+    });
+});
+</script>
 @endsection

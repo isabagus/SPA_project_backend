@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
             ClassSeeder::class,
             MentorSeeder::class,
             ReligionSeeder::class,
-            CategorySubjectSeeder::class,
             TermSeeder::class,
+            SubjectSeeder::class,
         ]);
     }
 }

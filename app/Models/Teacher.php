@@ -18,8 +18,8 @@ class Teacher extends Model
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
-    public function subjects()
+    public function rubric()
     {
-        return $this->belongsToMany(Subject::class, 'details_subject', 'teacher_id', 'subject_id');
+        return $this->hasMany(RubricCategory::class, 'teacher_id', 'teacher_id');
     }
 }

@@ -9,9 +9,9 @@ use App\Http\Controllers\Api\V1\AuthController;
 
 Route::prefix('v1')->group(function () {
     // Public Routes
-    Route::post('/login', [AuthController::class, 'login']);
 
     // Protected Routes
+    Route::post('/login', [AuthController::class, 'login']);
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/user', function (Request $request) {
             return $request->user();
@@ -31,7 +31,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Student Management (jika diakses via API)
+        Route::apiResource('students', StudentApiController::class);
         Route::apiResource('users-management', UserManagementController::class);
     });
-    Route::apiResource('students', StudentApiController::class);
 });

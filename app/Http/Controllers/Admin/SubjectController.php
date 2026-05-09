@@ -4,91 +4,133 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Subject;
-use App\Models\CategorySubject;
+use App\Models\RubricCategory;
 use App\Models\Term;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SubjectController extends Controller
 {
+
     public function index()
     {
-        $subjects = Subject::with(['category', 'term_data'])->get();
+        // Urutkan berdasarkan Tahun (level_class) dan kemudian berdasarkan Term
+        $subjects = Subject::with('class')
+            ->orderBy('level_class', 'asc')
+            ->orderBy('term', 'asc')
+            ->get();
+            
         return view('layouts.subjects.index', compact('subjects'));
+    }
+
+    public function show($id)
+    {
+        // Load rubrik beserta gurunya
+        $subject = Subject::with(['rubrics.teacher', 'class'])->findOrFail($id);
+        return view('layouts.subjects.detail', compact('subject'));
     }
 
     public function create()
     {
-        $categories = CategorySubject::all();
         $terms = Term::all();
-        return view('layouts.subjects.create', compact('categories', 'terms'));
+        $teachers = Teacher::all();
+        $subjects = Subject::select('category_subject')->distinct()->get();
+        
+        return view('layouts.subjects.create', compact('terms', 'teachers', 'subjects'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'category_subject' => 'required|exists:categories_subject,category_subject',
-            'term'             => 'required|exists:terms,term',
-            'name_subject.*'   => 'required|string|max:255',
+            'category_subject' => 'required|string',
+            'term'             => 'required|string',
+            'class_id'         => 'required|string',
+            'rubrics'          => 'required|array|min:1',
+            'rubrics.*.name'   => 'required|string',
+            'rubrics.*.teacher_id' => 'required|exists:teachers,teacher_id',
         ]);
 
-        DB::beginTransaction();
-        try {
-            foreach ($request->name_subject as $name) {
-                Subject::create([
-                    'category_subject' => $request->category_subject,
-                    'term'             => $request->term,
-                    'name_subject'     => $name,
+        DB::transaction(function () use ($request) {
+            $subject = Subject::create([
+                'category_subject' => $request->category_subject,
+                'term'             => $request->term,
+                'level_class'      => $request->class_id,
+            ]);
+
+            foreach ($request->rubrics as $rubricData) {
+                RubricCategory::create([
+                    'subject_id'  => $subject->subject_id,
+                    'rubric_name' => $rubricData['name'],
+                    'teacher_id'  => $rubricData['teacher_id'],
+                    'term'        => $request->term,
                 ]);
             }
+        });
 
-            DB::commit();
-            return redirect()->route('admin.subjects.index')->with('success', 'Subjects successfully saved!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Error saving subjects: ' . $e->getMessage())->withInput();
-        }
+        return redirect()->route('admin.subjects.index')->with('success', 'Subject dan Rubrik berhasil disimpan!');
     }
 
-    public function show($id)
-    {
-        $subject = Subject::findOrFail($id);
-        return view('layouts.subjects.detail', compact('subject'));
-    }
     public function edit($id)
     {
-        $subject = Subject::findOrFail($id);
-        $categories = CategorySubject::all();
+        $subject = Subject::with(['rubrics.teacher'])->findOrFail($id);
         $terms = Term::all();
-        return view('layouts.subjects.edit', compact('subject', 'categories', 'terms'));
+        $teachers = Teacher::all();
+        $subjectCategories = Subject::select('category_subject')->distinct()->get();
+        
+        return view('layouts.subjects.edit', compact('subject', 'terms', 'teachers', 'subjectCategories'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'category_subject' => 'required|exists:categories_subject,category_subject',
-            'term'             => 'required|exists:terms,term',
-            'name_subject'     => 'required|string|max:255',
+            'category_subject' => 'required|string',
+            'term'             => 'required|string',
+            'level_class'      => 'required|string',
+            'rubrics'          => 'required|array|min:1',
+            'rubrics.*.name'   => 'required|string',
+            'rubrics.*.teacher_id' => 'required|exists:teachers,teacher_id',
         ]);
 
-        try {
+        DB::transaction(function () use ($request, $id) {
             $subject = Subject::findOrFail($id);
             $subject->update([
                 'category_subject' => $request->category_subject,
                 'term'             => $request->term,
-                'name_subject'     => $request->name_subject,
+                'level_class'      => $request->level_class,
             ]);
 
-            return redirect()->route('admin.subjects.index')->with('success', 'Subject updated successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error updating subject: ' . $e->getMessage())->withInput();
-        }
+            $existingIds = collect($request->rubrics)->pluck('rubric_id')->filter()->toArray();
+
+            $subject->rubrics()->whereNotIn('rubric_id', $existingIds)->delete();
+
+ 
+            foreach ($request->rubrics as $data) {
+                if (isset($data['rubric_id'])) {
+                    RubricCategory::where('rubric_id', $data['rubric_id'])->update([
+                        'rubric_name' => $data['name'],
+                        'teacher_id'  => $data['teacher_id'],
+                        'term'        => $request->term,
+                    ]);
+                } else {
+
+                    RubricCategory::create([
+                        'subject_id'  => $subject->subject_id,
+                        'rubric_name' => $data['name'],
+                        'teacher_id'  => $data['teacher_id'],
+                        'term'        => $request->term,
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('admin.subjects.index')->with('success', 'Subject dan Rubrik berhasil diupdate!');
     }
 
     public function destroy($id)
     {
         $subject = Subject::findOrFail($id);
         $subject->delete();
-        return redirect()->route('admin.subjects.index')->with('success', 'Subject deleted successfully!');
+        return redirect()->route('admin.subjects.index')->with('success', 'Subject berhasil dihapus!');
     }
 }

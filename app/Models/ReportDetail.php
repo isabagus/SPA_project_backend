@@ -10,7 +10,7 @@ class ReportDetail extends Model
 
     protected $fillable = [
         'report_id',
-        'subject_id',
+        'rubric_id',
         'score',
         'description_subject',
     ];
@@ -20,13 +20,8 @@ class ReportDetail extends Model
         return $this->belongsTo(Reports::class, 'report_id', 'report_id');
     }
 
-    public function mentor()
+    public function rubric()
     {
-        return $this->belongsTo(Mentor::class, 'mentor_id', 'mentor_id');
-    }
-
-    public function subject()
-    {
-        return $this->belongsTo(Subject::class, 'id_subject', 'subject_id');
+        return $this->belongsTo(Subject::class, 'rubric_id', 'rubric_id');
     }
 }

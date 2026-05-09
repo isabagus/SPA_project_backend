@@ -7,7 +7,7 @@ use App\Http\Resources\V1\StudentResource;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
-class StudentApiController extends Controller
+class StudentApiController extends controller
 {
 
     public function index()
@@ -17,8 +17,8 @@ class StudentApiController extends Controller
             'message' => 'Student Data List',
             'success' => true,
             'data' => StudentResource::collection($students),
-
-        ], 200);
+            
+            ], 200);
     }
 
     public function store(Request $request)
@@ -32,7 +32,7 @@ class StudentApiController extends Controller
                 'gender'        => 'required',
                 'address'       => 'required',
                 'phone_number'  => 'required',
-                'mentor_id'     => 'nullable' 
+                'mentor_id'     => 'nullable'
             ]);
 
             $student = Student::create($data);
@@ -61,11 +61,8 @@ class StudentApiController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, string $id)
-    {
-        
-    }
-    
+    public function update(Request $request, string $id) {}
+
     public function destroy(string $id)
     {
         return response()->json([

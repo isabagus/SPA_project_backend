@@ -18,18 +18,18 @@
                             <tr>
                                 <th>No</th>
                                 <th> Subjects </th>
-                                <th> Sub Subject </th>
+                                <th> Year </th>
                                 <th> Term </th>
-                                <th> Details </th>
-                                <th> Action </th>
+                                <th> Detail Rubric</th>
+                                <th> Actions </th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($subjects as $subject)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td><strong>{{ $subject->category_subject }}</strong></td>
-                                    <td>{{ $subject->name_subject }}</td>
+                                    <td>{{ $subject->category_subject }}</td>
+                                    <td>{{ $subject->level_class }}</td>
                                     <td>{{ $subject->term }}</td>
                                     <td class="text-center align-middle">
                                         <div class="d-flex justify-content-center gap-2">

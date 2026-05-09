@@ -35,6 +35,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.create')}}">Add Mentor</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.index') }}">List Mentor</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.mentors.setClass') }}">Set Mentor Of Class</a>
                     </li>
                 </ul>
             </div>

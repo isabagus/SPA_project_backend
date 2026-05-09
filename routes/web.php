@@ -25,6 +25,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('students', StudentController::class);
     Route::resource('subjects', SubjectController::class);
     Route::resource('teachers', TeacherController::class);
+    Route::get('mentors/set-class', [MentorController::class, 'showSetClassView'])->name('mentors.setClass');
+    Route::put('mentors/set-class/set', [MentorController::class, 'updateSetClass'])->name('mentors.updateSetClass');
     Route::resource('mentors', MentorController::class);
     Route::resource('parents', ParentController::class);
     Route::resource('reports', ReportController::class);

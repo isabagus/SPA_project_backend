@@ -20,6 +20,7 @@
                                 <th> Name Mentor</th>
                                 <th> Email </th>
                                 <th>Phone Number</th>
+                                <th>Mentor of</th>
                                 <th> Action </th>
                             </tr>
                         </thead>
@@ -30,6 +31,13 @@
                                     <td>{{ $mentor->name }}</td>
                                     <td>{{ $mentor->user->email ?? '-' }}</td>
                                     <td>{{ $mentor->phone_number }}</td>
+                                    <td>
+                                        @forelse ($classes->where('mentor_id', $mentor->mentor_id) as $class)
+                                            {{ $class->level_class }}
+                                        @empty
+                                            - 
+                                        @endforelse
+                                    </td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
                                             <a href="{{ route('admin.mentors.edit', $mentor->mentor_id) }}"

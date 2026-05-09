@@ -16,4 +16,9 @@ class LevelClass extends Model
         'level_class',
         'mentor_id',
     ];
+
+    public function mentor()
+    {
+        return $this->belongsTo(Mentor::class, 'mentor_id', 'mentor_id');
+    }
 }

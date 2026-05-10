@@ -7,11 +7,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
     /**
-     * Handle user login and return a Sanctum token.
+     * Handle user login using SPA Stateful Authentication.
      */
     public function login(Request $request)
     {
@@ -20,24 +21,19 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-
-        $user = User::where('email', $request->email)->first();
-        if (!$user || ! Hash::check($request->password, $user->password)) {
+        if (!Auth::guard('web')->attempt($request->only('email', 'password'))) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email atau Password salah.'
             ], 401);
         }
 
-        $user->tokens()->delete();
-
-        $token = $user->createToken('nextjs_auth_token')->plainTextToken;
+        $request->session()->regenerate();
+        $user = Auth::guard('web')->user();
                 
         return response()->json([
             'success' => true,
             'message' => 'Login success',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
             'user' => [
                 'id' => $user->user_id,
                 'username' => $user->username,
@@ -47,10 +43,12 @@ class AuthController extends Controller
         ]);
     }
 
-
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::guard('web')->logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json([
             'success' => true,

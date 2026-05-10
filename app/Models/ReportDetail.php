@@ -22,6 +22,6 @@ class ReportDetail extends Model
 
     public function rubric()
     {
-        return $this->belongsTo(Subject::class, 'rubric_id', 'rubric_id');
+        return $this->belongsTo(RubricCategory::class, 'rubric_id', 'rubric_id');
     }
 }

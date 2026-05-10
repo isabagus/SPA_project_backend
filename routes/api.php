@@ -26,14 +26,9 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/auth/check', [UserPortalController::class, 'checkAuth']);
 
-        // Legacy routes (pertahankan sementara untuk backward compatibility)
-        // Route::middleware('role:teacher|mentor|parent')->group(function () {
-        //     Route::get('report-card', [UserPortalController::class, 'getReportCard']);
-        // });
+        Route::middleware('role:mentor')->prefix('mentor')->group(function (){
 
-        // Route::apiResource('students', StudentApiController::class);
-        // Route::apiResource('users-management', UserManagementController::class);
-
+        });
 
         Route::middleware('role:teacher')->prefix('teacher')->group(function () {
             Route::get('/profile', [TeacherProfileController::class, 'show']);

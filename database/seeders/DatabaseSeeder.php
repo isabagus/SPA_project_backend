@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             TermSeeder::class,
             MentorSeeder::class,   // Mentor dulu karena Class butuh mentor_id
             ClassSeeder::class,
-            SubjectSeeder::class,  // Subject butuh level_class
+            CategorySubjectSeeder::class, // Tambahkan ini agar Subject tidak error FK
+            SubjectSeeder::class,  // Subject butuh level_class & category_subject
         ]);
 
         // 2. Data Pengguna & Profil (Dummy)

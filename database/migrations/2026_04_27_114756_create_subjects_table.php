@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id('subject_id')->primary();
             $table->string('category_subject', 150);
             $table->string('term', 20);
+            $table->string('level_class', 35);
             $table->foreign('category_subject')->references('category_subject')->on('categories_subject')->onDelete('cascade');
             $table->foreign('term')->references('term')->on('terms')->onDelete('cascade');
             $table->foreign('level_class')->references('level_class')->on('classes')->onDelete('cascade');

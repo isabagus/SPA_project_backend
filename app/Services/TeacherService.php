@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Services;
 
 use App\Models\ReportDetail;
@@ -6,7 +7,6 @@ use App\Models\Teacher;
 use App\Models\Subject;
 use App\Models\Student;
 use App\Models\Reports;
-use App\Models\User;
 use App\Models\RubricCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,45 +15,55 @@ class TeacherService
 {
     /**
      * Mengambil daftar subject yang diampu teacher
+     * Dioptimalkan dengan Eager Loading dan relasi whereHas
      */
-    public function getMySubjects(Teacher $teacher)
+    public function getMySubjects(Teacher $teacher): Collection
     {
-        $subjectId = RubricCategory::where('teacher_id', $teacher->teacher_id)->pluck('subject_id')->unique();
-
-        return Subject::with([
-            'rubrics' => function ($query) use ($teacher) {
+        return Subject::whereHas('rubrics', function ($query) use ($teacher) {
                 $query->where('teacher_id', $teacher->teacher_id);
-            }
-        ])->whereIn('subject_id', $subjectId)->orderBy('level_class')->orderBy('term')->get();
+            })
+            ->with(['rubrics' => function ($query) use ($teacher) {
+                $query->where('teacher_id', $teacher->teacher_id);
+            }])
+            ->orderBy('level_class')
+            ->orderBy('term')
+            ->get();
     }
 
     /**
      * Mengambil daftar siswa beserta average nilai mereka
+     * Menggunakan metode Eager Loading untuk menghilangkan "N+1 Query Problem"
      */
-    public function getStudentsWithScore(Teacher $teacher, int $subjectId)
+    public function getStudentsWithScore(Teacher $teacher, int $subjectId): array
     {
-        $subject = Subject::find($subjectId);
+        // Pastikan teacher benar-benar mengampu subject ini
+        $subject = Subject::whereHas('rubrics', function ($query) use ($teacher) {
+                $query->where('teacher_id', $teacher->teacher_id);
+            })->find($subjectId);
 
         if (!$subject) {
-            return ['authorized' => false, 'subject' => null, 'students' => null];
+            return ['authorized' => false, 'subject' => null, 'students' => []];
         }
 
-        $isAuthorized = RubricCategory::where('teacher_id', $teacher->teacher_id)->where('subject_id', $subjectId)->exists();
-        if (!$isAuthorized) {
-            return ['authorized' => false, 'subject' => null, 'students' => null];
-        }
+        // Ambil data siswa sekaligus dengan nilai raport mereka di subject ini secara PARALEL (Eager Load)
+        $students = Student::where('level_class', $subject->level_class)
+            ->with(['reports' => function ($query) use ($subjectId) {
+                $query->where('subject_id', $subjectId);
+            }])
+            ->orderBy('name_student')
+            ->get()
+            ->map(function (Student $student) {
+                // Ekstrak data raport dari hasil Eager Loading
+                $report = $student->reports->first();
 
-        $students = Student::where('level_class', $subject->level_class)->orderBy('name_student')->get();
-        $studentId = $students->pluck('student_id');
-        $reports = Reports::where('subject_id', $subjectId)->whereIn('student_id', $studentId)->get()->keyBy('student_id');
- 
-        $students = $students->map(function (Student $student) use ($reports) {
-            $report = $reports->get($student->student_id);
-            $student->report_id     = $report?->report_id;
-            $student->average_value = $report?->average_value;
-            $student->has_score     = !is_null($report?->average_value);
-            return $student;
-        });
+                $student->report_id     = $report?->report_id;
+                $student->average_value = $report?->average_value;
+                $student->has_score     = !is_null($report?->average_value);
+
+                unset($student->reports);
+                
+                return $student;
+            });
 
         return [
             'authorized' => true,
@@ -74,7 +84,6 @@ class TeacherService
             return ['authorized' => false];
         }
 
-        // Ambil semua rubrik teacher di subject ini
         $rubrics = RubricCategory::where('teacher_id', $teacher->teacher_id)
             ->where('subject_id', $subjectId)
             ->get();
@@ -83,28 +92,22 @@ class TeacherService
             return ['authorized' => false];
         }
 
-        // Cari report yang ada
-        $report = Reports::where('student_id', $studentId)
+        // Eager load detail nilai agar tidak melakukan query berulang
+        $report = Reports::with('reportDetails')
+            ->where('student_id', $studentId)
             ->where('subject_id', $subjectId)
             ->first();
 
-        $details = collect();
-        if ($report) {
-            $details = ReportDetail::where('report_id', $report->report_id)
-                ->get()
-                ->keyBy('rubric_id');
-        }
+        // Konversi ke Collection Key-Value yang lebih cepat dibaca oleh CPU
+        $details = $report ? $report->reportDetails->keyBy('rubric_id') : collect();
 
-        // Mapping rubrik dengan nilai yang sudah ada (jika ada)
-        $mappedRubrics = $rubrics->map(function ($rubric) use ($details) {
-            $detail = $details->get($rubric->rubric_id);
-            return [
-                'rubric_id'           => $rubric->rubric_id,
-                'rubric_name'         => $rubric->rubric_name,
-                'current_score'       => $detail ? (float) $detail->score : null,
-                'description_subject' => $detail ? $detail->description_subject : '',
-            ];
-        });
+        // Arrow function (PHP 7.4+) map untuk penulisan yang ultra-bersih
+        $mappedRubrics = $rubrics->map(fn($rubric) => [
+            'rubric_id'           => $rubric->rubric_id,
+            'rubric_name'         => $rubric->rubric_name,
+            'current_score'       => $details->has($rubric->rubric_id) ? (float) $details->get($rubric->rubric_id)->score : null,
+            'description_subject' => $details->has($rubric->rubric_id) ? $details->get($rubric->rubric_id)->description_subject : '',
+        ]);
 
         return [
             'authorized'    => true,
@@ -128,12 +131,19 @@ class TeacherService
             return null;
         }
 
-        return DB::transaction(function () use ($teacher, $subjectId, $studentId, $subject, $data) {
+        // Cache array ID rubric milik guru ini sebagai keamanan tambahan
+        $teacherRubricIds = RubricCategory::where('teacher_id', $teacher->teacher_id)
+            ->where('subject_id', $subjectId)
+            ->pluck('rubric_id');
+
+        if ($teacherRubricIds->isEmpty()) {
+            return null;
+        }
+
+        // Gunakan Transaction block murni dari DB Facades
+        return DB::transaction(function () use ($subjectId, $studentId, $subject, $data, $teacherRubricIds) {
             $report = Reports::firstOrCreate(
-                [
-                    'student_id' => $studentId,
-                    'subject_id' => $subjectId,
-                ],
+                ['student_id' => $studentId, 'subject_id' => $subjectId],
                 [
                     'academic_year' => $data['academic_year'],
                     'level_class'   => $subject->level_class,
@@ -143,40 +153,37 @@ class TeacherService
                 ]
             );
 
-            $teacherRubricIds = RubricCategory::where('teacher_id', $teacher->teacher_id)
-                ->where('subject_id', $subjectId)
-                ->pluck('rubric_id')
-                ->toArray();
+            // Filter out malicious rubrics if any, using Collection functional filtering
+            $validScores = collect($data['scores'])->filter(fn($score) => $teacherRubricIds->contains($score['rubric_id']));
 
-            foreach ($data['scores'] as $scoreData) {
-                if (in_array($scoreData['rubric_id'], $teacherRubricIds)) {
-                    ReportDetail::updateOrCreate(
-                        [
-                            'report_id' => $report->report_id,
-                            'rubric_id' => $scoreData['rubric_id'],
-                        ],
-                        [
-                            'score'               => $scoreData['score'],
-                            'description_subject' => $scoreData['description_subject'] ?? '-',
-                        ]
-                    );
+            // Lakukan Insert/Update tanpa menggunakan updateOrCreate (karena tabel details_report tidak memiliki primary key 'id')
+            $validScores->each(function ($scoreData) use ($report) {
+                $match = [
+                    'report_id' => $report->report_id,
+                    'rubric_id' => $scoreData['rubric_id']
+                ];
+                $dataToSave = [
+                    'score'               => $scoreData['score'],
+                    'description_subject' => $scoreData['description_subject'] ?? '-'
+                ];
+
+                $existingDetail = ReportDetail::where($match)->first();
+
+                if ($existingDetail) {
+                    // Update menggunakan Query Builder untuk menghindari error missing 'id' column
+                    ReportDetail::where($match)->update($dataToSave);
+                } else {
+                    ReportDetail::create(array_merge($match, $dataToSave));
                 }
-            }
-            $this->recalculateAverage($report->report_id);
+            });
 
-            return $report->fresh();
+            // Rekalkulasi average langsung dari aggregate sum SQL (jauh lebih hemat memori dibanding menarik semua row)
+            $average = ReportDetail::where('report_id', $report->report_id)->avg('score');
+            
+            // Simpan average baru
+            $report->update(['average_value' => $average ? round($average, 2) : 0]);
+
+            return $report;
         });
-    }
-
-    /**
-     * Internal method untuk recalculate rata-rata
-     */
-    private function recalculateAverage(int $reportId): void
-    {
-        $average = ReportDetail::where('report_id', $reportId)->avg('score');
-        
-        Reports::where('report_id', $reportId)->update([
-            'average_value' => $average ? round($average, 2) : 0
-        ]);
     }
 }

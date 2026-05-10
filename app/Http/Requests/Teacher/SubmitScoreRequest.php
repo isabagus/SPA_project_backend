@@ -25,7 +25,7 @@ class SubmitScoreRequest extends FormRequest
             'academic_year'                => 'required|string|exists:academic_years,academic_year',
             'scores'                       => 'required|array|min:1',
             'scores.*.rubric_id'           => 'required|integer|exists:rubric_categories,rubric_id',
-            'scores.*.score'               => 'required|numeric|min:1|max:3', // Level 1-3
+            'scores.*.score'               => 'required|numeric|min:1|max:3',
             'scores.*.description_subject' => 'nullable|string|max:1000',
         ];
     }

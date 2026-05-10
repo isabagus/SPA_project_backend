@@ -10,12 +10,13 @@ class Reports extends Model
     protected $primaryKey = 'report_id';
 
     protected $fillable = [
-        'mentor_id',
+        'student_id',
+        'subject_id',
         'level_class',
         'academic_year',
         'average_value',
         'attendance',
-        'description',
+        'mentor_note',
     ];
 
     public function student()

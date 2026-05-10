@@ -57,4 +57,34 @@ class AuthController extends Controller
             'message' => 'Logged out successfully'
         ]);
     }
+
+    /**
+     * Get the authenticated User with their specific role profile.
+     */
+    public function me(Request $request)
+    {
+        $user = $request->user();
+        
+        // Load the relationship based on the user's role
+        $profile = null;
+        if ($user->role === 'teacher') {
+            $profile = $user->teacher;
+        } elseif ($user->role === 'mentor') {
+            $profile = $user->mentor;
+        } elseif ($user->role === 'parent') {
+            $profile = $user->parent;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'user_id' => $user->user_id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => $user->role,
+                'profile' => $profile
+            ]
+        ]);
+    }
+
 }

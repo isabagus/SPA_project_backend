@@ -7,10 +7,16 @@ use App\Http\Controllers\Api\V1\UserManagementController;
 use App\Http\Controllers\Api\V1\UserPortalController;
 use App\Http\Controllers\Api\V1\AuthController;
 
+// Controller Baru untuk Teacher
+use App\Http\Controllers\Api\V1\Teacher\TeacherProfileController;
+use App\Http\Controllers\Api\V1\Teacher\TeacherSubjectController;
+use App\Http\Controllers\Api\V1\Teacher\TeacherScoreController;
+
 Route::prefix('v1')->group(function () {
     // Public Routes
 
     // Protected Routes
+    
     Route::post('/login', [AuthController::class, 'login']);
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/user', function (Request $request) {
@@ -20,16 +26,23 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/auth/check', [UserPortalController::class, 'checkAuth']);
 
+        // Legacy routes (pertahankan sementara untuk backward compatibility)
         Route::middleware('role:teacher|mentor|parent')->group(function () {
             Route::get('report-card', [UserPortalController::class, 'getReportCard']);
         });
 
-        Route::middleware('role:teacher')->group(function () {
-            Route::get('/portal/teacher/students/{subject_id}', [UserPortalController::class, 'getStudentsBySubject']);
-            Route::post('/portal/teacher/submit-score', [UserPortalController::class, 'submitStudentScore']);
-        });
-
         Route::apiResource('students', StudentApiController::class);
         Route::apiResource('users-management', UserManagementController::class);
+
+        Route::middleware('role:teacher')->prefix('teacher')->group(function () {
+            Route::get('/profile', [TeacherProfileController::class, 'show']);
+
+            Route::get('/subjects', [TeacherSubjectController::class, 'index']);
+            Route::get('/subjects/{subjectId}/students', [TeacherSubjectController::class, 'students']);
+
+            // input request score 
+            Route::get('/subjects/{subjectId}/students/{studentId}/scores', [TeacherScoreController::class, 'show']);
+            Route::post('/subjects/{subjectId}/students/{studentId}/scores', [TeacherScoreController::class, 'store']);
+        });
     });
 });

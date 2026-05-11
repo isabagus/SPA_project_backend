@@ -21,7 +21,7 @@ Sistem E-Report yang dirancang untuk mengelola penilaian siswa dengan standar ku
   1. *Demonstrates good understanding of subject matter*
   2. *Participates actively in lessons*
 - **Collaboration**: Guru Agama yang berbeda mengisi kriteria yang sama (tetapi di subjek masing-masing dalam satu grup `RS_PKN`). Guru **PKN** juga tergabung dalam grup kolaborasi ini.
-- **Religious Cross-Check (Benang Merah)**: Guru Agama **HANYA** diizinkan menilai siswa yang agamanya cocok dengan kategori subjek. Jika tidak cocok, sistem menerapkan **Graceful Read-Only UX** (guru bisa melihat data tetapi tidak bisa mengedit, disertai banner informasi yang jelas).
+- **Religious Cross-Check (Benang Merah)**: Guru Agama **HANYA** diizinkan menilai siswa yang agamanya cocok dengan kategori subjek (contoh: Guru Mapel *Religion (Islam)* hanya bisa menilai siswa yang beragama *Islam*). Sistem akan memblokir akses jika terjadi ketidakcocokan.
 
 ## 🧱 Core Architecture: Rubric System (Parent-Child)
 Ini adalah fitur inti (Core Feature) aplikasi. Penilaian tidak lagi bersifat datar, melainkan berjenjang:

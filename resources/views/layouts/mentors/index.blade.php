@@ -35,7 +35,7 @@
                                         @forelse ($classes->where('mentor_id', $mentor->mentor_id) as $class)
                                             {{ $class->level_class }}
                                         @empty
-                                            - 
+                                            -
                                         @endforelse
                                     </td>
                                     <td>
@@ -43,11 +43,11 @@
                                             <a href="{{ route('admin.mentors.edit', $mentor->mentor_id) }}"
                                                 class="btn btn-warning text-white">Edit</a>
                                             <form action="{{ route('admin.mentors.destroy', $mentor->mentor_id) }}"
-                                                method="POST" onsubmit="return confirm('Delete this mentor? {{$mentor->name}}')">
+                                                method="POST"
+                                                onsubmit="return confirm('Delete this mentor? {{ $mentor->name }}')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    class="btn btn-danger text-white">Delete</button>
+                                                <button type="submit" class="btn btn-danger text-white">Delete</button>
                                             </form>
                                         </div>
                                     </td>
@@ -59,6 +59,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    {{ $mentors->links() }}
                 </div>
             </div>
         </div>

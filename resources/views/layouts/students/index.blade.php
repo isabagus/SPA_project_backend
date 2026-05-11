@@ -14,7 +14,7 @@
                 <form action="{{ route('admin.students.index') }}" class="d-flex col-md-4">
                     <div class="input-group">
                         <input type="text" name="search" class="form-control" placeholder="Search data student"
-                            id="searchInput">
+                            id="searchInput" value="{{ request('search') }}">
                         <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
                     </div>
                 </form>
@@ -72,6 +72,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    {{ $students->links() }}
                 </div>
             </div>
         </div>

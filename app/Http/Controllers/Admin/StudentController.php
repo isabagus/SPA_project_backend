@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\PaginationServiceProvider;
 use App\Models\Student;
 use App\Models\AcademicYear;
 use App\Models\Mentor;
@@ -13,9 +15,19 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::all();
+        $search = $request->search;
+
+        $students = Student::latest()
+            ->when($search, function ($query, $search) {
+                return $query->where('name_student', 'like', "%{$search}%")
+                    ->orWhere('academic_year', 'like', "%{$search}%")
+                    ->orWhere('level_class', 'like', "%{$search}%");
+            })
+            ->paginate(10)
+            ->withQueryString();
+
         return view('layouts.students.index', compact('students'));
     }
 
@@ -23,6 +35,7 @@ class StudentController extends Controller
     {
         return view('layouts.students.detail');
     }
+
 
     public function create()
     {
@@ -78,8 +91,8 @@ class StudentController extends Controller
         $religions = Religion::all();
         return view('layouts.students.edit', compact('data', 'academic_years', 'mentors', 'level_classes', 'religions'));
     }
-    
-    public function update(Request $request, $id) 
+
+    public function update(Request $request, $id)
     {
         $request->validate([
             'academic_year' => 'required|string|exists:academic_years,academic_year',
@@ -94,7 +107,7 @@ class StudentController extends Controller
 
         try {
             $student = Student::findOrFail($id);
-            
+
             $student->update([
                 'academic_year' => $request->academic_year,
                 'level_class'   => $request->level_class,
@@ -111,7 +124,8 @@ class StudentController extends Controller
             return redirect()->back()->with('error', 'Gagal memperbarui data: ' . $e->getMessage())->withInput();
         }
     }
-    public function destroy($id) {
+    public function destroy($id)
+    {
         $student = Student::findOrFail($id);
         $student->delete();
         return redirect()->route('admin.students.index')->with('success', 'Student Data successfully delete');

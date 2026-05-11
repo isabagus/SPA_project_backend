@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/auth/check', [UserPortalController::class, 'checkAuth']);
 
+
         Route::middleware('role:mentor')->prefix('mentor')->group(function (){
 
         });

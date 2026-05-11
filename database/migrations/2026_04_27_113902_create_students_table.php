@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('religion_name', 20);
             $table->foreignId('mentor_id')->constrained('mentors', 'mentor_id');
             $table->string('name_student');
-            // $table->string('nis');
+            $table->string('nis')->unique();
             $table->string('gender', 15);
             $table->string('address');
             $table->string('phone_number', 15);

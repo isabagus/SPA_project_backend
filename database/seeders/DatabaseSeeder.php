@@ -35,8 +35,14 @@ class DatabaseSeeder extends Seeder
 
         // 3. Operasional (Assignment & Score)
         $this->call([
-            RubricAssignmentSeeder::class, // Hubungkan Teacher ke Subject
-            ScoreSeeder::class,            // Isi Nilai awal
+            RubricAssignmentSeeder::class, // Hubungkan Teacher ke Subject (dummy)
+            ScoreSeeder::class,            // Isi Nilai awal (dummy)
+        ]);
+
+        // 4. Real Data Override (dari CSV asli)
+        // Meng-override data dummy dengan data asli dari laporan CSV.
+        $this->call([
+            RealDataSeeder::class,
         ]);
 
         // 4. Admin User (Opsional jika belum ada)

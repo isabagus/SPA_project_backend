@@ -22,13 +22,16 @@ class StudentSeeder extends Seeder
             
             for ($i = 1; $i <= 10; $i++) {
                 Student::firstOrCreate(
-                    ['name_student' => "Student $i - " . $class->level_class],
+                    [
+                        'name_student' => "Student $i - " . $class->level_class,
+                        'nis'          => "NIS-" . str_replace(' ', '', $class->level_class) . "-" . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    ],
                     [
                         'academic_year' => $academicYear,
                         'level_class' => $class->level_class,
                         'religion_name' => $religion,
                         'mentor_id' => $mentorId,
-                        'gender' => $i % 2 == 0 ? 'Male' : 'Female',
+                        'gender' => $i % 2 == 0 ? 'Laki-laki' : 'Perempuan',
                         'address' => "Address for Student $i in " . $class->level_class,
                         'phone_number' => '0898' . rand(10000000, 99999999),
                     ]

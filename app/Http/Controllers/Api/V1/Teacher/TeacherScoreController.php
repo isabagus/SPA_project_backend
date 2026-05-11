@@ -41,7 +41,8 @@ class TeacherScoreController extends Controller
      */
     public function store(SubmitScoreRequest $request, int $subjectId, int $studentId): JsonResponse
     {
-        $teacher = $request->user()->teacher;
+        try {
+            $teacher = $request->user()->teacher;
 
         if (!$teacher) {
             return $this->errorResponse('Teacher profile not found.', 404);
@@ -60,5 +61,9 @@ class TeacherScoreController extends Controller
             ],
             'Scores submitted successfully.'
         );
+        } catch (\Throwable $th) {
+            logger('error', [$th->getMessage()]);
+            return $this->errorResponse('Failed to submit score. Data validation failed or unauthorized.', 400);
+        }
     }
 }

@@ -18,16 +18,18 @@ class RubricAssignmentSeeder extends Seeder
             return;
         }
 
-        foreach ($subjects as $idx => $subject) {
-            // Assign 1 teacher to 1 subject (round robin)
-            $teacher = $teachers[$idx % $teachers->count()];
+        foreach ($subjects as $subject) {
+            // Get teacher from subject ownership
+            $teacherId = $subject->teacher_id;
+
+            if (!$teacherId) continue;
 
             // Create 3 rubrics for this assignment
             for ($i = 1; $i <= 3; $i++) {
                 RubricCategory::firstOrCreate(
                     [
                         'subject_id' => $subject->subject_id,
-                        'teacher_id' => $teacher->teacher_id,
+                        'teacher_id' => $teacherId,
                         'rubric_name' => "Kriteria $i - " . $subject->category_subject,
                         'term' => $subject->term,
                     ]

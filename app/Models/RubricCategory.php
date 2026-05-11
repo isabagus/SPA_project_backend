@@ -25,4 +25,12 @@ class RubricCategory extends Model
     {
         return $this->belongsTo(Teacher::class, 'teacher_id', 'teacher_id');
     }
+
+    /**
+     * Relasi ke Sub-Kriteria
+     */
+    public function criteria()
+    {
+        return $this->hasMany(RubricCriteria::class, 'rubric_id', 'rubric_id');
+    }
 }

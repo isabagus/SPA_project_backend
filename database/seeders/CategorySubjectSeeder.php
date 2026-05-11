@@ -14,13 +14,13 @@ class CategorySubjectSeeder extends Seeder
     {
         $categories = [
             'Science',
-            'Affective Domain',
-            'Aesthethics Domain',
-            'Bahasa Indonesia',
-            'Affective Domain RS PKN',
-            'Chinese Language',
+            'Mathematics',
             'English',
-            'Mathematics'
+            'Bahasa Indonesia',
+            'Chinese Language',
+            'Aesthetics Domain',
+            'RS & PKN',
+            'Affective Domain'
         ];
 
         foreach ($categories as $category) {

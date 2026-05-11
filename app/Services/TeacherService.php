@@ -8,6 +8,7 @@ use App\Models\Subject;
 use App\Models\Student;
 use App\Models\Reports;
 use App\Models\RubricCategory;
+use App\Models\RubricCriteria;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -15,16 +16,11 @@ class TeacherService
 {
     /**
      * Mengambil daftar subject yang diampu teacher
-     * Dioptimalkan dengan Eager Loading dan relasi whereHas
      */
     public function getMySubjects(Teacher $teacher): Collection
     {
-        return Subject::whereHas('rubrics', function ($query) use ($teacher) {
-                $query->where('teacher_id', $teacher->teacher_id);
-            })
-            ->with(['rubrics' => function ($query) use ($teacher) {
-                $query->where('teacher_id', $teacher->teacher_id);
-            }])
+        return Subject::where('teacher_id', $teacher->teacher_id)
+            ->with('rubrics')
             ->orderBy('level_class')
             ->orderBy('term')
             ->get();
@@ -32,20 +28,17 @@ class TeacherService
 
     /**
      * Mengambil daftar siswa beserta average nilai mereka
-     * Menggunakan metode Eager Loading untuk menghilangkan "N+1 Query Problem"
      */
     public function getStudentsWithScore(Teacher $teacher, int $subjectId): array
     {
-        // Pastikan teacher benar-benar mengampu subject ini
-        $subject = Subject::whereHas('rubrics', function ($query) use ($teacher) {
-                $query->where('teacher_id', $teacher->teacher_id);
-            })->find($subjectId);
+        $subject = Subject::where('subject_id', $subjectId)
+            ->where('teacher_id', $teacher->teacher_id)
+            ->first();
 
         if (!$subject) {
             return ['authorized' => false, 'subject' => null, 'students' => []];
         }
 
-        // Ambil data siswa sekaligus dengan nilai raport mereka di subject ini secara PARALEL (Eager Load)
         $students = Student::where('level_class', $subject->level_class)
             ->with(['reports' => function ($query) use ($subjectId) {
                 $query->where('subject_id', $subjectId);
@@ -53,15 +46,11 @@ class TeacherService
             ->orderBy('name_student')
             ->get()
             ->map(function (Student $student) {
-                // Ekstrak data raport dari hasil Eager Loading
                 $report = $student->reports->first();
-
                 $student->report_id     = $report?->report_id;
                 $student->average_value = $report?->average_value;
                 $student->has_score     = !is_null($report?->average_value);
-
                 unset($student->reports);
-                
                 return $student;
             });
 
@@ -73,7 +62,7 @@ class TeacherService
     }
 
     /**
-     * Mengambil form penilaian rubrik untuk 1 siswa di 1 subject
+     * Mengambil form penilaian rubrik (dengan Sub-Kriteria)
      */
     public function getScoreForm(Teacher $teacher, int $subjectId, int $studentId): array
     {
@@ -84,7 +73,9 @@ class TeacherService
             return ['authorized' => false];
         }
 
-        $rubrics = RubricCategory::where('teacher_id', $teacher->teacher_id)
+        // Ambil kategori rubrik beserta sub-kriterianya (Parent-Child)
+        $rubrics = RubricCategory::with('criteria')
+            ->where('teacher_id', $teacher->teacher_id)
             ->where('subject_id', $subjectId)
             ->get();
 
@@ -92,21 +83,24 @@ class TeacherService
             return ['authorized' => false];
         }
 
-        // Eager load detail nilai agar tidak melakukan query berulang
+        // Ambil detail nilai yang sudah ada (Key by criteria_id)
         $report = Reports::with('reportDetails')
             ->where('student_id', $studentId)
             ->where('subject_id', $subjectId)
             ->first();
 
-        // Konversi ke Collection Key-Value yang lebih cepat dibaca oleh CPU
-        $details = $report ? $report->reportDetails->keyBy('rubric_id') : collect();
+        $details = $report ? $report->reportDetails->keyBy('criteria_id') : collect();
 
-        // Arrow function (PHP 7.4+) map untuk penulisan yang ultra-bersih
+        // Map data rubrik ke struktur yang diinginkan frontend
         $mappedRubrics = $rubrics->map(fn($rubric) => [
-            'rubric_id'           => $rubric->rubric_id,
-            'rubric_name'         => $rubric->rubric_name,
-            'current_score'       => $details->has($rubric->rubric_id) ? (float) $details->get($rubric->rubric_id)->score : null,
-            'description_subject' => $details->has($rubric->rubric_id) ? $details->get($rubric->rubric_id)->description_subject : '',
+            'rubric_id'   => $rubric->rubric_id,
+            'rubric_name' => $rubric->rubric_name,
+            'criteria'    => $rubric->criteria->map(fn($c) => [
+                'criteria_id'         => $c->criteria_id,
+                'criteria_name'       => $c->criteria_name,
+                'current_score'       => $details->has($c->criteria_id) ? (float) $details->get($c->criteria_id)->score : null,
+                'description_subject' => $details->has($c->criteria_id) ? $details->get($c->criteria_id)->description_subject : ($c->default_description ?? ''),
+            ])
         ]);
 
         return [
@@ -120,67 +114,62 @@ class TeacherService
     }
 
     /**
-     * Menyimpan/mengupdate nilai siswa per rubrik dan hitung rata-rata
+     * Menyimpan/mengupdate nilai siswa per kriteria
      */
     public function submitScore(Teacher $teacher, int $subjectId, int $studentId, array $data): ?Reports
     {
         $subject = Subject::find($subjectId);
         $student = Student::find($studentId);
 
-        if (!$subject || !$student || $student->level_class !== $subject->level_class) {
+        if (!$subject || !$student) {
             return null;
         }
 
-        // Cache array ID rubric milik guru ini sebagai keamanan tambahan
-        $teacherRubricIds = RubricCategory::where('teacher_id', $teacher->teacher_id)
-            ->where('subject_id', $subjectId)
-            ->pluck('rubric_id');
+        // Ambil semua kriteria valid yang dimiliki teacher untuk subject ini
+        $validCriteriaIds = RubricCriteria::whereHas('category', function($q) use ($teacher, $subjectId) {
+            $q->where('teacher_id', $teacher->teacher_id)->where('subject_id', $subjectId);
+        })->pluck('criteria_id');
 
-        if ($teacherRubricIds->isEmpty()) {
+        if ($validCriteriaIds->isEmpty()) {
             return null;
         }
 
-        // Gunakan Transaction block murni dari DB Facades
-        return DB::transaction(function () use ($subjectId, $studentId, $subject, $data, $teacherRubricIds) {
+        return DB::transaction(function () use ($subjectId, $studentId, $subject, $data, $validCriteriaIds) {
             $report = Reports::firstOrCreate(
                 ['student_id' => $studentId, 'subject_id' => $subjectId],
                 [
-                    'academic_year' => $data['academic_year'],
+                    'academic_year' => $data['academic_year'] ?? '2024/2025',
                     'level_class'   => $subject->level_class,
                     'average_value' => 0,
                     'attendance'    => 0,
-                    'mentor_note'   => null,
                 ]
             );
 
-            // Filter out malicious rubrics if any, using Collection functional filtering
-            $validScores = collect($data['scores'])->filter(fn($score) => $teacherRubricIds->contains($score['rubric_id']));
+            // Cache mapping criteria_id => rubric_id untuk menghindari N+1 query di dalam loop
+            $criteriaToRubricMap = RubricCriteria::whereIn('criteria_id', collect($data['scores'])->pluck('criteria_id'))
+                ->pluck('rubric_id', 'criteria_id');
 
-            // Lakukan Insert/Update tanpa menggunakan updateOrCreate (karena tabel details_report tidak memiliki primary key 'id')
-            $validScores->each(function ($scoreData) use ($report) {
+            // Simpan nilai per kriteria
+            foreach ($data['scores'] as $scoreData) {
+                $cId = $scoreData['criteria_id'];
+                if (!$validCriteriaIds->contains($cId)) continue;
+
                 $match = [
-                    'report_id' => $report->report_id,
-                    'rubric_id' => $scoreData['rubric_id']
+                    'report_id'   => $report->report_id,
+                    'criteria_id' => $cId
                 ];
-                $dataToSave = [
+
+                $updateData = [
                     'score'               => $scoreData['score'],
-                    'description_subject' => $scoreData['description_subject'] ?? '-'
+                    'description_subject' => $scoreData['description_subject'] ?? '-',
+                    'rubric_id'           => $criteriaToRubricMap[$cId] ?? null
                 ];
 
-                $existingDetail = ReportDetail::where($match)->first();
+                ReportDetail::updateOrCreate($match, $updateData);
+            }
 
-                if ($existingDetail) {
-                    // Update menggunakan Query Builder untuk menghindari error missing 'id' column
-                    ReportDetail::where($match)->update($dataToSave);
-                } else {
-                    ReportDetail::create(array_merge($match, $dataToSave));
-                }
-            });
-
-            // Rekalkulasi average langsung dari aggregate sum SQL (jauh lebih hemat memori dibanding menarik semua row)
+            // Rekalkulasi rata-rata (AVG dari semua criteria yang diisi)
             $average = ReportDetail::where('report_id', $report->report_id)->avg('score');
-            
-            // Simpan average baru
             $report->update(['average_value' => $average ? round($average, 2) : 0]);
 
             return $report;

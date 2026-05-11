@@ -24,7 +24,7 @@ class SubmitScoreRequest extends FormRequest
         return [
             'academic_year'                => 'required|string|exists:academic_years,academic_year',
             'scores'                       => 'required|array|min:1',
-            'scores.*.rubric_id'           => 'required|integer|exists:rubric_categories,rubric_id',
+            'scores.*.criteria_id'         => 'required|integer|exists:rubric_criteria,criteria_id',
             'scores.*.score'               => 'required|numeric|min:1|max:3',
             'scores.*.description_subject' => 'nullable|string|max:1000',
         ];

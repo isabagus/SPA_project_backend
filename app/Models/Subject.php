@@ -13,8 +13,17 @@ class Subject extends Model
     protected $fillable = [
         'category_subject',
         'term',
-        'level_class'
+        'level_class',
+        'teacher_id'
     ];
+
+    /**
+     * Relasi ke Guru yang mengampu
+     */
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class, 'teacher_id', 'teacher_id');
+    }
 
     /**
      * Relasi ke Laporan

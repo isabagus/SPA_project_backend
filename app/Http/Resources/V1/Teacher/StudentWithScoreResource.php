@@ -15,13 +15,15 @@ class StudentWithScoreResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'student_id' => $this->student_id,
+            'student_id'   => $this->student_id,
             'name_student' => $this->name_student,
-            'nis' => $this->nis,
-            'gender' => $this->gender,
-            'has_score' => $this->has_score ?? false,
-            'report_id' => $this->report_id ?? null,
-            'average_value' => $this->average_value ?? null,
+            'nis'          => $this->nis,
+            'gender'       => $this->gender,
+            'address'      => $this->address, // Tambahkan alamat
+            'level_class'  => $this->level_class, // Tambahkan kelas
+            'has_score'    => $this->has_score ?? false,
+            'report_id'    => $this->report_id ?? null,
+            'average_value'=> $this->average_value ?? null,
         ];
     }
 }

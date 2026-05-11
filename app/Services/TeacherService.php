@@ -27,7 +27,7 @@ class TeacherService
     }
 
     /**
-     * Mengambil daftar siswa beserta average nilai mereka
+     * Mengambil daftar siswa beserta average nilai dan status kelengkapan
      */
     public function getStudentsWithScore(Teacher $teacher, int $subjectId): array
     {
@@ -39,17 +39,38 @@ class TeacherService
             return ['authorized' => false, 'subject' => null, 'students' => []];
         }
 
+        // Hitung total kriteria yang seharusnya dinilai untuk subjek ini
+        $totalCriteriaCount = RubricCriteria::whereHas('category', function($q) use ($teacher, $subjectId) {
+            $q->where('teacher_id', $teacher->teacher_id)->where('subject_id', $subjectId);
+        })->count();
+
         $students = Student::where('level_class', $subject->level_class)
             ->with(['reports' => function ($query) use ($subjectId) {
-                $query->where('subject_id', $subjectId);
+                $query->where('subject_id', $subjectId)->withCount('reportDetails');
             }])
             ->orderBy('name_student')
             ->get()
-            ->map(function (Student $student) {
+            ->map(function (Student $student) use ($totalCriteriaCount) {
                 $report = $student->reports->first();
+                $filledCriteriaCount = $report ? (int) $report->report_details_count : 0;
+
+                // LOGIKA STATUS DINAMIS (On-the-fly)
+                $status = 'none';
+                if ($totalCriteriaCount > 0) {
+                    if ($filledCriteriaCount === 0) {
+                        $status = 'none';
+                    } elseif ($filledCriteriaCount < $totalCriteriaCount) {
+                        $status = 'draft';
+                    } else {
+                        $status = 'completed';
+                    }
+                }
+
                 $student->report_id     = $report?->report_id;
                 $student->average_value = $report?->average_value;
-                $student->has_score     = !is_null($report?->average_value);
+                $student->status_score  = $status; // 'completed', 'draft', 'none'
+                $student->completion    = $totalCriteriaCount > 0 ? round(($filledCriteriaCount / $totalCriteriaCount) * 100) : 0;
+                
                 unset($student->reports);
                 return $student;
             });
@@ -73,7 +94,6 @@ class TeacherService
             return ['authorized' => false];
         }
 
-        // Ambil kategori rubrik beserta sub-kriterianya (Parent-Child)
         $rubrics = RubricCategory::with('criteria')
             ->where('teacher_id', $teacher->teacher_id)
             ->where('subject_id', $subjectId)
@@ -83,7 +103,6 @@ class TeacherService
             return ['authorized' => false];
         }
 
-        // Ambil detail nilai yang sudah ada (Key by criteria_id)
         $report = Reports::with('reportDetails')
             ->where('student_id', $studentId)
             ->where('subject_id', $subjectId)
@@ -91,7 +110,6 @@ class TeacherService
 
         $details = $report ? $report->reportDetails->keyBy('criteria_id') : collect();
 
-        // Map data rubrik ke struktur yang diinginkan frontend
         $mappedRubrics = $rubrics->map(fn($rubric) => [
             'rubric_id'   => $rubric->rubric_id,
             'rubric_name' => $rubric->rubric_name,
@@ -125,7 +143,6 @@ class TeacherService
             return null;
         }
 
-        // Ambil semua kriteria valid yang dimiliki teacher untuk subject ini
         $validCriteriaIds = RubricCriteria::whereHas('category', function($q) use ($teacher, $subjectId) {
             $q->where('teacher_id', $teacher->teacher_id)->where('subject_id', $subjectId);
         })->pluck('criteria_id');
@@ -145,11 +162,9 @@ class TeacherService
                 ]
             );
 
-            // Cache mapping criteria_id => rubric_id untuk menghindari N+1 query di dalam loop
             $criteriaToRubricMap = RubricCriteria::whereIn('criteria_id', collect($data['scores'])->pluck('criteria_id'))
                 ->pluck('rubric_id', 'criteria_id');
 
-            // Simpan nilai per kriteria
             foreach ($data['scores'] as $scoreData) {
                 $cId = $scoreData['criteria_id'];
                 if (!$validCriteriaIds->contains($cId)) continue;
@@ -158,6 +173,12 @@ class TeacherService
                     'report_id'   => $report->report_id,
                     'criteria_id' => $cId
                 ];
+
+                // Jika score kosong, kita hapus recordnya (Draft Mode)
+                if (is_null($scoreData['score']) || $scoreData['score'] === '') {
+                    ReportDetail::where($match)->delete();
+                    continue;
+                }
 
                 $updateData = [
                     'score'               => $scoreData['score'],
@@ -168,11 +189,80 @@ class TeacherService
                 ReportDetail::updateOrCreate($match, $updateData);
             }
 
-            // Rekalkulasi rata-rata (AVG dari semua criteria yang diisi)
             $average = ReportDetail::where('report_id', $report->report_id)->avg('score');
             $report->update(['average_value' => $average ? round($average, 2) : 0]);
 
             return $report;
         });
+    }
+
+    /**
+     * Rubric Management Logic
+     */
+    public function getMyRubrics(Teacher $teacher, int $subjectId): Collection
+    {
+        return RubricCategory::with('criteria')
+            ->where('teacher_id', $teacher->teacher_id)
+            ->where('subject_id', $subjectId)
+            ->get();
+    }
+
+    public function storeCategory(Teacher $teacher, int $subjectId, array $data): RubricCategory
+    {
+        $subject = Subject::find($subjectId);
+        return RubricCategory::create([
+            'teacher_id'  => $teacher->teacher_id,
+            'subject_id'  => $subjectId,
+            'rubric_name' => $data['rubric_name'],
+            'term'        => $subject->term,
+        ]);
+    }
+
+    public function updateCategory(Teacher $teacher, int $rubricId, array $data): bool
+    {
+        return RubricCategory::where('rubric_id', $rubricId)
+            ->where('teacher_id', $teacher->teacher_id)
+            ->update(['rubric_name' => $data['rubric_name']]);
+    }
+
+    public function destroyCategory(Teacher $teacher, int $rubricId): bool
+    {
+        return RubricCategory::where('rubric_id', $rubricId)
+            ->where('teacher_id', $teacher->teacher_id)
+            ->delete();
+    }
+
+    public function storeCriteria(Teacher $teacher, int $rubricId, array $data): RubricCriteria
+    {
+        $category = RubricCategory::where('rubric_id', $rubricId)
+            ->where('teacher_id', $teacher->teacher_id)
+            ->firstOrFail();
+
+        return RubricCriteria::create([
+            'rubric_id'           => $rubricId,
+            'criteria_name'       => $data['criteria_name'],
+            'default_description' => $data['default_description'] ?? null,
+        ]);
+    }
+
+    public function updateCriteria(Teacher $teacher, int $criteriaId, array $data): bool
+    {
+        $criteria = RubricCriteria::where('criteria_id', $criteriaId)
+            ->whereHas('category', fn($q) => $q->where('teacher_id', $teacher->teacher_id))
+            ->firstOrFail();
+
+        return $criteria->update([
+            'criteria_name'       => $data['criteria_name'],
+            'default_description' => $data['default_description'] ?? null,
+        ]);
+    }
+
+    public function destroyCriteria(Teacher $teacher, int $criteriaId): bool
+    {
+        $criteria = RubricCriteria::where('criteria_id', $criteriaId)
+            ->whereHas('category', fn($q) => $q->where('teacher_id', $teacher->teacher_id))
+            ->firstOrFail();
+
+        return $criteria->delete();
     }
 }

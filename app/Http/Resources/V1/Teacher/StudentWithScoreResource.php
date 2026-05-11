@@ -21,7 +21,8 @@ class StudentWithScoreResource extends JsonResource
             'gender'       => $this->gender,
             'address'      => $this->address, // Tambahkan alamat
             'level_class'  => $this->level_class, // Tambahkan kelas
-            'has_score'    => $this->has_score ?? false,
+            'status_score' => $this->status_score ?? 'none',
+            'completion'   => $this->completion ?? 0,
             'report_id'    => $this->report_id ?? null,
             'average_value'=> $this->average_value ?? null,
         ];

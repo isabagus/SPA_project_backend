@@ -6,15 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\PaginationServiceProvider;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $keyword = $request->search;
+
+        $users = User::latest()
+        ->where('username', 'like', "%{$keyword}%")
+        ->orWhere('email', 'like', "%{$keyword}%")
+        ->orWhere('role', 'like', "%{$keyword}%")
+        ->paginate(10);
         return view('layouts.users.index', compact('users'));
     }
 

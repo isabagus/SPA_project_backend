@@ -7,7 +7,16 @@
                 <p class="card-description">Add Users:
                     <a href="{{ route('admin.users.create') }}"> Form input</a>
                 </p>
-                
+
+                {{-- Form Search --}}
+                <form action="{{ route('admin.users.index') }}" class="d-flex col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search data user"
+                            id="searchInput" value="{{ request('search') }}">
+                        <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+                    </div>
+                </form>
+
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
@@ -63,6 +72,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    {{$users->links()}}
                 </div>
             </div>
         </div>

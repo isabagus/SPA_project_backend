@@ -5,52 +5,50 @@ namespace Database\Seeders;
 use App\Models\AcademicYear;
 use App\Models\LevelClass;
 use App\Models\Religion;
+use App\Models\Reports;
+use App\Models\ReportDetail;
+use App\Models\RubricCategory;
+use App\Models\RubricCriteria;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\User;
-use App\Models\RubricCategory;
-use App\Models\RubricCriteria;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class RealDataSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $this->command->info('🚀 Starting RealDataSeeder with Sub-Criteria Support...');
-
         // ============================================================
         // 1. DATA GURU (TEACHERS)
         // ============================================================
         $teachers = [
             'emmylou' => [
-                'name'     => 'Ms. Emmylou',
-                'email'    => 'emmylou@piaget.sch.id',
+                'name'     => 'Ms. Emmylou Gasper',
+                'email'    => 'emmylou.gasper@piaget.sch.id',
                 'username' => 'emmylou',
             ],
             'katrin' => [
-                'name'     => 'Ms. Katrin',
-                'email'    => 'katrin@piaget.sch.id',
+                'name'     => 'Ms. Katrin Setyawati',
+                'email'    => 'katrin.setyawati@piaget.sch.id',
                 'username' => 'katrin',
             ],
             'retno' => [
-                'name'     => 'Ms. Retno',
-                'email'    => 'retno@piaget.sch.id',
+                'name'     => 'Ms. Retno Nur Indah',
+                'email'    => 'retno.indah@piaget.sch.id',
                 'username' => 'retno',
             ],
             'valent' => [
-                'name'     => 'Ms. Valent',
-                'email'    => 'valent@piaget.sch.id',
+                'name'     => 'Ms. Valentina',
+                'email'    => 'valentina@piaget.sch.id',
                 'username' => 'valent',
             ],
             'mentor' => [
                 'name'     => 'Mentor Teacher',
                 'email'    => 'mentor.teacher@piaget.sch.id',
-                'username' => 'mentor.teacher',
+                'username' => 'mentor',
             ],
         ];
 
@@ -60,7 +58,7 @@ class RealDataSeeder extends Seeder
                 [
                     'username' => $t['username'],
                     'password' => Hash::make('password123'),
-                    'role'     => 'teacher',
+                    'role'     => $key === 'mentor' ? 'mentor' : 'teacher',
                 ]
             );
 
@@ -100,17 +98,27 @@ class RealDataSeeder extends Seeder
         }
 
         // ============================================================
-        // 3. MATA PELAJARAN (SUBJECTS)
+        // 3. MATA PELAJARAN & GROUPING
         // ============================================================
         $subjectTeacherMap = [
-            'English'             => 'emmylou',
-            'Mathematics'         => 'emmylou',
-            'Science'             => 'katrin',
-            'Aesthetics Domain'   => 'katrin',
-            'Bahasa Indonesia'    => 'retno',
-            'RS & PKN'            => 'retno',
-            'Chinese Language'    => 'valent',
-            'Affective Domain'    => 'mentor',
+            'English'               => 'emmylou',
+            'Mathematics'           => 'emmylou',
+            'Science'               => 'katrin',
+            'Aesthetics Domain'     => 'katrin',
+            'Bahasa Indonesia'      => 'retno',
+            'PKN'                   => 'retno',
+            'Religion (Islam)'      => 'valent',
+            'Religion (Christianity)' => 'katrin',
+            'Religion (Catholicism)'  => 'emmylou',
+            'Chinese Language'      => 'valent',
+            'Affective Domain'      => 'mentor',
+        ];
+
+        $groupMap = [
+            'PKN'                   => 'RS_PKN',
+            'Religion (Islam)'      => 'RS_PKN',
+            'Religion (Christianity)' => 'RS_PKN',
+            'Religion (Catholicism)'  => 'RS_PKN',
         ];
 
         foreach ($subjectTeacherMap as $subjectName => $teacherKey) {
@@ -122,7 +130,10 @@ class RealDataSeeder extends Seeder
                 foreach ($terms as $term) {
                     Subject::updateOrCreate(
                         ['category_subject' => $subjectName, 'level_class' => $level, 'term' => $term],
-                        ['teacher_id' => $teacherId]
+                        [
+                            'teacher_id'       => $teacherId,
+                            'report_group_key' => $groupMap[$subjectName] ?? null
+                        ]
                     );
                 }
             }
@@ -134,52 +145,55 @@ class RealDataSeeder extends Seeder
         $rubricDefinitions = [
             'English' => [
                 '_all_terms' => [
-                    ['rubric_name' => 'Reading & Listening',     'description' => 'Understand the main idea of a text; identify specific information; follow simple instructions.'],
-                    ['rubric_name' => 'Writing',                'description' => 'Write simple sentences with correct punctuation; use appropriate vocabulary.'],
-                    ['rubric_name' => 'Speaking',               'description' => 'Express ideas clearly; participate in class discussions; use correct pronunciation.'],
+                    ['rubric_name' => 'Reading & Listening',     'description' => 'Understand the main idea; identify info; follow instructions.'],
+                    ['rubric_name' => 'Writing',                'description' => 'Write simple sentences; use vocabulary.'],
                 ],
             ],
-            'Mathematics' => [
-                'Term 1' => [
-                    ['rubric_name' => 'Numbers to 10',             'description' => 'Count to 10; read and write numbers; compare and order numbers.'],
-                    ['rubric_name' => 'Number Bonds',              'description' => 'Show number bonds to 10; recognise parts and wholes.'],
-                ],
-                'Term 2' => [
-                    ['rubric_name' => 'Shapes & Patterns',         'description' => 'Identify common 2D shapes; group shapes by attributes; complete patterns.'],
-                ],
-            ],
-            'Science' => [
+            'PKN' => [
                 '_all_terms' => [
-                    ['rubric_name' => 'Scientific Knowledge',    'description' => 'Demonstrate understanding of scientific concepts; apply knowledge to new situations.'],
+                    ['rubric_name' => 'Civic Responsibility',    'description' => 'Understand rights and duties; show respect for national symbols.'],
+                ],
+            ],
+            // Standardized Religious Studies (Shared for all religions)
+            'Religion' => [
+                '_all_terms' => [
+                    ['rubric_name' => 'Religious Studies / Agama', 'description' => 'Demonstrates good understanding of subject matter; Participates actively in lessons'],
                 ],
             ],
         ];
 
         foreach ($rubricDefinitions as $subjectName => $termRubrics) {
-            $teacherKey = $subjectTeacherMap[$subjectName] ?? null;
-            if (!$teacherKey) continue;
-            
-            $teacherId = $teachers[$teacherKey]['model']->teacher_id;
-            $subjects = Subject::where('category_subject', $subjectName)->get();
+            // Logic khusus untuk Religion: cari semua subjek yang mengandung kata 'Religion'
+            if ($subjectName === 'Religion') {
+                $subjects = Subject::where('category_subject', 'like', 'Religion%')->get();
+                // Gunakan guru Valent sebagai default atau sesuai map jika perlu
+            } else {
+                $teacherKey = $subjectTeacherMap[$subjectName] ?? null;
+                if (!$teacherKey) continue;
+                $teacherId = $teachers[$teacherKey]['model']->teacher_id;
+                $subjects = Subject::where('category_subject', $subjectName)->get();
+            }
 
             foreach ($subjects as $subject) {
-                $subjectTerm = $subject->term;
-                $rubrics = $termRubrics['_all_terms'] ?? $termRubrics[$subjectTerm] ?? null;
-                if (!$rubrics) continue;
+                // Tentukan teacherId untuk subjek ini (jika bukan blok Religion umum)
+                $finalTeacherId = ($subjectName === 'Religion') 
+                    ? $subject->teacher_id 
+                    : $teachers[$subjectTeacherMap[$subjectName]]['model']->teacher_id;
 
-                foreach ($rubrics as $rubricData) {
-                    // 1. Create/Update Parent (Rubric Category)
+                $rubricsToSeed = $termRubrics['_all_terms'] ?? $termRubrics[$subject->term] ?? [];
+
+                foreach ($rubricsToSeed as $rubricData) {
                     $category = RubricCategory::updateOrCreate(
                         [
                             'subject_id'   => $subject->subject_id,
-                            'teacher_id'   => $teacherId,
                             'rubric_name'  => $rubricData['rubric_name'],
-                            'term'         => $subjectTerm,
+                        ],
+                        [
+                            'teacher_id'   => $finalTeacherId,
+                            'term'         => $subject->term,
                         ]
                     );
 
-                    // 2. Create/Update Children (Rubric Criteria)
-                    // Kita pecah deskripsi dari CSV menjadi sub-kriteria
                     $criteriaItems = explode(';', $rubricData['description']);
                     foreach ($criteriaItems as $itemName) {
                         RubricCriteria::updateOrCreate(
@@ -193,6 +207,6 @@ class RealDataSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ RealDataSeeder with Sub-Criteria completed!');
+        $this->command->info('✅ RealDataSeeder clean-up completed!');
     }
 }

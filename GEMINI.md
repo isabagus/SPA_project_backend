@@ -13,11 +13,21 @@ Sistem E-Report yang dirancang untuk mengelola penilaian siswa dengan standar ku
 3. **[PARENT]**: 
    - Akses baca (Read-only). Melihat grafik perkembangan dan mengekspor raport.
 
+## ⚙️ Backend Standards & Rules
+- **Authentication**: Login **WAJIB** menggunakan **Email**. Jangan gunakan username untuk proses autentikasi di frontend maupun backend.
+- **Data Integrity**: Penilaian (Score) menggunakan skala 1.00 - 3.00 (decimal).
+- **Ownership**: Guru hanya dapat mengelola data yang terkait dengan `teacher_id` mereka.
+- **Religious Studies (RS) Rule**: Semua mata pelajaran Agama (Islam, Kristen, dll) **WAJIB** menggunakan rubrik statis dengan nama kategori **"Religious Studies / Agama"**. Kriteria di dalamnya bersifat seragam untuk semua agama, yaitu:
+  1. *Demonstrates good understanding of subject matter*
+  2. *Participates actively in lessons*
+- **Collaboration**: Guru Agama yang berbeda mengisi kriteria yang sama (tetapi di subjek masing-masing dalam satu grup `RS_PKN`). Guru **PKN** juga tergabung dalam grup kolaborasi ini.
+- **Religious Cross-Check (Benang Merah)**: Guru Agama **HANYA** diizinkan menilai siswa yang agamanya cocok dengan kategori subjek. Jika tidak cocok, sistem menerapkan **Graceful Read-Only UX** (guru bisa melihat data tetapi tidak bisa mengedit, disertai banner informasi yang jelas).
+
 ## 🧱 Core Architecture: Rubric System (Parent-Child)
 Ini adalah fitur inti (Core Feature) aplikasi. Penilaian tidak lagi bersifat datar, melainkan berjenjang:
 
 - **Level 1: Rubric Category** (Parent)
-  - Contoh: *Reading & Listening*, *Mathematics T1*, *Social Skills*.
+  - Contoh: *Reading & Listening*, *Mathematics T1*, *PKN*.
 - **Level 2: Rubric Criteria** (Child)
   - Contoh di bawah *Reading*: *Phonics*, *Fluency*, *Comprehension*.
   - Guru dapat menambah/mengedit kriteria ini secara dinamis melalui menu **Perancangan Penilaian**.

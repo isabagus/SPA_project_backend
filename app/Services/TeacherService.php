@@ -83,24 +83,40 @@ class TeacherService
     }
 
     /**
-     * Mengambil form penilaian rubrik (dengan Sub-Kriteria)
+     * Mengambil form penilaian rubrik (dengan Sub-Kriteria & Collaborative Support)
      */
     public function getScoreForm(Teacher $teacher, int $subjectId, int $studentId): array
     {
         $subject = Subject::find($subjectId);
         $student = Student::find($studentId);
 
-        if (!$subject || !$student) {
-            return ['authorized' => false];
+        $isReadOnlyMode = false;
+        $reason = null;
+
+        // --- VALIDASI OTORITAS AGAMA (BENANG MERAH) ---
+        if (str_starts_with($subject->category_subject, 'Religion')) {
+            $studentRel = strtolower($student->religion_name);
+            $subjectCat = strtolower($subject->category_subject);
+
+            if (!str_contains($subjectCat, $studentRel)) {
+                $isReadOnlyMode = true;
+                $reason = "Halaman ini bersifat Read-Only karena agama siswa ({$student->religion_name}) berbeda dengan kompetensi mapel Anda.";
+            }
         }
 
-        $rubrics = RubricCategory::with('criteria')
-            ->where('teacher_id', $teacher->teacher_id)
-            ->where('subject_id', $subjectId)
-            ->get();
-
-        if ($rubrics->isEmpty()) {
-            return ['authorized' => false];
+        // 1. Tentukan subjek-subjek mana saja yang masuk dalam grup kolaborasi
+        $targetSubjectIds = [$subjectId]; // Default to current subject
+        
+        if ($subject->report_group_key) {
+            $groupSubjectIds = Subject::where('report_group_key', $subject->report_group_key)
+                ->where('level_class', $subject->level_class)
+                ->where('term', $subject->term)
+                ->pluck('subject_id')
+                ->toArray();
+            
+            if (!empty($groupSubjectIds)) {
+                $targetSubjectIds = $groupSubjectIds;
+            }
         }
 
         $report = Reports::with('reportDetails')
@@ -108,26 +124,56 @@ class TeacherService
             ->where('subject_id', $subjectId)
             ->first();
 
-        $details = $report ? $report->reportDetails->keyBy('criteria_id') : collect();
+        // 2. Ambil semua rubrik dari grup tersebut
+        // Urutkan agar kriteria milik saya (teacher_id login) muncul paling atas
+        $allGroupRubrics = RubricCategory::with(['criteria', 'subject'])
+            ->whereIn('subject_id', $targetSubjectIds)
+            ->get();
 
-        $mappedRubrics = $rubrics->map(fn($rubric) => [
+        // 3. Filter Rubrik: Hanya tampilkan PKN dan Agama yang relevan dengan siswa
+        $studentReligion = strtolower($student->religion_name);
+        
+        $filteredRubrics = $allGroupRubrics->filter(function($rubric) use ($studentReligion) {
+            $catName = strtolower($rubric->subject->category_subject);
+            
+            // Jika ini kategori Agama, cek apakah cocok dengan agama siswa
+            if (str_contains($catName, 'religion')) {
+                return str_contains($catName, $studentReligion);
+            }
+            
+            // Selain agama (seperti PKN), tampilkan semua
+            return true;
+        });
+
+        // Ambil details dari SEMUA subjek dalam grup untuk ditampilkan
+        $allReportIds = Reports::where('student_id', $studentId)
+            ->whereIn('subject_id', $targetSubjectIds)
+            ->pluck('report_id');
+
+        $details = ReportDetail::whereIn('report_id', $allReportIds)->get()->keyBy('criteria_id');
+
+        $mappedRubrics = $filteredRubrics->map(fn($rubric) => [
             'rubric_id'   => $rubric->rubric_id,
             'rubric_name' => $rubric->rubric_name,
+            'is_mine'     => $isReadOnlyMode ? false : ($rubric->teacher_id === $teacher->teacher_id),
             'criteria'    => $rubric->criteria->map(fn($c) => [
                 'criteria_id'         => $c->criteria_id,
                 'criteria_name'       => $c->criteria_name,
+                'is_mine'             => $isReadOnlyMode ? false : ($rubric->teacher_id === $teacher->teacher_id),
                 'current_score'       => $details->has($c->criteria_id) ? (float) $details->get($c->criteria_id)->score : null,
                 'description_subject' => $details->has($c->criteria_id) ? $details->get($c->criteria_id)->description_subject : ($c->default_description ?? ''),
             ])
-        ]);
+        ])->sortByDesc('is_mine')->values();
 
         return [
-            'authorized'    => true,
-            'student'       => $student,
-            'subject'       => $subject,
-            'report_id'     => $report?->report_id,
-            'average_value' => $report?->average_value,
-            'rubrics'       => $mappedRubrics,
+            'authorized'         => true,
+            'is_read_only_mode'  => $isReadOnlyMode,
+            'read_only_reason'   => $reason,
+            'student'            => $student,
+            'subject'            => $subject,
+            'report_id'          => $report?->report_id,
+            'average_value'      => $report?->average_value,
+            'rubrics'            => $mappedRubrics,
         ];
     }
 
@@ -141,6 +187,13 @@ class TeacherService
 
         if (!$subject || !$student) {
             return null;
+        }
+
+        // --- ENFORCE SECURITY: VALIDASI AGAMA ---
+        if (str_starts_with($subject->category_subject, 'Religion')) {
+            if (!str_contains(strtolower($subject->category_subject), strtolower($student->religion_name))) {
+                throw new \Exception("Unauthorized religious assessment.");
+            }
         }
 
         $validCriteriaIds = RubricCriteria::whereHas('category', function($q) use ($teacher, $subjectId) {

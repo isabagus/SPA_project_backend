@@ -14,7 +14,8 @@ class Subject extends Model
         'category_subject',
         'term',
         'level_class',
-        'teacher_id'
+        'teacher_id',
+        'report_group_key'
     ];
 
     /**

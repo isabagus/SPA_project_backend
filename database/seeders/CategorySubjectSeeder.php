@@ -19,7 +19,10 @@ class CategorySubjectSeeder extends Seeder
             'Bahasa Indonesia',
             'Chinese Language',
             'Aesthetics Domain',
-            'RS & PKN',
+            'PKN',
+            'Religion (Christianity)',
+            'Religion (Catholicism)',
+            'Religion (Islam)',
             'Affective Domain'
         ];
 

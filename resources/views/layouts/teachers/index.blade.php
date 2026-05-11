@@ -4,15 +4,24 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">List Teachers</h4>
-                
+
                 <p class="card-description">Add Teacher:
                     <a href="{{ route('admin.teachers.create') }}"> Form input</a>
                 </p>
 
+                {{-- Form Search --}}
+                <form action="{{ route('admin.teachers.index') }}" class="d-flex col-md-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search data teacher"
+                            id="searchInput" value="{{ request('search') }}">
+                        <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+                    </div>
+                </form>
+
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
-                
+
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -45,25 +54,26 @@
                                         <div class="d-flex justify-content-center gap-2">
                                             <a href="{{ route('admin.teachers.edit', $teacher->teacher_id) }}"
                                                 class="btn btn-warning text-white"> Edit</a>
-                                            <form action="{{ route('admin.teachers.destroy', $teacher->teacher_id) }}" method="POST"
-                                                class="d-inline" onsubmit="return confirm('Are you sure you want to delete this teacher {{$teacher->name}}?')">
+                                            <form action="{{ route('admin.teachers.destroy', $teacher->teacher_id) }}"
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Are you sure you want to delete this teacher {{ $teacher->name }}?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    class="btn btn-danger text-white">
+                                                <button type="submit" class="btn btn-danger text-white">
                                                     Delete
                                                 </button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
-                                @empty
+                            @empty
                                 <tr>
                                     <td colspan="5">No teachers available</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
+                    {{ $teachers->links() }}
                 </div>
             </div>
         </div>

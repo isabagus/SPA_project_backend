@@ -15,18 +15,18 @@ class MentorController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->search;
+        $keyword = $request->search;
 
         $mentors = Mentor::with(['user', 'classes'])
             ->latest()
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('nip', 'like', "%{$search}%")
-                    ->orWhere('phone_number', 'like', "%{$search}%")
+            ->when($keyword, function ($query, $keyword) {
+                return $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('nip', 'like', "%{$keyword}%")
+                    ->orWhere('phone_number', 'like', "%{$keyword}%")
                     // Search Tabel Master (User)
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('email', 'like', "%{$search}%")
-                            ->orWhere('username', 'like', "%{$search}%");
+                    ->orWhereHas('user', function ($q) use ($keyword) {
+                        $q->where('email', 'like', "%{$keyword}%")
+                            ->orWhere('username', 'like', "%{$keyword}%");
                     });
             })
             ->paginate(10)

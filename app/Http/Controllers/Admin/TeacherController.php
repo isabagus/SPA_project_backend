@@ -6,12 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\PaginationServiceProvider;
+use Illuminate\Database\Eloquent\Collection;
 
 class TeacherController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $teachers = Teacher::with('user')->get();
+        $keyword = $request->search;
+
+        $teachers = Teacher::with(['user'])
+            ->latest()
+            ->when($keyword, function ($query, $keyword) {
+                return $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('phone_number', 'like', "%{$keyword}%")
+                    ->orWhereHas('user', function ($q) use ($keyword) {
+                        $q->where('email', 'like', "%{$keyword}%")
+                            ->orWhere('username', 'like', "%{$keyword}%");
+                    });
+            })->paginate(10)->withQueryString();
+
         return view('layouts.teachers.index', compact('teachers'));
     }
 

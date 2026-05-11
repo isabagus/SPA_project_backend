@@ -46,3 +46,9 @@ Data awal ditarik dari folder `backend/database/real-data-csv`.
 - Prefix `Y`: Mewakili Year (Tingkat Kelas).
 - Prefix `T`: Mewakili Term (Periode).
 - Logika Seeder: Deskripsi gabungan di CSV (dipisah `;`) harus di-split otomatis menjadi baris `RubricCriteria` tersendiri saat proses seeding.
+
+## 🤝 Collaborative Assessment & Shared Rubrics
+Mendukung kasus di mana satu kategori raport (misal: **RS PKN**) diisi oleh beberapa guru (Guru PKN + Guru Agama).
+- **Grouping**: Subjek dikelompokkan via `report_group_key`.
+- **Ownership**: Form penilaian menampilkan semua kriteria dalam satu grup, namun hanya kriteria milik guru yang login (`is_mine: true`) yang dapat diedit. Kriteria guru lain ditampilkan sebagai **Read-Only**.
+- **Status Independence**: Kelengkapan nilai (Draft/Completed) dihitung per-guru berdasarkan kriteria yang mereka miliki dalam grup tersebut.

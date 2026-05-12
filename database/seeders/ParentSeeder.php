@@ -13,7 +13,7 @@ class ParentSeeder extends Seeder
     public function run(): void
     {
         // Ambil 10 student pertama sebagai contoh
-        $students = Student::limit(10)->get();
+        $students = Student::limit(30)->get();
 
         foreach ($students as $idx => $student) {
             $user = User::firstOrCreate(

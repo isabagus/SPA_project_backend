@@ -33,4 +33,9 @@ class Reports extends Model
     {
         return $this->hasMany(ReportDetail::class, 'report_id', 'report_id');
     }
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class, 'subject_id', 'subject_id');
+    }
 }

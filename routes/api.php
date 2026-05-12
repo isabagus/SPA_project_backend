@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\V1\Teacher\TeacherProfileController;
 use App\Http\Controllers\Api\V1\Teacher\TeacherSubjectController;
 use App\Http\Controllers\Api\V1\Teacher\TeacherScoreController;
 use App\Http\Controllers\Api\V1\Teacher\TeacherRubricController;
+use App\Http\Controllers\Api\V1\Parent\ParentStudentController;
+use App\Http\Controllers\Api\V1\Parent\ParentReportController;
 
 Route::prefix('v1')->group(function () {
     // Public Routes
@@ -51,6 +53,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/rubrics/{rubricId}/criteria', [TeacherRubricController::class, 'storeCriteria']);
             Route::put('/criteria/{criteriaId}', [TeacherRubricController::class, 'updateCriteria']);
             Route::delete('/criteria/{criteriaId}', [TeacherRubricController::class, 'destroyCriteria']);
+        });
+
+        Route::middleware('role:parent')->prefix('parent')->group(function () {
+            Route::get('/children', [ParentStudentController::class, 'index']);
+            Route::get('/children/{studentId}/reports', [ParentReportController::class, 'index']);
+            Route::get('/children/report/{reportId}', [ParentReportController::class, 'show']);
+            Route::get('/children/report/{reportId}/export', [ParentReportController::class, 'exportPdf']);
         });
     });
 });

@@ -20,8 +20,23 @@ Sistem E-Report yang dirancang untuk mengelola penilaian siswa dengan standar ku
 - **Religious Studies (RS) Rule**: Semua mata pelajaran Agama (Islam, Kristen, dll) **WAJIB** menggunakan rubrik statis dengan nama kategori **"Religious Studies / Agama"**. Kriteria di dalamnya bersifat seragam untuk semua agama, yaitu:
   1. *Demonstrates good understanding of subject matter*
   2. *Participates actively in lessons*
-- **Collaboration**: Guru Agama yang berbeda mengisi kriteria yang sama (tetapi di subjek masing-masing dalam satu grup `RS_PKN`). Guru **PKN** juga tergabung dalam grup kolaborasi ini.
-- **Religious Cross-Check (Benang Merah)**: Guru Agama **HANYA** diizinkan menilai siswa yang agamanya cocok dengan kategori subjek (contoh: Guru Mapel *Religion (Islam)* hanya bisa menilai siswa yang beragama *Islam*). Sistem akan memblokir akses jika terjadi ketidakcocokan.
+- **Mentor Fallback Rule**: Jika agama siswa tidak ter-cover oleh subjek agama yang tersedia/diampu oleh guru manapun, maka **Mentor** memiliki otoritas penuh (`is_mine: true`) untuk mengisi nilai **Religious Studies / Agama** siswa tersebut.
+
+## 🤝 Collaborative Assessment (Grouped Subjects)
+Fitur ini memungkinkan beberapa Mata Pelajaran (Subject) untuk berbagi satu lembar penilaian yang sama.
+
+### 1. Mekanisme Grouping
+*   **`report_group_key`**: Kolom pada tabel `subjects` yang menjadi "lem" antar mapel. Mapel dengan kunci yang sama (contoh: `RS_PKN`) akan ditampilkan dalam satu form terpadu.
+*   **Visibility**: Guru yang mengampu salah satu mapel dalam grup tersebut dapat melihat seluruh rubrik dari mapel lain dalam grup yang sama.
+
+### 2. Otoritas & Keamanan (`is_mine`)
+*   **Edit Permission**: Meskipun semua rubrik dalam grup terlihat, guru **hanya** bisa mengisi/mengubah kriteria yang secara eksplisit dimiliki oleh `teacher_id` mereka.
+*   **Read-Only UI**: Kriteria milik rekan sejawat akan otomatis terkunci (disabled) dan diberi label "Penilaian Rekan".
+*   **Graceful Handling**: Jika terjadi ketidakcocokan (misal: Guru Agama Islam mengakses siswa beragama Kristen), form tetap terbuka dalam mode **Read-Only** dengan banner informasi yang jelas, bukan memblokir akses (UX yang lebih halus).
+
+### 3. Smart Filtering (Religious Studies)
+*   Sistem secara otomatis memfilter rubrik agama agar hanya menampilkan yang relevan dengan agama siswa tersebut.
+*   **Contoh Case**: Pada grup `RS_PKN`, siswa beragama Islam hanya akan melihat rubrik **PKN** dan **Religion (Islam)**. Rubrik *Religion (Christianity)* akan disembunyikan dari form tersebut agar tidak membingungkan.
 
 ## 🧱 Core Architecture: Rubric System (Parent-Child)
 Ini adalah fitur inti (Core Feature) aplikasi. Penilaian tidak lagi bersifat datar, melainkan berjenjang:

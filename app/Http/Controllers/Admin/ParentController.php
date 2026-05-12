@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\PaginationServiceProvider;
 use App\Models\User;
 use App\Models\Parents;
 use App\Models\Student;
@@ -12,7 +14,7 @@ class ParentController extends Controller
 {
     public function index()
     {
-        $parents = Parents::with(['user', 'student'])->get();
+        $parents = Parents::with(['user', 'student'])->latest()->paginate(10);
         return view('layouts.parents.index', compact('parents'));
     }
 

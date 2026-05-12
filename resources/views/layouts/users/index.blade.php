@@ -21,6 +21,13 @@
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
                 
+                <style>
+                    .highlight-new {
+                        background-color: #e8f5e9 !important;
+                        transition: background-color 2s ease;
+                    }
+                </style>
+
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -44,7 +51,7 @@
                         </thead>
                         <tbody>
                             @forelse ($users as $user)
-                                <tr>
+                                <tr class="{{ session('new_user_id') == $user->user_id ? 'highlight-new' : '' }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td class="py-1">{{ $user->username }}</td>
                                     <td>{{ $user->email }}</td>

@@ -23,7 +23,7 @@ class Student extends Model
 
     public function academicYear()
     {
-        return $this->belongsTo(AcademicYear::class, 'year_academy', 'year_academy');
+        return $this->belongsTo(AcademicYear::class, 'academic_year', 'academic_year');
     }
 
     public function levelClass()

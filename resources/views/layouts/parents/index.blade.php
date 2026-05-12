@@ -66,6 +66,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    {{$parents->links()}}
                 </div>
             </div>
         </div>

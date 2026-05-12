@@ -1,7 +1,7 @@
 # E-Report Project Context (Singapore Piaget Academy)
 
 ## 🎯 Project Overview
-Sistem E-Report yang dirancang untuk mengelola penilaian siswa dengan standar kurikulum internasional. Sistem ini membagi peran pengguna menjadi Guru (Teacher), Mentor, dan Orang Tua (Parent).
+Sistem E-Report yang dirancang untuk mengelola penilaian siswa dengan standar kurikulum internasional atau dikenal dengan kurikulum Cambridge. Sistem ini membagi peran pengguna menjadi Guru (Teacher), Mentor, dan Orang Tua (Parent).
 
 ## 🏛️ Domain Rules & RBAC
 1. **[TEACHER]**: 

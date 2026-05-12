@@ -28,9 +28,9 @@ class MentorSeeder extends Seeder
 
         // 2. Buat Data Mentor 1
         Mentor::firstOrCreate(
-            ['user_id' => $user1->user_id], // Assuming user_id is the primary key of User table based on previous context
+            ['user_id' => $user1->user_id],
             [
-                'name' => 'Agus Setiawan, M.Pd.',
+                'name_mentor' => 'Agus Setiawan, M.Pd.',
                 'nip' => '198001012005011001',
                 'phone_number' => '081234567890',
             ]
@@ -51,7 +51,7 @@ class MentorSeeder extends Seeder
         Mentor::firstOrCreate(
             ['user_id' => $user2->user_id],
             [
-                'name' => 'Budi Santoso, S.Kom.',
+                'name_mentor' => 'Budi Santoso, S.Kom.',
                 'nip' => '198502022010011002',
                 'phone_number' => '081298765432',
             ]

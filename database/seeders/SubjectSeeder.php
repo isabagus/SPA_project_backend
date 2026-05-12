@@ -44,9 +44,10 @@ class SubjectSeeder extends Seeder
                         [
                             'category_subject' => $name,
                             'term'             => $term->term,
-                            'level_class'      => $year->level_class,
+                            'class_id'         => $year->class_id,
                         ],
                         [
+                            'level_class'      => $year->level_class,
                             'teacher_id'       => $teacher->teacher_id
                         ]
                     );

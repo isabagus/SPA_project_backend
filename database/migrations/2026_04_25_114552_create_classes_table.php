@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('classes', function (Blueprint $table) {
-            $table->string('level_class', 35)->primary();
+            $table->id('class_id'); // Auto-incrementing integer PK
+            $table->string('level_name', 50); // e.g., 'Year 1'
+            $table->string('section_name', 50)->default('-'); // e.g., 'A'
+            $table->string('level_class', 100)->unique(); // Full name: 'Year 1-A'
             $table->foreignId('mentor_id')->nullable()->constrained('mentors', 'mentor_id');
         });
     }

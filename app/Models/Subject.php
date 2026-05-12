@@ -13,6 +13,7 @@ class Subject extends Model
     protected $fillable = [
         'category_subject',
         'term',
+        'class_id',
         'level_class',
         'teacher_id',
         'report_group_key'
@@ -36,7 +37,7 @@ class Subject extends Model
 
     public function class()
     {
-        return $this->belongsTo(LevelClass::class, 'level_class', 'level_class');
+        return $this->belongsTo(LevelClass::class, 'class_id', 'class_id');
     }
 
     public function rubrics()

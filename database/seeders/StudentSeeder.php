@@ -28,12 +28,13 @@ class StudentSeeder extends Seeder
                     ],
                     [
                         'academic_year' => $academicYear,
-                        'level_class' => $class->level_class,
+                        'class_id'      => $class->class_id,
+                        'level_class'   => $class->level_class,
                         'religion_name' => $religion,
-                        'mentor_id' => $mentorId,
-                        'gender' => $i % 2 == 0 ? 'Laki-laki' : 'Perempuan',
-                        'address' => "Address for Student $i in " . $class->level_class,
-                        'phone_number' => '0898' . rand(10000000, 99999999),
+                        'mentor_id'     => $mentorId,
+                        'gender'        => $i % 2 == 0 ? 'Laki-laki' : 'Perempuan',
+                        'address'       => "Address for Student $i in " . $class->level_class,
+                        'phone_number'  => '0898' . rand(10000000, 99999999),
                     ]
                 );
             }

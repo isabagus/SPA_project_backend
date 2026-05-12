@@ -11,6 +11,7 @@ use App\Models\RubricCategory;
 use App\Models\RubricCriteria;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Models\Mentor;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -45,54 +46,97 @@ class RealDataSeeder extends Seeder
                 'email'    => 'valentina@piaget.sch.id',
                 'username' => 'valent',
             ],
-            'mentor' => [
-                'name'     => 'Mentor Teacher',
-                'email'    => 'mentor.teacher@piaget.sch.id',
-                'username' => 'mentor',
+            'mentor_a' => [
+                'name'     => 'Ms. Mentor Year 1',
+                'email'    => 'mentor.a@piaget.sch.id',
+                'username' => 'mentor_a',
+            ],
+            'mentor_b' => [
+                'name'     => 'Mr. Mentor Year 2',
+                'email'    => 'mentor.b@piaget.sch.id',
+                'username' => 'mentor_b',
             ],
         ];
 
         foreach ($teachers as $key => $t) {
+            $isMentor = (strpos($key, 'mentor') !== false);
+            
             $user = User::updateOrCreate(
                 ['email' => $t['email']],
                 [
                     'username' => $t['username'],
                     'password' => Hash::make('password123'),
-                    'role'     => $key === 'mentor' ? 'mentor' : 'teacher',
+                    'role'     => $isMentor ? 'mentor' : 'teacher',
                 ]
             );
 
-            $teachers[$key]['model'] = Teacher::updateOrCreate(
+            // Always create Teacher record for grading ownership
+            $teacherModel = Teacher::updateOrCreate(
                 ['user_id' => $user->user_id],
                 ['name' => $t['name'], 'phone_number' => '0812' . rand(10000000, 99999999)]
             );
+            $teachers[$key]['teacher_model'] = $teacherModel;
+
+            if ($isMentor) {
+                $teachers[$key]['mentor_model'] = Mentor::updateOrCreate(
+                    ['user_id' => $user->user_id],
+                    [
+                        'name_mentor'  => $t['name'], 
+                        'nip'          => 'MNT-' . rand(1000, 9999),
+                        'phone_number' => '0812' . rand(10000000, 99999999)
+                    ]
+                );
+            }
         }
 
         // ============================================================
-        // 2. DATA SISWA (STUDENTS)
+        // 2. DATA KELAS & SISWA
         // ============================================================
+        $classesData = [
+            ['level' => 'Year 1', 'section' => '-', 'mentor_key' => 'mentor_a'],
+            ['level' => 'Year 2', 'section' => '-', 'mentor_key' => 'mentor_b'],
+        ];
+
+        foreach ($classesData as $c) {
+            $mentorId = $teachers[$c['mentor_key']]['mentor_model']->mentor_id;
+            $fullName = $c['section'] === '-' ? $c['level'] : "{$c['level']}-{$c['section']}";
+            
+            LevelClass::updateOrCreate(
+                ['level_class' => $fullName],
+                [
+                    'level_name'   => $c['level'],
+                    'section_name' => $c['section'],
+                    'mentor_id'    => $mentorId
+                ]
+            );
+        }
+
         $studentsData = [
             ['nis' => 'Y1-001', 'name' => 'Emmy Kurniawan Lukminto', 'level_class' => 'Year 1', 'gender' => 'Perempuan', 'address' => '-'],
             ['nis' => 'Y2-001', 'name' => 'Adrian Li Preman', 'level_class' => 'Year 2', 'gender' => 'Laki-laki', 'address' => '-'],
         ];
 
+        Religion::updateOrCreate(['religion_name' => 'Buddhism']);
+
         foreach ($studentsData as $s) {
-            $levelClass = LevelClass::where('level_class', $s['level_class'])->first();
-            if (!$levelClass) continue;
+            $class = LevelClass::where('level_class', $s['level_class'])->first();
+            if (!$class) continue;
+            
             $academicYear = AcademicYear::first()->academic_year ?? '2024/2025';
-            $religion     = Religion::first()->religion_name ?? 'Islam';
+            $religion = $s['nis'] === 'Y2-001' ? 'Buddhism' : 'Islam';
 
             Student::updateOrCreate(
                 ['nis' => $s['nis']],
                 [
                     'name_student'  => $s['name'],
                     'academic_year' => $academicYear,
+                    'class_id'      => $class->class_id,
                     'level_class'   => $s['level_class'],
                     'religion_name' => $religion,
                     'gender'        => $s['gender'],
                     'address'       => $s['address'],
                     'phone_number'  => '0812' . rand(10000000, 99999999),
-                    'mentor_id'     => $levelClass->mentor_id,
+                    'mentor_id'     => $class->mentor_id,
                 ]
             );
         }
@@ -111,7 +155,7 @@ class RealDataSeeder extends Seeder
             'Religion (Christianity)' => 'katrin',
             'Religion (Catholicism)'  => 'emmylou',
             'Chinese Language'      => 'valent',
-            'Affective Domain'      => 'mentor',
+            'Affective Domain'      => 'mentor_key', // Special flag
         ];
 
         $groupMap = [
@@ -121,17 +165,31 @@ class RealDataSeeder extends Seeder
             'Religion (Catholicism)'  => 'RS_PKN',
         ];
 
-        foreach ($subjectTeacherMap as $subjectName => $teacherKey) {
-            $teacherId = $teachers[$teacherKey]['model']->teacher_id;
-            $terms = ['Term 1', 'Term 2', 'Term 3', 'Term 4'];
-            $levels = ['Year 1', 'Year 2'];
+        $classes = LevelClass::all();
+        $terms = ['Term 1', 'Term 2', 'Term 3', 'Term 4'];
 
-            foreach ($levels as $level) {
+        foreach ($subjectTeacherMap as $subjectName => $teacherKey) {
+            foreach ($classes as $class) {
+                // If subject is Affective Domain, use the class mentor's TEACHER profile
+                if ($subjectName === 'Affective Domain') {
+                    // Find the teacher_id associated with the mentor of this class
+                    $mentor = Mentor::find($class->mentor_id);
+                    $teacherForMentor = Teacher::where('user_id', $mentor->user_id)->first();
+                    $finalTeacherId = $teacherForMentor->teacher_id;
+                } else {
+                    $finalTeacherId = $teachers[$teacherKey]['teacher_model']->teacher_id;
+                }
+
                 foreach ($terms as $term) {
                     Subject::updateOrCreate(
-                        ['category_subject' => $subjectName, 'level_class' => $level, 'term' => $term],
                         [
-                            'teacher_id'       => $teacherId,
+                            'category_subject' => $subjectName, 
+                            'class_id'         => $class->class_id, 
+                            'term'             => $term
+                        ],
+                        [
+                            'level_class'      => $class->level_class,
+                            'teacher_id'       => $finalTeacherId,
                             'report_group_key' => $groupMap[$subjectName] ?? null
                         ]
                     );
@@ -154,7 +212,6 @@ class RealDataSeeder extends Seeder
                     ['rubric_name' => 'Civic Responsibility',    'description' => 'Understand rights and duties; show respect for national symbols.'],
                 ],
             ],
-            // Standardized Religious Studies (Shared for all religions)
             'Religion' => [
                 '_all_terms' => [
                     ['rubric_name' => 'Religious Studies / Agama', 'description' => 'Demonstrates good understanding of subject matter; Participates actively in lessons'],
@@ -163,23 +220,13 @@ class RealDataSeeder extends Seeder
         ];
 
         foreach ($rubricDefinitions as $subjectName => $termRubrics) {
-            // Logic khusus untuk Religion: cari semua subjek yang mengandung kata 'Religion'
             if ($subjectName === 'Religion') {
                 $subjects = Subject::where('category_subject', 'like', 'Religion%')->get();
-                // Gunakan guru Valent sebagai default atau sesuai map jika perlu
             } else {
-                $teacherKey = $subjectTeacherMap[$subjectName] ?? null;
-                if (!$teacherKey) continue;
-                $teacherId = $teachers[$teacherKey]['model']->teacher_id;
                 $subjects = Subject::where('category_subject', $subjectName)->get();
             }
 
             foreach ($subjects as $subject) {
-                // Tentukan teacherId untuk subjek ini (jika bukan blok Religion umum)
-                $finalTeacherId = ($subjectName === 'Religion') 
-                    ? $subject->teacher_id 
-                    : $teachers[$subjectTeacherMap[$subjectName]]['model']->teacher_id;
-
                 $rubricsToSeed = $termRubrics['_all_terms'] ?? $termRubrics[$subject->term] ?? [];
 
                 foreach ($rubricsToSeed as $rubricData) {
@@ -189,7 +236,7 @@ class RealDataSeeder extends Seeder
                             'rubric_name'  => $rubricData['rubric_name'],
                         ],
                         [
-                            'teacher_id'   => $finalTeacherId,
+                            'teacher_id'   => $subject->teacher_id,
                             'term'         => $subject->term,
                         ]
                     );
@@ -203,6 +250,66 @@ class RealDataSeeder extends Seeder
                             ]
                         );
                     }
+                }
+            }
+        }
+
+        // ============================================================
+        // 5. GENERATE SCORES (REPORTS & DETAILS)
+        // ============================================================
+        $students = Student::all();
+        foreach ($students as $student) {
+            $subjects = Subject::where('class_id', $student->class_id)->get();
+            
+            foreach ($subjects as $subject) {
+                // Create the main report record
+                $report = Reports::updateOrCreate(
+                    [
+                        'student_id'    => $student->student_id,
+                        'subject_id'    => $subject->subject_id,
+                    ],
+                    [
+                        'class_id'      => $student->class_id,
+                        'level_class'   => $student->level_class,
+                        'academic_year' => $student->academic_year,
+                        'average_value' => 0, // Will update after details
+                        'attendance'    => rand(0, 2),
+                        'mentor_note'   => (strpos($subject->category_subject, 'Affective') !== false) 
+                                           ? "{$student->name_student} menunjukkan perilaku yang sangat baik dan aktif dalam kegiatan sekolah." 
+                                           : null,
+                    ]
+                );
+
+                // Create report details for each rubric criteria
+                $rubricCategories = RubricCategory::where('subject_id', $subject->subject_id)->get();
+                $totalScore = 0;
+                $criteriaCount = 0;
+
+                foreach ($rubricCategories as $cat) {
+                    $criteria = RubricCriteria::where('rubric_id', $cat->rubric_id)->get();
+                    foreach ($criteria as $crit) {
+                        $score = number_format((rand(200, 300) / 100), 2); // Score between 2.00 - 3.00
+                        
+                        ReportDetail::updateOrCreate(
+                            [
+                                'report_id'     => $report->report_id,
+                                'criteria_id'   => $crit->criteria_id,
+                            ],
+                            [
+                                'rubric_id'           => $cat->rubric_id,
+                                'score'               => $score,
+                                'description_subject' => "Performance is consistent with the grade level expectations.",
+                            ]
+                        );
+                        $totalScore += (float)$score;
+                        $criteriaCount++;
+                    }
+                }
+
+                // Update average based on real criteria scores (Scale 1-3)
+                if ($criteriaCount > 0) {
+                    $avgScore = $totalScore / $criteriaCount;
+                    $report->update(['average_value' => round($avgScore, 2)]);
                 }
             }
         }

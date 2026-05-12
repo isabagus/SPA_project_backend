@@ -12,6 +12,7 @@ class Reports extends Model
     protected $fillable = [
         'student_id',
         'subject_id',
+        'class_id',
         'level_class',
         'academic_year',
         'average_value',

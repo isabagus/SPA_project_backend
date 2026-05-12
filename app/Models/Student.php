@@ -11,6 +11,7 @@ class Student extends Model
     public $incrementing = true;
     protected $fillable = [
         'academic_year',
+        'class_id',
         'level_class',
         'religion_name',
         'mentor_id',
@@ -27,7 +28,7 @@ class Student extends Model
 
     public function levelClass()
     {
-        return $this->belongsTo(LevelClass::class, 'level_class', 'level_class');
+        return $this->belongsTo(LevelClass::class, 'class_id', 'class_id');
     }
 
     public function religion()

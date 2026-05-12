@@ -8,19 +8,22 @@ class LevelClass extends Model
 {
     protected $table = 'classes'; // Nama tabel di database Anda
     
-    protected $primaryKey = 'level_class';
-    public $incrementing = false;
+    protected $primaryKey = 'class_id';
+    public $incrementing = true;
     public $timestamps = false;
-    protected $keyType = 'string';
+    protected $keyType = 'int';
 
     protected $fillable = [
-        'level_class',
+        'class_id',
+        'level_name',
+        'section_name',
+        'level_class', // Keep for backward compat/display
         'mentor_id'
     ];
 
     public function subjects()
     {
-        return $this->hasMany(Subject::class, 'class_id', 'level_class');
+        return $this->hasMany(Subject::class, 'class_id', 'class_id');
     }
 
     public function mentor()

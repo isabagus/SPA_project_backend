@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\V1\Teacher\TeacherRubricController;
 use App\Http\Controllers\Api\V1\Parent\ParentStudentController;
 use App\Http\Controllers\Api\V1\Parent\ParentReportController;
 
+use App\Http\Controllers\V1\MentorController;
+
 Route::prefix('v1')->group(function () {
     // Public Routes
 
@@ -31,7 +33,13 @@ Route::prefix('v1')->group(function () {
 
 
         Route::middleware('role:mentor')->prefix('mentor')->group(function (){
-
+            Route::get('/classes', [MentorController::class, 'getClasses']);
+            Route::get('/students', [MentorController::class, 'getStudents']);
+            Route::get('/students/{studentId}/evaluation-form', [MentorController::class, 'getEvaluationForm']);
+            Route::post('/students/{studentId}/evaluation', [MentorController::class, 'submitEvaluation']);
+            Route::get('/students/{studentId}/academic-report', [MentorController::class, 'getAcademicReport']);
+            Route::get('/students/{studentId}/academic-report/{reportId}', [MentorController::class, 'getSubjectDetail']);
+            Route::put('/students/{studentId}/academic-report/detail/{detailId}', [MentorController::class, 'updateReportDetail']);
         });
 
         Route::middleware('role:teacher')->prefix('teacher')->group(function () {

@@ -74,6 +74,7 @@ class SubjectController extends Controller
                 'term'             => $request->term,
                 'class_id'         => $request->class_id,
                 'level_class'      => $levelClass->level_name, // Store name for display
+                'teacher_id'       => $request->rubrics[0]['teacher_id'] ?? null,
             ]);
 
             foreach ($request->rubrics as $rubricData) {
@@ -130,6 +131,7 @@ class SubjectController extends Controller
                 'term'             => $request->term,
                 'level_class'      => $levelClass->level_name,
                 'class_id'         => $request->level_class,
+                'teacher_id'       => $request->rubrics[0]['teacher_id'] ?? null,
             ]);
 
             $existingRubricIds = collect($request->rubrics)->pluck('rubric_id')->filter()->toArray();

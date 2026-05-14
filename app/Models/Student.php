@@ -17,6 +17,7 @@ class Student extends Model
         'mentor_id',
         'nis',
         'name_student',
+        'nis',
         'gender',
         'address',
         'phone_number'

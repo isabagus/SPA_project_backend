@@ -22,7 +22,7 @@ class RoleMiddleware
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthenticated'], 401);
             }
-            return redirect()->route('login');
+            return redirect()->route('admin.login');
         }
 
         if (!in_array($request->user()->role, $roles)) {

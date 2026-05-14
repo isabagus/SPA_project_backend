@@ -12,25 +12,32 @@ use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\ParentController;
 
 Route::get('/', function () {
-    return view('layouts.dashboard.index');
+    return redirect()->route('admin.login');
 });
 
-Route::get('admin/login', [AuthController::class, 'index'])->name('admin.login');
-Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login');
-Route::post('admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
-
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::resource('dashboard', DashboardController::class);
-    Route::resource('users', UserController::class);
-    Route::resource('students', StudentController::class);
-    Route::resource('subjects', SubjectController::class);
-    Route::resource('teachers', TeacherController::class);
-    Route::get('mentors/set-class', [MentorController::class, 'showSetClassView'])->name('mentors.setClass');
-    Route::put('mentors/set-class/set', [MentorController::class, 'updateSetClass'])->name('mentors.updateSetClass');
-    Route::resource('mentors', MentorController::class);
-    Route::resource('parents', ParentController::class);
-    Route::resource('reports', ReportController::class);
-    
+    // Auth Routes
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [AuthController::class, 'index'])->name('login');
+        Route::post('login', [AuthController::class, 'login'])->name('login');
+    });
+
+    // Protected Admin Routes
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+        Route::resource('users', UserController::class);
+        Route::resource('students', StudentController::class);
+        Route::resource('subjects', SubjectController::class);
+        Route::resource('teachers', TeacherController::class);
+        
+        Route::get('mentors/set-class', [MentorController::class, 'showSetClassView'])->name('mentors.setClass');
+        Route::put('mentors/set-class/set', [MentorController::class, 'updateSetClass'])->name('mentors.updateSetClass');
+        Route::resource('mentors', MentorController::class);
+        Route::resource('parents', ParentController::class);
+        Route::resource('reports', ReportController::class);
+    });
 });
 
 require __DIR__ . '/auth.php';

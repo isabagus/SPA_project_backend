@@ -29,7 +29,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $subject->category_subject }}</td>
-                                    <td>{{ $subject->level_class }}</td>
+                                    <td>{{ $subject->class->level_name }}</td>
                                     <td>{{ $subject->term }}</td>
                                     <td class="text-center align-middle">
                                         <div class="d-flex justify-content-center gap-2">
@@ -58,6 +58,13 @@
                             @endforelse
                         </tbody>
                     </table>
+                <div class="mt-4 d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        Showing {{ $subjects->firstItem() }} to {{ $subjects->lastItem() }} of {{ $subjects->total() }} subjects
+                    </div>
+                    <div>
+                        {{ $subjects->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
             </div>
         </div>

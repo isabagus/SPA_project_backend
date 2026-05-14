@@ -23,7 +23,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->redirectGuestsTo('/admin/login');
-        $middleware->redirectUsersTo('/admin/dashboard');
+        $middleware->redirectUsersTo(function () {
+            if (auth()->check() && auth()->user()->role !== 'admin') {
+                auth()->logout();
+                session()->invalidate();
+                session()->regenerateToken();
+                return route('admin.login');
+            }
+            return route('admin.dashboard.index');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

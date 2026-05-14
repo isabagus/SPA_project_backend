@@ -16,6 +16,10 @@ Route::get('/', function () {
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard.index');
+    });
+
     // Auth Routes
     Route::middleware('guest')->group(function () {
         Route::get('login', [AuthController::class, 'index'])->name('login');

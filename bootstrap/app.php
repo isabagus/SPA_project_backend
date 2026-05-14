@@ -22,7 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
-        $middleware->redirectGuestsTo(fn() => route('admin.login'));
+        $middleware->redirectGuestsTo('/admin/login');
+        $middleware->redirectUsersTo('/admin/dashboard');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

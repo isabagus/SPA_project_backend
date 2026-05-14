@@ -25,7 +25,7 @@
                         <label class="mb-2 fw-bold">Subject Category (Header)</label>
                         <select class="form-select" name="category_subject" required>
                             <option value="">Select Subject</option>
-                            @foreach ($subjects as $sub)
+                            @foreach ($categorySubjects as $sub)
                                 <option value="{{ $sub->category_subject }}" {{ old('category_subject') == $sub->category_subject ? 'selected' : '' }}>
                                     {{ $sub->category_subject }}
                                 </option>

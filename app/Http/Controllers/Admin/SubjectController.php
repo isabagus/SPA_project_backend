@@ -8,6 +8,7 @@ use App\Models\RubricCategory;
 use App\Models\Term;
 use App\Models\Teacher;
 use App\Models\LevelClass;
+use App\Models\CategorySubject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -34,10 +35,10 @@ class SubjectController extends Controller
     {
         $terms = Term::all();
         $teachers = Teacher::all();
-        $subjects = Subject::select('category_subject')->distinct()->get();
+        $categorySubjects = CategorySubject::all();
         $years = LevelClass::all();
         
-        return view('layouts.subjects.create', compact('terms', 'teachers', 'subjects', 'years'));
+        return view('layouts.subjects.create', compact('terms', 'teachers', 'categorySubjects', 'years'));
     }
 
     public function store(Request $request)

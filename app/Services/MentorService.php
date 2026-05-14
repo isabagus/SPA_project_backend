@@ -177,6 +177,7 @@ class MentorService
             Reports::updateOrCreate(
                 ['student_id' => $studentId, 'subject_id' => $affectiveSubject->subject_id],
                 [
+                    'class_id'      => $affectiveSubject->class_id,
                     'level_class'   => $levelClass,
                     'academic_year' => $data['academic_year'] ?? '2024/2025',
                     'mentor_note'   => $data['mentor_note'] ?? null,
@@ -195,7 +196,11 @@ class MentorService
             if ($religionSubject) {
                 $religionReport = Reports::updateOrCreate(
                     ['student_id' => $studentId, 'subject_id' => $religionSubject->subject_id],
-                    ['level_class' => $levelClass, 'academic_year' => $data['academic_year'] ?? '2024/2025']
+                    [
+                        'class_id'      => $religionSubject->class_id,
+                        'level_class'   => $levelClass, 
+                        'academic_year' => $data['academic_year'] ?? '2024/2025'
+                    ]
                 );
 
                 foreach ($data['scores'] as $criteriaId => $score) {
@@ -206,7 +211,11 @@ class MentorService
                 }
                 
                 $avg = $religionReport->reportDetails()->avg('score');
-                $religionReport->update(['average_value' => $avg ? round($avg, 2) : 0]);
+                $religionReport->update([
+                    'average_value' => $avg ? round($avg, 2) : 0,
+                    'class_id'      => $religionSubject->class_id,
+                    'level_class'   => $levelClass,
+                ]);
             }
         }
 

@@ -215,6 +215,7 @@ class TeacherService
                 ['student_id' => $studentId, 'subject_id' => $subjectId],
                 [
                     'academic_year' => $data['academic_year'] ?? '2024/2025',
+                    'class_id'      => $subject->class_id,
                     'level_class'   => $subject->level_class,
                     'average_value' => 0,
                     'attendance'    => 0,
@@ -249,7 +250,11 @@ class TeacherService
             }
 
             $average = ReportDetail::where('report_id', $report->report_id)->avg('score');
-            $report->update(['average_value' => $average ? round($average, 2) : 0]);
+            $report->update([
+                'average_value' => $average ? round($average, 2) : 0,
+                'class_id'      => $subject->class_id,
+                'level_class'   => $subject->level_class,
+            ]);
 
             return $report;
         });

@@ -136,6 +136,7 @@ class UserPortalController extends Controller
     {
         $user = $request->user();
         $permissions = [];
+        $displayName = $user->username;
         
         switch ($user->role) {
             case 'admin':
@@ -143,12 +144,15 @@ class UserPortalController extends Controller
                 break;
             case 'teacher':
                 $permissions = ['view_my_subjects', 'input_scores'];
+                $displayName = $user->teacher?->name ?? $user->username;
                 break;
             case 'mentor':
                 $permissions = ['view_class_students', 'view_reports'];
+                $displayName = $user->mentor?->name_mentor ?? $user->username;
                 break;
             case 'parent':
                 $permissions = ['view_child_report'];
+                $displayName = $user->parent?->name_parent ?? $user->username;
                 break;
         }
 
@@ -157,6 +161,7 @@ class UserPortalController extends Controller
             'user' => [
                 'id' => $user->user_id,
                 'username' => $user->username,
+                'display_name' => $displayName,
                 'email' => $user->email,
                 'role' => $user->role,
             ],

@@ -19,7 +19,10 @@ Sistem E-Report yang dirancang untuk mengelola penilaian siswa dengan standar ku
 - **Authentication**: Login menggunakan **Email** (backend) atau **Username** (fleksibel di frontend).
 - **Data Integrity**: Penilaian (Score) & Rata-rata (`average_value`) menggunakan skala **1.00 - 3.00**.
 - **Ownership Check**: Mentor hanya dapat memantau dan mengedit data siswa yang terdaftar dalam kelas perwaliannya (`mentor_id` pada tabel `students`).
-- **Religious Studies (RS) Rule**: Mapel Agama menggunakan rubrik statis. Jika tidak ada guru agama yang sesuai, Mentor mengambil alih penilaian (*Fallback Rule*).
+- **Religious Studies (RS) Rule**: 
+    - **Religion Matching**: Guru hanya dapat menilai murid jika kategori subjek (misal: *Religion Christian*) cocok dengan `religion_name` murid.
+    - **Fallback Rule**: Jika tidak ada guru agama spesifik di suatu kelas, Mentor mengambil alih pengisian nilai dan deskripsi.
+- **Civics (PKN) Rule**: Diperlakukan seperti **Subject Umum**, di mana deskripsi kriteria diisi secara kolaboratif oleh **Guru Pengampu** dan **Mentor** (Wali Kelas).
 
 ## 🤝 Collaborative Assessment (Grouped Subjects)
 Memungkinkan beberapa Mata Pelajaran berbagi satu lembar penilaian (misal: RS & PKN).

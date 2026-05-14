@@ -23,7 +23,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Auth Routes
     Route::middleware('guest')->group(function () {
         Route::get('login', [AuthController::class, 'index'])->name('login');
-        Route::post('login', [AuthController::class, 'login'])->name('login');
+        Route::post('login', [AuthController::class, 'login'])->name('auth');
     });
 
     // Protected Admin Routes
@@ -33,6 +33,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
         Route::resource('users', UserController::class);
         Route::resource('students', StudentController::class);
+        Route::get('subjects/{id}/assign-teachers', [SubjectController::class, 'assignTeachers'])->name('subjects.assignTeachers');
+        Route::put('subjects/{id}/assign-teachers', [SubjectController::class, 'updateTeachers'])->name('subjects.updateTeachers');
         Route::resource('subjects', SubjectController::class);
         Route::resource('teachers', TeacherController::class);
         

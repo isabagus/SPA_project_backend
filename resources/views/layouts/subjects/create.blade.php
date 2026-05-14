@@ -28,7 +28,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6 form-group">
                         <label class="mb-2 fw-bold">Subject Category (Header)</label>
-                        <select class="form-select" name="category_subject" required>
+                        <select class="form-select" id="category_subject" name="category_subject" required>
                             <option value="">Select Subject</option>
                             @foreach ($categorySubjects as $sub)
                                 <option value="{{ $sub->category_subject }}" {{ old('category_subject') == $sub->category_subject ? 'selected' : '' }}>
@@ -90,13 +90,13 @@
                                         <label class="small fw-bold mb-2">Category Name / Judul Rubrik</label>
                                         <input type="text" name="rubrics[{{ $rIndex }}][name]" value="{{ $rData['name'] }}" class="form-control" placeholder="Contoh: Reading & Writing" required>
                                     </div>
-                                    <div class="col-md-4 form-group">
-                                        <label class="small fw-bold mb-2">Assign to     </label>
-                                        <select name="rubrics[{{ $rIndex }}][teacher_id]" class="form-select" required>
+                                    <div class="col-md-4 form-group teacher-assign-container">
+                                        <label class="small fw-bold mb-2">Assign to Teacher</label>
+                                        <select name="rubrics[{{ $rIndex }}][teacher_id]" class="form-select teacher-select">
                                             <option value="">Select Teacher</option>
                                             @foreach($teachers as $teacher)
                                                 <option value="{{ $teacher->teacher_id }}" {{ $rData['teacher_id'] == $teacher->teacher_id ? 'selected' : '' }}>
-                                                    {{ $teacher->name }}
+                                                    {{ $teacher->name }} ({{ $teacher->subjects->pluck('category_subject')->unique()->implode(', ') }})
                                                 </option>
                                             @endforeach
                                         </select>
@@ -148,13 +148,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize count based on how many rubrics are already rendered (from old() or default)
     let rubricCount = document.querySelectorAll('.rubric-item').length;
 
-    // Tambah Rubrik
-    addButton.addEventListener('click', function() {
-        const index = rubricCount;
-        rubricCount++;
+    const categorySelect = document.getElementById('category_subject');
+
+    function addRubric(initialData = null) {
+        const index = document.querySelectorAll('.rubric-item').length;
+        const rubricCount = index + 1;
         
         const newRubric = document.createElement('div');
         newRubric.className = 'card border mb-4 rubric-item shadow-sm';
+        
+        const rubricName = initialData ? initialData.name : '';
+        const isGroupedRS = document.getElementById('category_subject').value === 'Affective Domain RS & PKN';
+        
+        // Selective Visibility: Hide only if specifically told to, or if category is RS/PKN and it's the general rubric
+        let teacherDisplay = 'block';
+        if (initialData && initialData.hideTeacher === true) {
+            teacherDisplay = 'none';
+        } else if (isGroupedRS && rubricName === 'Religious Studies / Agama') {
+            teacherDisplay = 'none';
+        }
+
+        const criteriaHtml = initialData && initialData.criteria 
+            ? initialData.criteria.map((c, j) => `
+                <div class="criteria-item mb-2 d-flex gap-2">
+                    <input type="text" name="rubrics[${index}][criteria][${j}][name]" class="form-control form-control-sm" value="${c}" required>
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-criteria"><i class="fa fa-times"></i></button>
+                </div>`).join('')
+            : `
+                <div class="criteria-item mb-2 d-flex gap-2">
+                    <input type="text" name="rubrics[${index}][criteria][0][name]" class="form-control form-control-sm" placeholder="Contoh: Kriteria Baru" required>
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-criteria"><i class="fa fa-times"></i></button>
+                </div>`;
+
         newRubric.innerHTML = `
             <div class="card-body bg-white">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -164,15 +189,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="row mb-4">
                     <div class="col-md-8 form-group">
                         <label class="small fw-bold mb-2">Category Name / Judul Rubrik</label>
-                        <input type="text" name="rubrics[${index}][name]" class="form-control" placeholder="Contoh: Category Baru" required>
+                        <input type="text" name="rubrics[${index}][name]" class="form-control" value="${rubricName}" placeholder="Contoh: Category Baru" required>
                     </div>
-                    <div class="col-md-4 form-group">
+                    <div class="col-md-4 form-group teacher-assign-container" style="display: ${teacherDisplay}">
                         <label class="small fw-bold mb-2">Assign to Teacher</label>
-                        <select name="rubrics[${index}][teacher_id]" class="form-select" required>
+                        <select name="rubrics[${index}][teacher_id]" class="form-select teacher-select">
+                            <option value="">Select Teacher</option>
                             @foreach($teachers as $teacher)
-                                <option value="{{ $teacher->teacher_id }}">{{ $teacher->name }}</option>
+                                <option value="{{ $teacher->teacher_id }}">{{ $teacher->name }} ({{ $teacher->subjects->pluck('category_subject')->unique()->implode(', ') }})</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="col-md-4 form-group mentor-info-container" style="display: ${teacherDisplay === 'none' ? 'block' : 'none'}">
+                        <label class="small fw-bold mb-2">Pengampu</label>
+                        <div class="d-flex align-items-center gap-2 p-2 bg-info bg-opacity-10 border border-info rounded">
+                            <i class="fa fa-info-circle text-info"></i>
+                            <span class="small text-info fw-semibold">Guru agama akan ditugaskan via tombol <strong>"Assign Guru"</strong> setelah disimpan</span>
+                        </div>
                     </div>
                 </div>
 
@@ -186,14 +219,76 @@ document.addEventListener('DOMContentLoaded', function() {
                         </button>
                     </div>
                     <div class="criteria-container" data-rubric-index="${index}">
-                        <div class="criteria-item mb-2 d-flex gap-2">
-                            <input type="text" name="rubrics[${index}][criteria][0][name]" class="form-control form-control-sm" placeholder="Contoh: Kriteria Baru" required>
-                            <button type="button" class="btn btn-outline-danger btn-sm remove-criteria"><i class="fa fa-times"></i></button>
-                        </div>
+                        ${criteriaHtml}
                     </div>
                 </div>
             </div>`;
         container.appendChild(newRubric);
+    }
+
+    // Tambah Rubrik
+    addButton.addEventListener('click', function() {
+        addRubric();
+    });
+
+    categorySelect.addEventListener('change', function() {
+        const isGroupedRS = this.value === 'Affective Domain RS & PKN';
+        
+        // Update visibility of existing rubrics
+        document.querySelectorAll('.rubric-item').forEach(rubric => {
+            const nameInput = rubric.querySelector('input[name*="[name]"]');
+            const teacherContainer = rubric.querySelector('.teacher-assign-container');
+            const teacherSelect = rubric.querySelector('.teacher-select');
+            
+            if (isGroupedRS) {
+                // If RS/PKN category: Hide RS, Show PKN
+                if (nameInput && nameInput.value === 'Religious Studies / Agama') {
+                    teacherContainer.style.display = 'none';
+                    if (teacherSelect) {
+                        teacherSelect.value = '';
+                        teacherSelect.removeAttribute('required');
+                    }
+                } else {
+                    teacherContainer.style.display = 'block';
+                    if (teacherSelect) teacherSelect.setAttribute('required', 'required');
+                }
+            } else {
+                // Standard categories: Show all
+                teacherContainer.style.display = 'block';
+                if (teacherSelect) teacherSelect.setAttribute('required', 'required');
+            }
+        });
+
+        if (isGroupedRS) {
+            // Confirm with user if they want to clear existing rubrics
+            if (document.querySelectorAll('.rubric-item').length > 0 && 
+                !confirm('Memilih kategori ini akan menghapus rubrik yang sudah Anda isi dan menggantinya dengan template otomatis. Lanjutkan?')) {
+                return;
+            }
+
+            // Clear current rubrics
+            container.innerHTML = '';
+
+            // Add Religious Studies / Agama (Hidden Teacher Selection - handled by Mentor)
+            addRubric({
+                name: 'Religious Studies / Agama',
+                hideTeacher: true,
+                criteria: [
+                    'Demonstrates good understanding of subject matter',
+                    'Participates actively in lessons'
+                ]
+            });
+
+            // Add PKN (Visible Teacher Selection - handled by PKN Teacher)
+            addRubric({
+                name: 'PKN',
+                hideTeacher: false,
+                criteria: [
+                    'Demonstrates good understanding of subject matter',
+                    'Participates actively in lessons'
+                ]
+            });
+        }
     });
 
     // Delegasi Event untuk Hapus Rubrik & Tambah/Hapus Kriteria

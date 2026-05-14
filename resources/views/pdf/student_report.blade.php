@@ -79,8 +79,8 @@
     </table>
 
     <div class="mentor-section">
-        <h3>Mentor's Comments (Affective Domain)</h3>
-        <p class="mentor-note">"{{ $report->mentor_note ?: 'No comments provided for this period.' }}"</p>
+        <h3>Mentor's Notes</h3>
+        <p class="mentor-note">"{{ $report->mentor_note ?: 'No notes provided for this period.' }}"</p>
     </div>
 
     <div class="footer">

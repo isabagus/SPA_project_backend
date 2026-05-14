@@ -22,4 +22,9 @@ class Teacher extends Model
     {
         return $this->hasMany(RubricCategory::class, 'teacher_id', 'teacher_id');
     }
+
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class, 'teacher_id', 'teacher_id');
+    }
 }

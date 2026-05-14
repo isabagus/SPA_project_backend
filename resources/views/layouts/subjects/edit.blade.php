@@ -90,7 +90,7 @@
                                         <select name="rubrics[{{ $index }}][teacher_id]" class="form-select" required>
                                             @foreach($teachers as $teacher)
                                                 <option value="{{ $teacher->teacher_id }}" {{ $rubric->teacher_id == $teacher->teacher_id ? 'selected' : '' }}>
-                                                    {{ $teacher->name }}
+                                                    {{ $teacher->name }} ({{ $teacher->subjects->pluck('category_subject')->unique()->implode(', ') }})
                                                 </option>
                                             @endforeach
                                         </select>
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="small fw-bold mb-2">Teacher</label>
                         <select name="rubrics[${index}][teacher_id]" class="form-select" required>
                             @foreach($teachers as $teacher)
-                                <option value="{{ $teacher->teacher_id }}">{{ $teacher->name }}</option>
+                                <option value="{{ $teacher->teacher_id }}">{{ $teacher->name }} ({{ $teacher->subjects->pluck('category_subject')->unique()->implode(', ') }})</option>
                             @endforeach
                         </select>
                     </div>

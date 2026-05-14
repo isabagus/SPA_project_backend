@@ -16,6 +16,13 @@
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        @foreach ($errors->all() as $error)
+                            <p class="mb-0">{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
 
                 <div class="table-responsive">
                     <table class="table table-striped text-center">
@@ -44,11 +51,21 @@
                                     </td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}"
-                                                class="btn btn-warning text-white">Edit</a>
+                                            @if ($subject->report_group_key)
+                                                {{-- Grouped RS/PKN: Tombol Assign Guru --}}
+                                                <a href="{{ route('admin.subjects.assignTeachers', $subject->subject_id) }}"
+                                                    class="btn btn-info text-white" title="Assign Guru Agama & PKN">
+                                                    <i class="fa fa-users"></i> Assign Guru
+                                                </a>
+                                            @else
+                                                {{-- Standard: Tombol Edit biasa --}}
+                                                <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}"
+                                                    class="btn btn-warning text-white">Edit</a>
+                                            @endif
+
                                             <form action="{{ route('admin.subjects.destroy', $subject->subject_id) }}"
                                                 method="POST"
-                                                onsubmit="return confirm('Delete this subject {{ $subject->name_subject }}?')">
+                                                onsubmit="return confirm('Delete this subject {{ $subject->category_subject }}?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger text-white">Delete</button>
@@ -58,7 +75,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5">No data available</td>
+                                    <td colspan="6">No data available</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -24,7 +24,7 @@
                             <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-student-btn" style="display: none;"><i class="fa fa-times"></i> Hapus</button>
                             
                             <div class="row">
-                                <div class="col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label>Academic Year</label>
                                     <select class="form-select" name="academic_year[]" required>
                                         <option value="">Select Academic Year</option>
@@ -33,21 +33,12 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-4 form-group">
+                                <div class="col-md-6 form-group">
                                     <label>Level Class</label>
                                     <select class="form-select" name="level_class[]" required>
                                         <option value="">Select Level Class</option>
                                         @foreach ($level_classes as $class)
                                             <option value="{{ $class->level_class }}">{{ $class->level_class }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label>Mentor</label>
-                                    <select class="form-select" name="mentor_id[]" required>
-                                        <option value="">Select Mentor</option>
-                                        @foreach ($mentors as $mentor)
-                                            <option value="{{ $mentor->mentor_id }}">{{ $mentor->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

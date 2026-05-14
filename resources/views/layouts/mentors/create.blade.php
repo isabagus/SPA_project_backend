@@ -31,7 +31,8 @@
                         <small class="text-muted">Choose existing or leave empty to create new below.</small>
                     </div>
 
-                    <div id="new_account_fields">
+                    <div id="new_account_fields" class="border p-3 mb-3 rounded bg-white">
+                        <h5 class="mb-3">New Account Information</h5>
                         <div class="row">
                             <div class="col-md-4 form-group">
                                 <label for="username">Username Baru</label>

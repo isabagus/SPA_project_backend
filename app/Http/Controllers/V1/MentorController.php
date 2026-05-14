@@ -163,13 +163,17 @@ class MentorController extends Controller
 
         $request->validate([
             'description' => 'required|string',
+            'subject_id'  => 'nullable|integer',
+            'criteria_id' => 'nullable|integer'
         ]);
 
         $detail = $this->mentorService->updateReportDetailDescription(
             $user->mentor->mentor_id,
             $studentId,
             $detailId,
-            $request->description
+            $request->description,
+            $request->subject_id,
+            $request->criteria_id
         );
 
         return response()->json([

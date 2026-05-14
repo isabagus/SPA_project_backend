@@ -75,15 +75,78 @@ class MentorService
      */
     public function getStudentAcademicReport($mentorId, $studentId)
     {
-        // Security Check: Pastikan siswa ini di bawah bimbingan mentor ini
+        // 1. Security Check
         $student = Student::where('student_id', $studentId)
             ->where('mentor_id', $mentorId)
             ->firstOrFail();
 
-        // Ambil semua raport (reports) untuk siswa tersebut
-        return Reports::where('student_id', $studentId)
-            ->with(['subject.teacher', 'reportDetails.rubric', 'reportDetails.criteria'])
+        // 2. Ambil semua subjek yang ada di kelas siswa tersebut
+        $subjects = Subject::where('class_id', $student->class_id)
+            ->with(['teacher', 'rubrics.criteria'])
             ->get();
+
+        // Filter subjek agar hanya menampilkan Agama yang sesuai dengan siswa (dan PKN/lainnya)
+        $studentReligion = $student->religion_name ? trim(strtolower($student->religion_name)) : '';
+        $filteredSubjects = $subjects->filter(function($subject) use ($studentReligion) {
+            $catName = strtolower($subject->category_subject);
+            
+            if (str_starts_with($catName, 'religion') || str_starts_with($catName, 'agama')) {
+                if (empty($studentReligion)) return false;
+
+                $religions = ['islam', 'christian', 'catholic', 'hindu', 'buddha', 'konghucu'];
+                foreach ($religions as $rel) {
+                    if (str_contains($catName, $rel)) {
+                        return str_contains($studentReligion, $rel) || str_contains($rel, $studentReligion);
+                    }
+                }
+                
+                return str_contains($catName, $studentReligion);
+            }
+            
+            return true;
+        });
+
+        // 3. Ambil laporan yang sudah ada
+        $existingReports = Reports::where('student_id', $studentId)
+            ->with(['reportDetails.rubric', 'reportDetails.criteria.category'])
+            ->get()
+            ->keyBy('subject_id');
+
+        // 4. Gabungkan: Tampilkan subjek meskipun belum ada report-nya
+        return $filteredSubjects->map(function ($subject) use ($existingReports, $studentId) {
+            if ($existingReports->has($subject->subject_id)) {
+                $report = $existingReports->get($subject->subject_id);
+                // Pastikan subject di dalam report adalah subject yang lengkap dengan teacher
+                $report->subject = $subject;
+                return $report;
+            }
+
+            // Jika belum ada report, buat "Phantom Report" agar rubriknya muncul di Mentor
+            $report_details = [];
+            foreach ($subject->rubrics as $rubric) {
+                foreach ($rubric->criteria as $criteria) {
+                    $report_details[] = [
+                        'id' => 0, // Virtual ID
+                        'rubric_id' => $rubric->rubric_id,
+                        'criteria_id' => $criteria->criteria_id,
+                        'score' => 0,
+                        'description_subject' => null,
+                        'rubric' => $rubric,
+                        'criteria' => $criteria,
+                    ];
+                }
+            }
+
+            return (object) [
+                'report_id' => 0,
+                'student_id' => $studentId,
+                'subject_id' => $subject->subject_id,
+                'average_value' => 0,
+                'academic_year' => '-',
+                'subject' => $subject,
+                'report_details' => $report_details
+            ];
+        })->values();
     }
 
     /**
@@ -225,18 +288,39 @@ class MentorService
     /**
      * Update qualitative description for a specific rubric criteria (Mentor Access)
      */
-    public function updateReportDetailDescription($mentorId, $studentId, $detailId, $description)
+    public function updateReportDetailDescription($mentorId, $studentId, $detailId, $description, $subjectId = null, $criteriaId = null)
     {
         // Security Check: Pastikan siswa ini di bawah bimbingan mentor ini
         $student = Student::where('student_id', $studentId)
             ->where('mentor_id', $mentorId)
             ->firstOrFail();
 
-        $detail = ReportDetail::where('id', $detailId)
-            ->whereHas('report', function($q) use ($studentId) {
-                $q->where('student_id', $studentId);
-            })
-            ->firstOrFail();
+        if ($detailId == 0 && $subjectId && $criteriaId) {
+            // Phantom Detail: Create the report and detail on the fly
+            $subject = Subject::findOrFail($subjectId);
+            
+            $report = Reports::firstOrCreate(
+                ['student_id' => $studentId, 'subject_id' => $subjectId],
+                [
+                    'class_id'      => $student->class_id,
+                    'level_class'   => $subject->level_class,
+                    'academic_year' => '2024/2025',
+                    'average_value' => 0,
+                    'attendance'    => 0,
+                ]
+            );
+
+            $detail = ReportDetail::firstOrCreate(
+                ['report_id' => $report->report_id, 'criteria_id' => $criteriaId],
+                ['score' => 0, 'description_subject' => '']
+            );
+        } else {
+            $detail = ReportDetail::where('id', $detailId)
+                ->whereHas('report', function($q) use ($studentId) {
+                    $q->where('student_id', $studentId);
+                })
+                ->firstOrFail();
+        }
 
         $detail->update([
             'description_subject' => $description

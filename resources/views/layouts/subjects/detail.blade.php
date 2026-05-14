@@ -45,15 +45,29 @@
                     </thead>
                     <tbody>
                         @forelse ($subject->rubrics as $rubric)
-                            <tr>
+                            <tr class="bg-light">
                                 <td>{{ $loop->iteration }}</td>
-                                <td class="fw-bold">{{ $rubric->rubric_name }}</td>
+                                <td class="fw-bold text-primary">{{ $rubric->rubric_name }}</td>
                                 <td>
-                                    <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center justify-content-center">
                                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px; font-size: 12px;">
                                             {{ strtoupper(substr($rubric->teacher->name ?? 'T', 0, 1)) }}
                                         </div>
                                         <span>{{ $rubric->teacher->name ?? '-' }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="p-0">
+                                    <div class="px-5 py-2 bg-white">
+                                        <ul class="list-group list-group-flush text-start">
+                                            @foreach($rubric->criteria as $criteria)
+                                                <li class="list-group-item d-flex align-items-center py-2 border-0">
+                                                    <i class="fa fa-caret-right text-muted me-2"></i>
+                                                    <span class="small">{{ $criteria->criteria_name }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
                                     </div>
                                 </td>
                             </tr>

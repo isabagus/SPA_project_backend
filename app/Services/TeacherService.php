@@ -19,11 +19,15 @@ class TeacherService
      */
     public function getMySubjects(Teacher $teacher): Collection
     {
-        return Subject::where('teacher_id', $teacher->teacher_id)
-            ->with('rubrics')
-            ->orderBy('level_class')
-            ->orderBy('term')
-            ->get();
+        return Subject::whereHas('rubrics', function ($query) use ($teacher) {
+            $query->where('teacher_id', $teacher->teacher_id);
+        })
+        ->with(['rubrics' => function ($query) use ($teacher) {
+            $query->where('teacher_id', $teacher->teacher_id);
+        }])
+        ->orderBy('level_class')
+        ->orderBy('term')
+        ->get();
     }
 
     /**
@@ -32,7 +36,9 @@ class TeacherService
     public function getStudentsWithScore(Teacher $teacher, int $subjectId): array
     {
         $subject = Subject::where('subject_id', $subjectId)
-            ->where('teacher_id', $teacher->teacher_id)
+            ->whereHas('rubrics', function($q) use ($teacher) {
+                $q->where('teacher_id', $teacher->teacher_id);
+            })
             ->first();
 
         if (!$subject) {
@@ -44,7 +50,7 @@ class TeacherService
             $q->where('teacher_id', $teacher->teacher_id)->where('subject_id', $subjectId);
         })->count();
 
-        $students = Student::where('level_class', $subject->level_class)
+        $students = Student::where('class_id', $subject->class_id)
             ->with(['reports' => function ($query) use ($subjectId) {
                 $query->where('subject_id', $subjectId)->withCount('reportDetails');
             }])

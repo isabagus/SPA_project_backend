@@ -20,29 +20,29 @@ class DatabaseSeeder extends Seeder
             AcademicYearSeeder::class,
             ReligionSeeder::class,
             TermSeeder::class,
-            MentorSeeder::class,   // Mentor dulu karena Class butuh mentor_id
-            ClassSeeder::class,
-            CategorySubjectSeeder::class, // Tambahkan ini agar Subject tidak error FK
-            SubjectSeeder::class,  // Subject butuh level_class & category_subject
+            // MentorSeeder::class,   // Mentor dulu karena Class butuh mentor_id
+            // ClassSeeder::class,
+            // CategorySubjectSeeder::class, // Tambahkan ini agar Subject tidak error FK
+            // SubjectSeeder::class,  // Subject butuh level_class & category_subject
         ]);
 
         // 2. Data Pengguna & Profil (Dummy)
         $this->call([
-            TeacherSeeder::class,
-            StudentSeeder::class,  // Student butuh Class & Mentor
-            ParentSeeder::class,   // Parent butuh Student
+            // TeacherSeeder::class,
+            // StudentSeeder::class,  // Student butuh Class & Mentor
+            // ParentSeeder::class,   // Parent butuh Student
         ]);
 
         // 3. Operasional (Assignment & Score)
         $this->call([
-            RubricAssignmentSeeder::class, // Hubungkan Teacher ke Subject (dummy)
-            ScoreSeeder::class,            // Isi Nilai awal (dummy)
+            // RubricAssignmentSeeder::class, // Hubungkan Teacher ke Subject (dummy)
+            // ScoreSeeder::class,            // Isi Nilai awal (dummy)
         ]);
 
         // 4. Real Data Override (dari CSV asli)
         // Meng-override data dummy dengan data asli dari laporan CSV.
         $this->call([
-            RealDataSeeder::class,
+            // RealDataSeeder::class,
         ]);
 
         // 4. Admin User (Opsional jika belum ada)

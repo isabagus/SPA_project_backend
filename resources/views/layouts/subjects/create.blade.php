@@ -86,7 +86,7 @@
                                         <input type="text" name="rubrics[{{ $rIndex }}][name]" value="{{ $rData['name'] }}" class="form-control" placeholder="Contoh: Reading & Writing" required>
                                     </div>
                                     <div class="col-md-4 form-group">
-                                        <label class="small fw-bold mb-2">Assign to Teacher</label>
+                                        <label class="small fw-bold mb-2">Assign to     </label>
                                         <select name="rubrics[{{ $rIndex }}][teacher_id]" class="form-select" required>
                                             <option value="">Select Teacher</option>
                                             @foreach($teachers as $teacher)

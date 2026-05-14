@@ -50,3 +50,6 @@ Penilaian berjenjang untuk fleksibilitas kurikulum:
 ## 📁 Technical Stack
 - **Backend**: Laravel 11, Sanctum Auth, Eloquent ORM.
 - **Frontend**: Next.js 14 (App Router), TanStack Query, Tailwind CSS, Lucide Icons.
+
+## Language
+- All response and communication must be in **English**.

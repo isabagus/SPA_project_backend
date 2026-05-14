@@ -3,7 +3,12 @@
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Edit Mentor Profile</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Edit Mentor Profile</h4>
+                    <a href="{{ route('admin.mentors.index') }}" class="text-dark text-decoration-none" title="Back to List">
+                        <i class="mdi mdi-arrow-left"></i> Mentors
+                    </a>
+                </div>
                 <p class="card-description"> Update Mentor Data </p>
                 
                 @if ($errors->any())

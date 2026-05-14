@@ -9,8 +9,8 @@
                     <h3 class="fw-bold mb-0">Subject Detail</h3>
                     <p class="text-muted mb-0">Informasi lengkap kriteria penilaian subject</p>
                 </div>
-                <a href="{{ route('admin.subjects.index') }}" class="btn btn-light border">
-                    <i class="fa fa-arrow-left me-1"></i> Kembali
+                <a href="{{ route('admin.subjects.index') }}" class="text-dark text-decoration-none" title="Back to List">
+                    <i class="mdi mdi-arrow-left"></i> Subjects
                 </a>
             </div>
 

@@ -3,7 +3,12 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">List Subjects</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">List Mentors</h4>
+                    <a href="{{ route('admin.dashboard.index') }}" class="text-dark text-decoration-none" title="Go to Dashboard">
+                        <i class="mdi mdi-arrow-left"></i> Dashboard
+                    </a>
+                </div>
                 <p class="card-description"> Add Subject:
                     <a href="{{ route('admin.mentors.create') }}">Form input</a>
                 </p>

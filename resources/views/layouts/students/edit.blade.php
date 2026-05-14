@@ -21,7 +21,7 @@
                     @method('PUT')
                     
                     <div class="row">
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-6 form-group">
                             <label>Academic Year</label>
                             <select class="form-select" name="academic_year" required>
                                 @foreach ($academic_years as $year)
@@ -29,19 +29,11 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-6 form-group">
                             <label>Level Class</label>
                             <select class="form-select" name="level_class" required>
                                 @foreach ($level_classes as $class)
                                     <option value="{{ $class->level_class }}" {{ $data->level_class == $class->level_class ? 'selected' : '' }}>{{ $class->level_class }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4 form-group">
-                            <label>Mentor</label>
-                            <select class="form-select" name="mentor_id" required>
-                                @foreach ($mentors as $mentor)
-                                    <option value="{{ $mentor->mentor_id }}" {{ $data->mentor_id == $mentor->mentor_id ? 'selected' : '' }}>{{ $mentor->name_mentor }}</option>
                                 @endforeach
                             </select>
                         </div>

@@ -17,15 +17,34 @@
                 <form class="forms-sample" method="POST" action="{{ route('admin.teachers.store') }}">
                     @csrf
                     <div class="row mb-3">
-                        <div class="col-md-6 form-group">
+                        <div class="col-md-12 form-group">
                             <label for="user_id">User Akun</label>
-                            <select class="form-select" name="user_id" id="user_id" required>
-                                <option value="">Pilih User</option>
+                            <select class="form-select" name="user_id" id="user_id">
+                                <option value="">-- Buat Akun Baru --</option>
                                 @foreach ($users as $user)
-                                    <option value="{{ $user->user_id }}">{{ $user->username }} ({{ $user->email }})
+                                    <option value="{{ $user->user_id }}" {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
+                                        {{ $user->username }} ({{ $user->email }})
                                     </option>
                                 @endforeach
                             </select>
+                            <small class="text-muted">Pilih akun yang sudah ada atau biarkan kosong untuk membuat akun baru di bawah.</small>
+                        </div>
+                    </div>
+
+                    <div id="new_account_fields">
+                        <div class="row mb-3">
+                            <div class="col-md-4 form-group">
+                                <label for="username">Username Baru</label>
+                                <input type="text" class="form-control" name="username" id="username" placeholder="Username" value="{{ old('username') }}">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="email">Email Baru</label>
+                                <input type="email" class="form-control" name="email" id="email" placeholder="email@example.com" value="{{ old('email') }}">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="password">Password Baru</label>
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Min. 8 Karakter">
+                            </div>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -61,4 +80,25 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function toggleNewAccountFields() {
+                if ($('#user_id').val() === '') {
+                    $('#new_account_fields').show();
+                    $('#username, #email, #password').attr('required', true);
+                } else {
+                    $('#new_account_fields').hide();
+                    $('#username, #email, #password').removeAttr('required');
+                }
+            }
+
+            $('#user_id').on('change', function() {
+                toggleNewAccountFields();
+            });
+
+            // Run on load
+            toggleNewAccountFields();
+        });
+    </script>
 @endsection

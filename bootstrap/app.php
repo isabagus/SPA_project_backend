@@ -22,7 +22,16 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
-        $middleware->redirectGuestsTo(fn() => route('admin.login'));
+        $middleware->redirectGuestsTo('/admin/login');
+        $middleware->redirectUsersTo(function () {
+            if (auth()->check() && auth()->user()->role !== 'admin') {
+                auth()->logout();
+                session()->invalidate();
+                session()->regenerateToken();
+                return route('admin.login');
+            }
+            return route('admin.dashboard.index');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

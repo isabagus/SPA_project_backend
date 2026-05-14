@@ -16,6 +16,10 @@ Route::get('/', function () {
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard.index');
+    });
+
     // Auth Routes
     Route::middleware('guest')->group(function () {
         Route::get('login', [AuthController::class, 'index'])->name('login');
@@ -23,22 +27,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     // Protected Admin Routes
-    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::middleware(['auth'])->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-        Route::resource('users', UserController::class);
-        Route::resource('students', StudentController::class);
-        Route::get('subjects/{id}/assign-teachers', [SubjectController::class, 'assignTeachers'])->name('subjects.assignTeachers');
-        Route::put('subjects/{id}/assign-teachers', [SubjectController::class, 'updateTeachers'])->name('subjects.updateTeachers');
-        Route::resource('subjects', SubjectController::class);
-        Route::resource('teachers', TeacherController::class);
-        
-        Route::get('mentors/set-class', [MentorController::class, 'showSetClassView'])->name('mentors.setClass');
-        Route::put('mentors/set-class/set', [MentorController::class, 'updateSetClass'])->name('mentors.updateSetClass');
-        Route::resource('mentors', MentorController::class);
-        Route::resource('parents', ParentController::class);
-        Route::resource('reports', ReportController::class);
+        Route::middleware(['role:admin'])->group(function () {
+            Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+            Route::resource('users', UserController::class);
+            Route::resource('students', StudentController::class);
+            Route::get('subjects/{id}/assign-teachers', [SubjectController::class, 'assignTeachers'])->name('subjects.assignTeachers');
+            Route::put('subjects/{id}/assign-teachers', [SubjectController::class, 'updateTeachers'])->name('subjects.updateTeachers');
+            Route::resource('subjects', SubjectController::class);
+            Route::resource('teachers', TeacherController::class);
+            
+            Route::get('mentors/set-class', [MentorController::class, 'showSetClassView'])->name('mentors.setClass');
+            Route::put('mentors/set-class/set', [MentorController::class, 'updateSetClass'])->name('mentors.updateSetClass');
+            Route::resource('mentors', MentorController::class);
+            Route::resource('parents', ParentController::class);
+            Route::resource('reports', ReportController::class);
+        });
     });
 });
 

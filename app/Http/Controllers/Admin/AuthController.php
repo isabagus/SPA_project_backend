@@ -31,7 +31,18 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('admin.dashboard.index'));
+            // Check role admin
+            if (Auth::user()->role !== 'admin') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                
+                throw ValidationException::withMessages([
+                    'email' => 'You do not have permission to access the admin dashboard.',
+                ]);
+            }
+
+            return redirect()->route('admin.dashboard.index');
         }
 
         // 5. Jika Login Gagal

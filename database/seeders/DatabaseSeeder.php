@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             ReligionSeeder::class,
             TermSeeder::class,
             // MentorSeeder::class,   // Mentor dulu karena Class butuh mentor_id
-            // ClassSeeder::class,
+            ClassSeeder::class,
             // CategorySubjectSeeder::class, // Tambahkan ini agar Subject tidak error FK
             // SubjectSeeder::class,  // Subject butuh level_class & category_subject
         ]);

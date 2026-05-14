@@ -122,28 +122,24 @@ class MentorController extends Controller
     {
         try {
             $validated = $request->validate([
-                'class_id' => 'required|string|max:255',
-                'mentor_id' => 'required|string|max:255',
+                'class_id' => 'required|integer|exists:classes,class_id',
+                'mentor_id' => 'required|integer|exists:mentors,mentor_id',
             ]);
 
-            // dd($validated);
+            $mentorId = $validated['mentor_id'];
+            $classId = $validated['class_id'];
 
-            $currentMentor = Mentor::with('classes')->where('mentor_id', $validated['mentor_id'])->first();
+            // 1. Reset class_id yang sebelumnya diampu oleh mentor ini (jika sistem 1 mentor 1 kelas)
+            LevelClass::where('mentor_id', $mentorId)->update(['mentor_id' => null]);
 
-            // dd($currentMentor);
-            foreach ($currentMentor->classes as $key => $class) {
-                $class->mentor_id = null;
-                $class->save();
-            }
-
-            $class = LevelClass::findOrFail($validated['class_id']);
-            $class->mentor_id = null;
-            $class->mentor_id = $validated['mentor_id'];
+            // 2. Set mentor baru ke class yang dipilih
+            $class = LevelClass::findOrFail($classId);
+            $class->mentor_id = $mentorId;
             $class->save();
 
-            return redirect()->route('admin.mentors.index')->with('success', 'Mentor Set Successfully');
+            return redirect()->route('admin.mentors.index')->with('success', 'Mentor assigned to class successfully.');
         } catch (Throwable $th) {
-            return redirect()->route('admin.mentors.index')->with('error', $th->getMessage());
+            return redirect()->route('admin.mentors.index')->with('error', 'Error: ' . $th->getMessage());
         }
     }
 

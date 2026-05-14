@@ -26,7 +26,7 @@
                         <select name="mentor_id" class="form-control" id="mentor_id" required>
                             <option value="">-- Select Mentor --</option>
                             @foreach ($mentors as $mentor)
-                                <option value="{{ $mentor->mentor_id }}" {{ old('mentor_id') == $mentor->mentor_id ? 'selected' : '' }}>
+                                <option value="{{ $mentor->mentor_id }}" {{ (old('mentor_id') ?? $mentor->mentor_id) == $mentor->mentor_id ? 'selected' : '' }}>
                                     {{ $mentor->name_mentor }}
                                 </option>
                             @endforeach
@@ -38,7 +38,7 @@
                         <select name="class_id" class="form-control" id="class_id" required>
                             <option value="">-- Select Class --</option>
                             @foreach ($classes as $class)
-                                <option value="{{ $class->class_id }}" {{ old('class_id') == $class->class_id ? 'selected' : '' }}>
+                                <option value="{{ $class->class_id }}" {{ (old('class_id') ?? '') == $class->class_id ? 'selected' : '' }}>
                                     {{ $class->level_class }}
                                 </option>
                             @endforeach

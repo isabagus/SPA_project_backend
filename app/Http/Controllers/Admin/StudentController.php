@@ -52,6 +52,7 @@ class StudentController extends Controller
             'academic_year.*' => 'required|string|exists:academic_years,academic_year',
             'level_class.*'   => 'required|string|exists:classes,level_class',
             'religion_name.*' => 'required|string|exists:religions,religion_name',
+            'nis.*'           => 'required|string|max:20|unique:students,nis',
             'name_student.*'  => 'required|string|max:100',
             'gender.*'        => 'required|string|max:15',
             'address.*'       => 'required|string|max:255',
@@ -63,12 +64,19 @@ class StudentController extends Controller
             foreach ($request->name_student as $index => $name) {
                 $class = LevelClass::where('level_class', $request->level_class[$index])->firstOrFail();
 
+                // Validasi: Pastikan kelas sudah memiliki mentor (karena kolom mentor_id di DB adalah NOT NULL)
+                if (is_null($class->mentor_id)) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', "Gagal: Kelas {$class->level_class} belum memiliki Mentor. Silakan assign Mentor ke kelas tersebut melalui menu Kelas terlebih dahulu.")->withInput();
+                }
+
                 Student::create([
                     'academic_year' => $request->academic_year[$index],
                     'class_id'      => $class->class_id,
                     'level_class'   => $class->level_class,
                     'religion_name' => $request->religion_name[$index],
                     'mentor_id'     => $class->mentor_id,
+                    'nis'           => $request->nis[$index],
                     'name_student'  => $name,
                     'gender'        => $request->gender[$index],
                     'address'       => $request->address[$index],
@@ -100,6 +108,7 @@ class StudentController extends Controller
             'academic_year' => 'required|string|exists:academic_years,academic_year',
             'level_class'   => 'required|string|exists:classes,level_class',
             'religion_name' => 'required|string|exists:religions,religion_name',
+            'nis'           => 'required|string|max:20|unique:students,nis,' . $id . ',student_id',
             'name_student'  => 'required|string|max:100',
             'gender'        => 'required|string|max:15',
             'address'       => 'required|string|max:255',
@@ -110,12 +119,18 @@ class StudentController extends Controller
             $student = Student::findOrFail($id);
             $class = LevelClass::where('level_class', $request->level_class)->firstOrFail();
 
+            // Validasi: Pastikan kelas sudah memiliki mentor
+            if (is_null($class->mentor_id)) {
+                return redirect()->back()->with('error', "Gagal: Kelas {$class->level_class} belum memiliki Mentor.")->withInput();
+            }
+
             $student->update([
                 'academic_year' => $request->academic_year,
                 'class_id'      => $class->class_id,
                 'level_class'   => $class->level_class,
                 'religion_name' => $request->religion_name,
                 'mentor_id'     => $class->mentor_id,
+                'nis'           => $request->nis,
                 'name_student'  => $request->name_student,
                 'gender'        => $request->gender,
                 'address'       => $request->address,

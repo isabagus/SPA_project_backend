@@ -40,18 +40,22 @@
                     </div>
                     
                     <div class="row">
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-3 form-group">
+                            <label>NIS</label>
+                            <input type="text" class="form-control" name="nis" value="{{ $data->nis }}" required>
+                        </div>
+                        <div class="col-md-3 form-group">
                             <label>Name Student</label>
                             <input type="text" class="form-control" name="name_student" value="{{ $data->name_student }}" required>
                         </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-3 form-group">
                             <label>Gender</label>
                             <select class="form-select" name="gender" required>
                                 <option value="male" {{ $data->gender == 'male' ? 'selected' : '' }}>Male</option>
                                 <option value="female" {{ $data->gender == 'female' ? 'selected' : '' }}>Female</option>
                             </select>
                         </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-3 form-group">
                             <label>Religion</label>
                             <select class="form-select" name="religion_name" required>
                                 @foreach ($religions as $religion)

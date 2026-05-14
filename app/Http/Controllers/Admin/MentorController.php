@@ -20,7 +20,7 @@ class MentorController extends Controller
         $mentors = Mentor::with(['user', 'classes'])
             ->latest()
             ->when($keyword, function ($query, $keyword) {
-                return $query->where('name', 'like', "%{$keyword}%")
+                return $query->where('name_mentor', 'like', "%{$keyword}%")
                     ->orWhere('nip', 'like', "%{$keyword}%")
                     ->orWhere('phone_number', 'like', "%{$keyword}%")
                     // Search Tabel Master (User)

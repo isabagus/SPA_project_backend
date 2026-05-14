@@ -18,14 +18,7 @@ class ClassSeeder extends Seeder
             ['level' => 'Year 2', 'section' => '-'],
         ];
         
-        $mentors = Mentor::all();
-
-        if ($mentors->isEmpty()) {
-            return;
-        }
-
         foreach ($classes as $idx => $classData) {
-            $mentor = $mentors[$idx % $mentors->count()];
             $levelName = $classData['level'];
             $sectionName = $classData['section'];
             
@@ -37,7 +30,7 @@ class ClassSeeder extends Seeder
                 [
                     'level_name'   => $levelName,
                     'section_name' => $sectionName,
-                    'mentor_id'    => $mentor->mentor_id
+                    'mentor_id'    => null, // Diisi manual oleh Admin nanti
                 ]
             );
         }

@@ -36,7 +36,7 @@
                             @forelse ($mentors as $mentor)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $mentor->name }}</td>
+                                    <td>{{ $mentor->name_mentor }}</td>
                                     <td>{{ $mentor->user->email ?? '-' }}</td>
                                     <td>{{ $mentor->phone_number }}</td>
                                     <td>

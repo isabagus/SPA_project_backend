@@ -15,6 +15,7 @@ class Student extends Model
         'level_class',
         'religion_name',
         'mentor_id',
+        'nis',
         'name_student',
         'gender',
         'address',

@@ -34,7 +34,7 @@ class MentorService
             return [];
         }
 
-        $affectiveSubject = Subject::where('category_subject', 'Affective Domain')
+        $affectiveSubject = Subject::whereIn('category_subject', ['Affective Domain', 'Affective Domain RS & PKN'])
             ->where('level_class', $levelClass)
             ->first();
 
@@ -114,7 +114,7 @@ class MentorService
     {
         $student = Student::findOrFail($studentId);
 
-        $affectiveSubject = Subject::where('category_subject', 'Affective Domain')
+        $affectiveSubject = Subject::whereIn('category_subject', ['Affective Domain', 'Affective Domain RS & PKN'])
             ->where('level_class', $levelClass)
             ->first();
 
@@ -169,7 +169,7 @@ class MentorService
      */
     public function submitEvaluation(Mentor $mentor, int $studentId, string $levelClass, array $data)
     {
-        $affectiveSubject = Subject::where('category_subject', 'Affective Domain')
+        $affectiveSubject = Subject::whereIn('category_subject', ['Affective Domain', 'Affective Domain RS & PKN'])
             ->where('level_class', $levelClass)
             ->first();
 

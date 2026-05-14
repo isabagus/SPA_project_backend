@@ -23,7 +23,9 @@ class CategorySubjectSeeder extends Seeder
             'Religion (Christianity)',
             'Religion (Catholicism)',
             'Religion (Islam)',
-            'Affective Domain'
+            'Affective Domain',
+            'Affective Domain RS & PKN',
+            'Religious Studies / Agama'
         ];
 
         foreach ($categories as $category) {

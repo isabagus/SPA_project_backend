@@ -50,8 +50,23 @@ class TeacherService
             $q->where('teacher_id', $teacher->teacher_id)->where('subject_id', $subjectId);
         })->count();
 
-        $students = Student::where('class_id', $subject->class_id)
-            ->with(['reports' => function ($query) use ($subjectId) {
+        $studentsQuery = Student::where('class_id', $subject->class_id);
+
+        if (str_starts_with($subject->category_subject, 'Religion')) {
+            preg_match('/\((.*?)\)/', $subject->category_subject, $matches);
+            $religionKeyword = $matches[1] ?? '';
+            
+            if ($religionKeyword) {
+                // Mapping sederhana untuk menangani variasi nama (Christian vs Christianity, dll)
+                $search = $religionKeyword;
+                if (strtolower($religionKeyword) === 'christianity') $search = 'Christian';
+                if (strtolower($religionKeyword) === 'catholicism') $search = 'Catholic';
+
+                $studentsQuery->where('religion_name', 'LIKE', '%' . $search . '%');
+            }
+        }
+
+        $students = $studentsQuery->with(['reports' => function ($query) use ($subjectId) {
                 $query->where('subject_id', $subjectId)->withCount('reportDetails');
             }])
             ->orderBy('name_student')
@@ -110,8 +125,8 @@ class TeacherService
             }
         }
 
-        // 1. Tentukan subjek-subjek mana saja yang masuk dalam grup kolaborasi
-        $targetSubjectIds = [$subjectId]; // Default to current subject
+        // 1. Tentukan subjek-subjek mana saja yang masuk dalam grup kolaborasi (PKN + Semua Agama)
+        $targetSubjectIds = [$subjectId];
         
         if ($subject->report_group_key) {
             $groupSubjectIds = Subject::where('report_group_key', $subject->report_group_key)
@@ -131,27 +146,41 @@ class TeacherService
             ->first();
 
         // 2. Ambil semua rubrik dari grup tersebut
-        // Urutkan agar kriteria milik saya (teacher_id login) muncul paling atas
         $allGroupRubrics = RubricCategory::with(['criteria', 'subject'])
             ->whereIn('subject_id', $targetSubjectIds)
             ->get();
 
-        // 3. Filter Rubrik: Hanya tampilkan PKN dan Agama yang relevan dengan siswa
-        $studentReligion = strtolower($student->religion_name);
+        // 3. Filter Rubrik: Pertahankan PKN, tapi sembunyikan Agama lain yang tidak relevan dengan siswa
+        $studentReligion = $student->religion_name ? trim(strtolower($student->religion_name)) : '';
         
         $filteredRubrics = $allGroupRubrics->filter(function($rubric) use ($studentReligion) {
             $catName = strtolower($rubric->subject->category_subject);
+            $rubName = strtolower($rubric->rubric_name);
             
-            // Jika ini kategori Agama, cek apakah cocok dengan agama siswa
-            if (str_contains($catName, 'religion')) {
-                return str_contains($catName, $studentReligion);
+            $isReligionRubric = str_contains($catName, 'religion') || str_contains($catName, 'agama') || 
+                               str_contains($rubName, 'religion') || str_contains($rubName, 'agama');
+
+            if ($isReligionRubric) {
+                if (empty($studentReligion)) return false;
+
+                // Cek kesesuaian agama secara lebih spesifik untuk menghindari salah tangkap (Christian vs Catholic)
+                // Kita cek apakah kata kunci agama ada di dalam nama kategori
+                $religions = ['islam', 'christian', 'catholic', 'hindu', 'buddha', 'konghucu'];
+                foreach ($religions as $rel) {
+                    // Jika rubrik ini mengandung kata 'catholic' tapi siswa 'christian', maka reject
+                    if (str_contains($catName, $rel) || str_contains($rubName, $rel)) {
+                        return str_contains($studentReligion, $rel) || str_contains($rel, $studentReligion);
+                    }
+                }
+                
+                // Fallback: jika tidak ada keyword spesifik, gunakan contains biasa
+                return str_contains($catName, $studentReligion) || str_contains($rubName, $studentReligion);
             }
             
-            // Selain agama (seperti PKN), tampilkan semua
+            // Selain agama (seperti PKN), tampilkan
             return true;
         });
 
-        // Ambil details dari SEMUA subjek dalam grup untuk ditampilkan
         $allReportIds = Reports::where('student_id', $studentId)
             ->whereIn('subject_id', $targetSubjectIds)
             ->pluck('report_id');
@@ -161,11 +190,11 @@ class TeacherService
         $mappedRubrics = $filteredRubrics->map(fn($rubric) => [
             'rubric_id'   => $rubric->rubric_id,
             'rubric_name' => $rubric->rubric_name,
-            'is_mine'     => $isReadOnlyMode ? false : ($rubric->teacher_id === $teacher->teacher_id),
+            'is_mine'     => ($rubric->teacher_id == $teacher->teacher_id),
             'criteria'    => $rubric->criteria->map(fn($c) => [
                 'criteria_id'         => $c->criteria_id,
                 'criteria_name'       => $c->criteria_name,
-                'is_mine'             => $isReadOnlyMode ? false : ($rubric->teacher_id === $teacher->teacher_id),
+                'is_mine'             => ($rubric->teacher_id == $teacher->teacher_id),
                 'current_score'       => $details->has($c->criteria_id) ? (float) $details->get($c->criteria_id)->score : null,
                 'description_subject' => $details->has($c->criteria_id) ? $details->get($c->criteria_id)->description_subject : ($c->default_description ?? ''),
             ])
@@ -197,13 +226,24 @@ class TeacherService
 
         // --- ENFORCE SECURITY: VALIDASI AGAMA ---
         if (str_starts_with($subject->category_subject, 'Religion')) {
-            if (!str_contains(strtolower($subject->category_subject), strtolower($student->religion_name))) {
+            $studentRel = $student->religion_name ? strtolower($student->religion_name) : '';
+            if (!str_contains(strtolower($subject->category_subject), $studentRel)) {
                 throw new \Exception("Unauthorized religious assessment.");
             }
         }
 
-        $validCriteriaIds = RubricCriteria::whereHas('category', function($q) use ($teacher, $subjectId) {
-            $q->where('teacher_id', $teacher->teacher_id)->where('subject_id', $subjectId);
+        // 1. Tentukan target subjects dalam grup kolaborasi
+        $targetSubjectIds = [$subjectId];
+        if ($subject->report_group_key) {
+            $targetSubjectIds = Subject::where('report_group_key', $subject->report_group_key)
+                ->where('level_class', $subject->level_class)
+                ->where('term', $subject->term)
+                ->pluck('subject_id')
+                ->toArray();
+        }
+
+        $validCriteriaIds = RubricCriteria::whereHas('category', function($q) use ($teacher, $targetSubjectIds) {
+            $q->where('teacher_id', $teacher->teacher_id)->whereIn('subject_id', $targetSubjectIds);
         })->pluck('criteria_id');
 
         if ($validCriteriaIds->isEmpty()) {

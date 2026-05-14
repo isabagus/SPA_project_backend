@@ -45,16 +45,45 @@ class MentorController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,user_id',
+        $rules = [
             'name_mentor' => 'required|string|max:255',
             'nip' => 'nullable|string|max:255',
             'phone_number' => 'nullable|string|max:20',
-        ]);
+        ];
 
-        Mentor::create($request->all());
+        if (!$request->user_id) {
+            $rules['username'] = 'required|string|max:255|unique:users,username';
+            $rules['email'] = 'required|string|email|max:255|unique:users,email';
+            $rules['password'] = 'required|string|min:8';
+        } else {
+            $rules['user_id'] = 'required|exists:users,user_id';
+        }
 
-        return redirect()->route('admin.mentors.index')->with('success', 'Mentor Created Successfully');
+        $request->validate($rules);
+
+        \DB::transaction(function () use ($request) {
+            $userId = $request->user_id;
+
+            if (!$userId) {
+                $user = User::create([
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'password' => \Hash::make($request->password),
+                    'role' => 'mentor',
+                ]);
+                $userId = $user->user_id;
+            }
+
+            Mentor::create([
+                'user_id' => $userId,
+                'name' => $request->name_mentor, // Mentor model uses 'name' or 'name_mentor'? Let's check model.
+                'name_mentor' => $request->name_mentor,
+                'nip' => $request->nip,
+                'phone_number' => $request->phone_number,
+            ]);
+        });
+
+        return redirect()->route('admin.mentors.index')->with('success', 'Mentor Created Successfully with user account.');
     }
 
     public function edit($id)

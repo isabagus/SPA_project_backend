@@ -28,15 +28,42 @@ class ParentController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,user_id|unique:parents,user_id',
+        $rules = [
             'student_id' => 'required|exists:students,student_id',
             'name_parent' => 'required|string|max:150',
-        ]);
+        ];
 
-        Parents::create($data);
+        if (!$request->user_id) {
+            $rules['username'] = 'required|string|max:255|unique:users,username';
+            $rules['email'] = 'required|string|email|max:255|unique:users,email';
+            $rules['password'] = 'required|string|min:8';
+        } else {
+            $rules['user_id'] = 'required|exists:users,user_id|unique:parents,user_id';
+        }
 
-        return redirect()->route('admin.parents.index')->with('success', 'Parent profile created successfully.');
+        $request->validate($rules);
+
+        \DB::transaction(function () use ($request) {
+            $userId = $request->user_id;
+
+            if (!$userId) {
+                $user = User::create([
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'password' => \Hash::make($request->password),
+                    'role' => 'parent',
+                ]);
+                $userId = $user->user_id;
+            }
+
+            Parents::create([
+                'user_id' => $userId,
+                'student_id' => $request->student_id,
+                'name_parent' => $request->name_parent,
+            ]);
+        });
+
+        return redirect()->route('admin.parents.index')->with('success', 'Parent profile created successfully with user account.');
     }
 
     public function edit($id)

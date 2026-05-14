@@ -20,14 +20,32 @@
                     @csrf
                     <div class="form-group">
                         <label for="user_id">Select User Account</label>
-                        <select name="user_id" class="form-control" id="user_id" required>
-                            <option value="">-- Select User --</option>
+                        <select name="user_id" class="form-control" id="user_id">
+                            <option value="">-- Create New Account --</option>
                             @foreach ($usersMentor as $user)
                                 <option value="{{ $user->user_id }}" {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
                                     {{ $user->username }} ({{ $user->email }})
                                 </option>
                             @endforeach
                         </select>
+                        <small class="text-muted">Choose existing or leave empty to create new below.</small>
+                    </div>
+
+                    <div id="new_account_fields">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="username">Username Baru</label>
+                                <input type="text" name="username" class="form-control" id="username" placeholder="Username" value="{{ old('username') }}">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="email">Email Baru</label>
+                                <input type="email" name="email" class="form-control" id="email" placeholder="email@example.com" value="{{ old('email') }}">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="password">Password Baru</label>
+                                <input type="password" name="password" class="form-control" id="password" placeholder="Min. 8 Chars">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="name_mentor">Name Mentor</label>
@@ -46,8 +64,25 @@
                     <a href="{{ route('admin.mentors.index') }}" class="btn btn-light">Cancel</a>
                 </form>
 
-                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+                        function toggleNewAccountFields() {
+                            if ($('#user_id').val() === '') {
+                                $('#new_account_fields').show();
+                                $('#username, #email, #password').attr('required', true);
+                            } else {
+                                $('#new_account_fields').hide();
+                                $('#username, #email, #password').removeAttr('required');
+                            }
+                        }
+
+                        $('#user_id').on('change', function() {
+                            toggleNewAccountFields();
+                        });
+
+                        toggleNewAccountFields();
+                    });
+                </script>
             </div>
         </div>
     </div>

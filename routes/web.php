@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -11,13 +12,12 @@ use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\ParentController;
 
 Route::get('/', function () {
-    // return ['Laravel' => app()->version()];
     return view('layouts.dashboard.index');
 });
 
-Route::get('/template', function () {
-    return view('welcome');
-});
+Route::get('admin/login', [AuthController::class, 'index'])->name('admin.login');
+Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login');
+Route::post('admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('dashboard', DashboardController::class);
@@ -30,7 +30,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('mentors', MentorController::class);
     Route::resource('parents', ParentController::class);
     Route::resource('reports', ReportController::class);
-
+    
 });
 
 require __DIR__ . '/auth.php';
+
+// Route::get('/template', function () {
+//     return view('welcome');
+// });

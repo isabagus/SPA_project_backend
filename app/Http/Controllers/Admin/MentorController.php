@@ -61,7 +61,8 @@ class MentorController extends Controller
 
         $request->validate($rules);
 
-        \DB::transaction(function () use ($request) {
+        \DB::beginTransaction();
+        try {
             $userId = $request->user_id;
 
             if (!$userId) {
@@ -70,20 +71,24 @@ class MentorController extends Controller
                     'email' => $request->email,
                     'password' => \Hash::make($request->password),
                     'role' => 'mentor',
+                    'phone_number' => $request->phone_number,
                 ]);
                 $userId = $user->user_id;
             }
 
             Mentor::create([
                 'user_id' => $userId,
-                'name' => $request->name_mentor, // Mentor model uses 'name' or 'name_mentor'? Let's check model.
                 'name_mentor' => $request->name_mentor,
                 'nip' => $request->nip,
                 'phone_number' => $request->phone_number,
             ]);
-        });
 
-        return redirect()->route('admin.mentors.index')->with('success', 'Mentor Created Successfully with user account.');
+            \DB::commit();
+            return redirect()->route('admin.mentors.index')->with('success', 'Mentor Created Successfully with user account.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal membuat mentor: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function edit($id)
@@ -161,8 +166,19 @@ class MentorController extends Controller
     public function destroy($id)
     {
         $mentor = Mentor::findOrFail($id);
-        $mentor->delete();
+        
+        \DB::transaction(function () use ($mentor) {
+            // Unassign mentor from classes first to avoid foreign key constraint error
+            \App\Models\LevelClass::where('mentor_id', $mentor->mentor_id)
+                                 ->update(['mentor_id' => null]);
 
-        return redirect()->route('admin.mentors.index')->with('success', 'Mentor Deleted Successfully');
+            $user = $mentor->user;
+            $mentor->delete();
+            if ($user) {
+                $user->delete();
+            }
+        });
+
+        return redirect()->route('admin.mentors.index')->with('success', 'Mentor and associated User account deleted successfully.');
     }
 }

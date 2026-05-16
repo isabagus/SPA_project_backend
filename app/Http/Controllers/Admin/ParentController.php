@@ -144,8 +144,15 @@ class ParentController extends Controller
     public function destroy($id)
     {
         $parent = Parents::findOrFail($id);
-        $parent->delete();
+        
+        \DB::transaction(function () use ($parent) {
+            $user = $parent->user;
+            $parent->delete();
+            if ($user) {
+                $user->delete();
+            }
+        });
 
-        return redirect()->route('admin.parents.index')->with('success', 'Parent profile deleted successfully.');
+        return redirect()->route('admin.parents.index')->with('success', 'Parent profile and associated User account deleted successfully.');
     }
 }

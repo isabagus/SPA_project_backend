@@ -62,6 +62,7 @@ class TeacherController extends Controller
                     'email' => $request->email,
                     'password' => \Hash::make($request->password),
                     'role' => 'teacher',
+                    'phone_number' => $request->phone_number,
                 ]);
                 $userId = $user->user_id;
             }
@@ -103,8 +104,19 @@ class TeacherController extends Controller
     public function destroy(string $id)
     {
         $teacher = Teacher::findOrFail($id);
-        $teacher->delete();
+        
+        \DB::transaction(function () use ($teacher) {
+            // Unassign teacher from subjects first to avoid foreign key constraint error
+            \App\Models\Subject::where('teacher_id', $teacher->teacher_id)
+                               ->update(['teacher_id' => null]);
 
-        return redirect()->route('admin.teachers.index')->with('success', 'Teacher deleted successfully');
+            $user = $teacher->user;
+            $teacher->delete();
+            if ($user) {
+                $user->delete();
+            }
+        });
+
+        return redirect()->route('admin.teachers.index')->with('success', 'Teacher and associated User account deleted successfully.');
     }
 }

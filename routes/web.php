@@ -43,7 +43,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('mentors/set-class/set', [MentorController::class, 'updateSetClass'])->name('mentors.updateSetClass');
             Route::resource('mentors', MentorController::class);
             Route::resource('parents', ParentController::class);
-            Route::resource('reports', ReportController::class);
+            Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('reports/students/{class_id}/{academic_year}', [ReportController::class, 'listStudents'])->name('reports.students')->where('academic_year', '.*');
+            Route::get('reports/detail/{id}', [ReportController::class, 'show'])->name('reports.show');
+            Route::get('reports/subject/{id}', [ReportController::class, 'subjectDetail'])->name('reports.subject_detail');
+            Route::delete('reports/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
         });
     });
 });

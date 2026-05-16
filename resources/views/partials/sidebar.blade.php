@@ -16,8 +16,6 @@
             </a>
             <div class="collapse" id="form-elements">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.create')}}">Generate Report</a>
-                    </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.index')}}">List Report</a>
                     </li>
                 </ul>

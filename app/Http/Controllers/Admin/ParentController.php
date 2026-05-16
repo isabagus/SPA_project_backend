@@ -25,7 +25,8 @@ class ParentController extends Controller
     public function create()
     {
         $usersParent = User::where('role', 'parent')->doesntHave('parent')->get();
-        $students = Student::all();
+        // Only show students who don't have a parent yet
+        $students = Student::whereDoesntHave('parent')->get();
         $academic_years = AcademicYear::all();
         $mentors = Mentor::all();
         $level_classes = LevelClass::all();
@@ -60,7 +61,8 @@ class ParentController extends Controller
             $rules['class_id'] = 'required|exists:classes,class_id';
             $rules['religion_name'] = 'required|exists:religions,religion_name';
         } else {
-            $rules['student_id'] = 'required|exists:students,student_id';
+            // Fix: Add unique validation for existing student selection
+            $rules['student_id'] = 'required|exists:students,student_id|unique:parents,student_id';
         }
 
         $request->validate($rules);

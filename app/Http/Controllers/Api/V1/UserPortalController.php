@@ -156,6 +156,8 @@ class UserPortalController extends Controller
                 break;
         }
 
+        $latestYear = \App\Models\AcademicYear::orderBy('academic_year', 'desc')->first()?->academic_year ?? '2024/2025';
+
         return response()->json([
             'success' => true,
             'user' => [
@@ -164,6 +166,7 @@ class UserPortalController extends Controller
                 'display_name' => $displayName,
                 'email' => $user->email,
                 'role' => $user->role,
+                'academic_year' => $latestYear,
             ],
             'permissions' => $permissions
         ]);

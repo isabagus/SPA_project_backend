@@ -10,6 +10,7 @@ use App\Http\Resources\V1\StudentResource;
 use App\Models\ReportDetail;
 use App\Models\Subject;
 use App\Models\Student;
+use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 
 class UserPortalController extends Controller
@@ -156,7 +157,7 @@ class UserPortalController extends Controller
                 break;
         }
 
-        $latestYear = \App\Models\AcademicYear::orderBy('academic_year', 'desc')->first()?->academic_year ?? '2024/2025';
+        $latestYear = AcademicYear::orderBy('academic_year', 'desc')->first()?->academic_year ?? '2024/2025';
 
         return response()->json([
             'success' => true,

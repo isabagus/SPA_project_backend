@@ -33,8 +33,8 @@ class ComprehensiveAppSeeder extends Seeder
 
         $this->command->info('Memulai seeding data komprehensif...');
 
-        // 0. Disable Foreign Key Checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // 0. Disable Foreign Key Checks (PostgreSQL equivalent)
+        DB::statement('SET session_replication_role = replica;');
         
         // Bersihkan tabel agar jumlah data sesuai dengan config $count
         ReportDetail::truncate(); 
@@ -195,7 +195,7 @@ class ComprehensiveAppSeeder extends Seeder
             }
         }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        DB::statement('SET session_replication_role = DEFAULT;');
         $this->command->info('Seeding selesai! Silakan gunakan akun parent1@gmail.com s/d parent25@gmail.com.');
     }
 }

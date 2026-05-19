@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::table('details_report', function (Blueprint $table) {
             // Tambahkan criteria_id sebagai FK baru
-            $table->foreignId('criteria_id')->after('rubric_id')->nullable()->constrained('rubric_criteria', 'criteria_id')->onDelete('cascade');
+            $table->foreignId('criteria_id')->nullable()->constrained('rubric_criteria', 'criteria_id')->onDelete('cascade');
             
             // Jadikan rubric_id nullable karena penilaian sekarang akan fokus ke level criteria
-            $table->foreignId('rubric_id')->nullable()->change();
+            $table->bigInteger('rubric_id')->nullable()->change();
         });
     }
 

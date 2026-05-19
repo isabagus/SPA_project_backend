@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('subjects', function (Blueprint $table) {
-            $table->unsignedBigInteger('teacher_id')->nullable()->change();
+            // PostgreSQL tidak memiliki unsigned, gunakan bigInteger biasa
+            $table->bigInteger('teacher_id')->nullable()->change();
         });
 
         Schema::table('rubric_categories', function (Blueprint $table) {
-            $table->unsignedBigInteger('teacher_id')->nullable()->change();
+            $table->bigInteger('teacher_id')->nullable()->change();
         });
     }
 
@@ -26,11 +27,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('subjects', function (Blueprint $table) {
-            $table->unsignedBigInteger('teacher_id')->nullable(false)->change();
+            $table->bigInteger('teacher_id')->nullable(false)->change();
         });
 
         Schema::table('rubric_categories', function (Blueprint $table) {
-            $table->unsignedBigInteger('teacher_id')->nullable(false)->change();
+            $table->bigInteger('teacher_id')->nullable(false)->change();
         });
     }
 };

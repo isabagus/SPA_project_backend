@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('details_report', function (Blueprint $table) {
-            // Menambahkan auto-increment ID sebagai primary key di awal tabel
-            $table->id()->first();
+            // PostgreSQL tidak mendukung ->first(), kolom akan ditambahkan di akhir tabel
+            $table->id();
         });
     }
 

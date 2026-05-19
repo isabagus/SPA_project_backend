@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('subjects', function (Blueprint $table) {
-            $table->string('report_group_key')->nullable()->after('term')->index()->comment('Grup mapel untuk collaborative assessment (misal: RS_PKN)');
+            $table->string('report_group_key')->nullable()->index();
         });
     }
 

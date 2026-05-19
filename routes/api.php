@@ -32,7 +32,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/auth/check', [UserPortalController::class, 'checkAuth']);
 
 
-        Route::middleware('role:mentor')->prefix('mentor')->group(function (){
+        Route::middleware('role:mentor')->prefix('mentor')->middleware('throttle:15,1')->group(function (){
             Route::get('/classes', [MentorController::class, 'getClasses']);
             Route::get('/students', [MentorController::class, 'getStudents']);
             Route::get('/students/{studentId}/evaluation-form', [MentorController::class, 'getEvaluationForm']);
@@ -42,7 +42,7 @@ Route::prefix('v1')->group(function () {
             Route::put('/students/{studentId}/academic-report/detail/{detailId}', [MentorController::class, 'updateReportDetail']);
         });
 
-        Route::middleware('role:teacher')->prefix('teacher')->group(function () {
+        Route::middleware('role:teacher')->prefix('teacher')->middleware('throttle:15,1')->group(function () {
             Route::get('/profile', [TeacherProfileController::class, 'show']);
 
             Route::get('/subjects', [TeacherSubjectController::class, 'index']);
@@ -63,7 +63,7 @@ Route::prefix('v1')->group(function () {
             Route::delete('/criteria/{criteriaId}', [TeacherRubricController::class, 'destroyCriteria']);
         });
 
-        Route::middleware('role:parent')->prefix('parent')->group(function () {
+        Route::middleware('role:parent')->prefix('parent')->middleware('throttle:15,1')->group(function () {
             Route::get('/children', [ParentStudentController::class, 'index']);
             Route::get('/children/{studentId}/reports', [ParentReportController::class, 'index']);
             Route::get('/children/report/{reportId}', [ParentReportController::class, 'show']);

@@ -173,9 +173,20 @@ class RealDataSeeder extends Seeder
                 // If subject is Affective Domain, use the class mentor's TEACHER profile
                 if ($subjectName === 'Affective Domain') {
                     // Find the teacher_id associated with the mentor of this class
-                    $mentor = Mentor::find($class->mentor_id);
-                    $teacherForMentor = Teacher::where('user_id', $mentor->user_id)->first();
-                    $finalTeacherId = $teacherForMentor->teacher_id;
+                    $mentor = $class->mentor_id ? Mentor::find($class->mentor_id) : null;
+                    if ($mentor) {
+                        $teacherForMentor = Teacher::where('user_id', $mentor->user_id)->first();
+                        if (!$teacherForMentor) {
+                            $teacherForMentor = Teacher::create([
+                                'user_id'      => $mentor->user_id,
+                                'name'         => $mentor->name_mentor,
+                                'phone_number' => $mentor->phone_number
+                            ]);
+                        }
+                        $finalTeacherId = $teacherForMentor->teacher_id;
+                    } else {
+                        $finalTeacherId = $teachers['mentor_a']['teacher_model']->teacher_id;
+                    }
                 } else {
                     $finalTeacherId = $teachers[$teacherKey]['teacher_model']->teacher_id;
                 }

@@ -13,6 +13,7 @@ use App\Models\Reports;
 use App\Models\ReportDetail;
 use App\Models\Mentor;
 use App\Models\Teacher;
+use App\Models\LevelClass;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
@@ -63,11 +64,21 @@ class ComprehensiveAppSeeder extends Seeder
                 'role' => 'mentor'
             ]);
 
+            $name = $faker->name;
+            $phone = $faker->numerify('08##########');
+
+            // Mentor also needs a Teacher record for grading/ownership checks
+            Teacher::create([
+                'user_id' => $user->user_id,
+                'name' => $name,
+                'phone_number' => $phone
+            ]);
+
             $mentors[] = Mentor::create([
                 'user_id' => $user->user_id,
-                'name' => $faker->name,
+                'name_mentor' => $name,
                 'nip' => $faker->unique()->numerify('##########'),
-                'phone_number' => $faker->numerify('08##########')
+                'phone_number' => $phone
             ]);
         }
 
@@ -94,12 +105,22 @@ class ComprehensiveAppSeeder extends Seeder
         $levels = ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6'];
 
         foreach ($levels as $level) {
+            $class = LevelClass::updateOrCreate(
+                ['level_class' => $level],
+                [
+                    'level_name'   => $level,
+                    'section_name' => '-',
+                    'mentor_id'    => $faker->randomElement($mentors)->mentor_id,
+                ]
+            );
+
             foreach ($subjectNames as $subName) {
                 $subjects[] = Subject::create([
                     'category_subject' => $subName,
-                    'level_class' => $level,
-                    'term' => 'Term 1',
-                    'teacher_id' => $faker->randomElement($teachers)->teacher_id
+                    'level_class'      => $level,
+                    'class_id'         => $class->class_id,
+                    'term'             => 'Term 1',
+                    'teacher_id'       => $faker->randomElement($teachers)->teacher_id
                 ]);
             }
         }
@@ -110,16 +131,20 @@ class ComprehensiveAppSeeder extends Seeder
         if (empty($religions)) $religions = ['Islam', 'Christian', 'Catholic', 'Buddhism', 'Hinduism'];
 
         for ($i = 1; $i <= $count['students']; $i++) {
+            $studentLevel = $faker->randomElement($levels);
+            $class = LevelClass::where('level_class', $studentLevel)->first();
+
             $students[] = Student::create([
-                'nis' => $faker->unique()->numerify('#####'),
-                'name_student' => $faker->name,
+                'nis'           => $faker->unique()->numerify('#####'),
+                'name_student'  => $faker->name,
                 'academic_year' => '2023/2024',
-                'level_class' => $faker->randomElement($levels),
+                'class_id'      => $class->class_id,
+                'level_class'   => $studentLevel,
                 'religion_name' => $faker->randomElement($religions),
-                'mentor_id' => $faker->randomElement($mentors)->mentor_id,
-                'gender' => $faker->randomElement(['Male', 'Female']),
-                'address' => $faker->address,
-                'phone_number' => $faker->numerify('08##########')
+                'mentor_id'     => $class->mentor_id,
+                'gender'        => $faker->randomElement(['Male', 'Female']),
+                'address'       => $faker->address,
+                'phone_number'  => $faker->numerify('08##########')
             ]);
         }
 
@@ -157,6 +182,7 @@ class ComprehensiveAppSeeder extends Seeder
                 $report = Reports::create([
                     'student_id' => $student->student_id,
                     'subject_id' => $subject->subject_id,
+                    'class_id' => $student->class_id,
                     'academic_year' => '2023/2024',
                     'level_class' => $student->level_class,
                     'average_value' => 0, // Akan diupdate nanti

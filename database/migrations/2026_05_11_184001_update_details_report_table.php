@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('criteria_id')->nullable()->constrained('rubric_criteria', 'criteria_id')->onDelete('cascade');
             
             // Jadikan rubric_id nullable karena penilaian sekarang akan fokus ke level criteria
-            $table->bigInteger('rubric_id')->nullable()->change();
+            $table->unsignedBigInteger('rubric_id')->nullable()->change();
         });
     }
 

@@ -167,7 +167,6 @@ class UserPortalController extends Controller
                 'display_name' => $displayName,
                 'email' => $user->email,
                 'role' => $user->role,
-                'academic_year' => $latestYear,
             ],
             'permissions' => $permissions
         ]);

@@ -9,7 +9,7 @@
                         <i class="mdi mdi-arrow-left"></i> Teachers
                     </a>
                 </div>
-                <p class="card-description">Form Input Guru</p>
+                <p class="card-description">Teacher Input Form</p>
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -23,16 +23,16 @@
                     @csrf
                     <div class="row mb-3">
                         <div class="col-md-12 form-group">
-                            <label for="user_id">User Akun</label>
+                            <label for="user_id">User Account</label>
                             <select class="form-select" name="user_id" id="user_id">
-                                <option value="">-- Buat Akun Baru --</option>
+                                <option value="">-- Create New Account --</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->user_id }}" {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
                                         {{ $user->username }} ({{ $user->email }})
                                     </option>
                                 @endforeach
                             </select>
-                            <small class="text-muted">Pilih akun yang sudah ada atau biarkan kosong untuk membuat akun baru di bawah.</small>
+                            <small class="text-muted">Select an existing account or leave blank to create a new account below.</small>
                         </div>
                     </div>
 
@@ -40,29 +40,29 @@
                         <h5 class="mb-3">New Account Information</h5>
                         <div class="row">
                             <div class="col-md-4 form-group">
-                                <label for="username">Username Baru</label>
+                                <label for="username">New Username</label>
                                 <input type="text" class="form-control" name="username" id="username" placeholder="Username" value="{{ old('username') }}">
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="email">Email Baru</label>
+                                <label for="email">New Email</label>
                                 <input type="email" class="form-control" name="email" id="email" placeholder="email@example.com" value="{{ old('email') }}">
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="password">Password Baru</label>
-                                <input type="password" class="form-control" name="password" id="password" placeholder="Min. 8 Karakter">
+                                <label for="password">New Password</label>
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Min. 8 Characters">
                             </div>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6 form-group">
-                            <label for="name">Nama Guru</label>
-                            <input type="text" class="form-control" name="name" id="name" placeholder="Nama Guru"
+                            <label for="name">Teacher Name</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Teacher Name"
                                 required>
                         </div>
                         <div class="col-md-6 form-group">
-                            <label for="phone_number">Nomor Telepon</label>
+                            <label for="phone_number">Phone Number</label>
                             <input type="text" class="form-control" name="phone_number" id="phone_number"
-                                placeholder="Nomor Telepon" required>
+                                placeholder="Phone Number" required>
                         </div>
                     </div>
                     {{-- Jika ingin menambah relasi ke subject, bisa tambahkan di sini --}}
@@ -79,8 +79,8 @@
                         </div>
                     </div>
                     --}}
-                    <button type="submit" class="btn btn-primary me-2">Simpan</button>
-                    <a href="{{ route('admin.teachers.index') }}" class="btn btn-light">Batal</a>
+                    <button type="submit" class="btn btn-primary me-2">Save</button>
+                    <a href="{{ route('admin.teachers.index') }}" class="btn btn-light">Cancel</a>
                 </form>
             </div>
         </div>

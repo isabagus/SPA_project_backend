@@ -57,7 +57,7 @@ class ParentController extends Controller
             $rules['address'] = 'required|string|max:255';
             $rules['nis'] = 'required|string|max:255|unique:students,nis';
             $rules['phone_number'] = 'required|string|max:15';
-            $rules['academic_year'] = 'required|exists:academic_years,academic_year';
+            $rules['academic_year'] = 'required|string|max:20';
             $rules['class_id'] = 'required|exists:classes,class_id';
             $rules['religion_name'] = 'required|exists:religions,religion_name';
         } else {

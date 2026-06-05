@@ -11,7 +11,7 @@
                 </div>
 
                 <p class="card-description">Add Parent:
-                    <a href="{{ route('admin.parents.create') }}"> Form input</a>
+                    <a href="{{ route('admin.parents.create') }}">Add Parent</a>
                 </p>
 
                 @if (session('success'))

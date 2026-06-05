@@ -5,10 +5,10 @@
             <div class="card-body">
                 <h4 class="card-title">
                     <i class="fa fa-users me-2"></i>
-                    Assign Guru — Affective Domain RS & PKN
+                    Assign Teachers — Affective Domain RS & PKN
                 </h4>
                 <p class="card-description">
-                    Tugaskan guru pengampu untuk setiap subjek dalam grup 
+                    Assign homeroom teachers for each subject in the group 
                     <strong>{{ $subject->level_class }} / {{ $subject->term }}</strong>
                 </p>
 
@@ -32,9 +32,9 @@
                             <thead class="table-light">
                                 <tr>
                                     <th width="5%">No</th>
-                                    <th width="30%">Nama Subjek</th>
-                                    <th width="25%">Guru Saat Ini</th>
-                                    <th width="40%">Pilih Guru Pengampu</th>
+                                    <th width="30%">Subject Name</th>
+                                    <th width="25%">Current Teacher</th>
+                                    <th width="40%">Select Homeroom Teacher</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -56,12 +56,12 @@
                                                     {{ $gs->rubrics->first()->teacher->name }}
                                                 </span>
                                             @else
-                                                <span class="badge bg-warning text-dark">Belum ditugaskan</span>
+                                                <span class="badge bg-warning text-dark">Not Assigned</span>
                                             @endif
                                         </td>
                                         <td>
                                             <select name="teachers[{{ $gs->subject_id }}]" class="form-select">
-                                                <option value="">-- Pilih Guru --</option>
+                                                <option value="">-- Select Teacher --</option>
                                                 @foreach ($teachers as $teacher)
                                                     <option value="{{ $teacher->teacher_id }}"
                                                         {{ $gs->teacher_id == $teacher->teacher_id ? 'selected' : '' }}>
@@ -78,10 +78,10 @@
 
                     <div class="d-flex justify-content-between mt-4">
                         <a href="{{ route('admin.subjects.index') }}" class="btn btn-secondary">
-                            <i class="fa fa-arrow-left me-1"></i> Kembali
+                            <i class="fa fa-arrow-left me-1"></i> Back
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-save me-1"></i> Simpan Penugasan Guru
+                            <i class="fa fa-save me-1"></i> Save Teacher Assignments
                         </button>
                     </div>
                 </form>

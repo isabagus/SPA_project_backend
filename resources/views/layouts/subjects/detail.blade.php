@@ -7,7 +7,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h3 class="fw-bold mb-0">Subject Detail</h3>
-                    <p class="text-muted mb-0">Informasi lengkap kriteria penilaian subject</p>
+                    <p class="text-muted mb-0">Full information on subject assessment criteria</p>
                 </div>
                 <a href="{{ route('admin.subjects.index') }}" class="text-dark text-decoration-none" title="Back to List">
                     <i class="mdi mdi-arrow-left"></i> Subjects
@@ -33,7 +33,7 @@
             <hr class="my-4">
 
             {{-- Rubrics Table --}}
-            <h5 class="fw-bold mb-3">Assessment Rubrics (Item Penilaian)</h5>
+            <h5 class="fw-bold mb-3">Assessment Rubrics</h5>
             <div class="table-responsive">
                 <table class="table table-striped text-center">
                     <thead>
@@ -73,7 +73,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center text-muted py-4">Belum ada rubrik penilaian untuk subject ini.</td>
+                                <td colspan="3" class="text-center text-muted py-4">No assessment rubrics exist for this subject yet.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -82,7 +82,7 @@
 
             <div class="mt-4 pt-3 border-top d-flex gap-2">
                 <a href="{{ route('admin.subjects.edit', $subject->subject_id) }}" class="btn btn-warning text-white px-4">
-                    <i class="fa fa-edit me-1"></i> Edit Data
+                    <i class="fa fa-edit me-1"></i> Edit
                 </a>
             </div>
         </div>

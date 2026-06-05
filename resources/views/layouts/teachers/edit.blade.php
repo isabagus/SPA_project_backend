@@ -9,7 +9,7 @@
                         <i class="mdi mdi-arrow-left"></i> Teachers
                     </a>
                 </div>
-                <p class="card-description">Form Update Guru</p>
+                <p class="card-description">Update Teacher Form</p>
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -24,9 +24,9 @@
                     @method('PUT')
                     <div class="row mb-3">
                         <div class="col-md-6 form-group">
-                            <label for="user_id">User Akun</label>
+                            <label for="user_id">User Account</label>
                             <select class="form-select" name="user_id" id="user_id" required>
-                                <option value="">Pilih User</option>
+                                <option value="">Select User</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->user_id }}" {{ (old('user_id') ?? $teacher->user_id) == $user->user_id ? 'selected' : '' }}>
                                         {{ $user->username }} ({{ $user->email }})
@@ -37,19 +37,19 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6 form-group">
-                            <label for="name">Nama Guru</label>
-                            <input type="text" class="form-control" name="name" id="name" placeholder="Nama Guru"
+                            <label for="name">Teacher Name</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Teacher Name"
                                 value="{{ old('name') ?? $teacher->name }}" required>
                         </div>
                         <div class="col-md-6 form-group">
-                            <label for="phone_number">Nomor Telepon</label>
+                            <label for="phone_number">Phone Number</label>
                             <input type="text" class="form-control" name="phone_number" id="phone_number"
-                                placeholder="Nomor Telepon" value="{{ old('phone_number') ?? $teacher->phone_number }}" required>
+                                placeholder="Phone Number" value="{{ old('phone_number') ?? $teacher->phone_number }}" required>
                         </div>
                     </div>
                     
                     <button type="submit" class="btn btn-primary me-2">Update</button>
-                    <a href="{{ route('admin.teachers.index') }}" class="btn btn-light">Batal</a>
+                    <a href="{{ route('admin.teachers.index') }}" class="btn btn-light">Cancel</a>
                 </form>
             </div>
         </div>

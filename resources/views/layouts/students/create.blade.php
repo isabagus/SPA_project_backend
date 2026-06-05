@@ -40,18 +40,13 @@
                     <div id="student-forms-container">
                         <!-- Single Student Block -->
                         <div class="student-block border p-3 mb-3 position-relative rounded">
-                            <h5 class="mb-3 student-title">Data Siswa 1</h5>
-                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-student-btn" style="display: none;"><i class="fa fa-times"></i> Hapus</button>
+                            <h5 class="mb-3 student-title">Student 1 Data</h5>
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-student-btn" style="display: none;"><i class="fa fa-times"></i> Remove</button>
                             
                             <div class="row">
                                 <div class="col-md-6 form-group">
                                     <label>Academic Year</label>
-                                    <select class="form-select" name="academic_year[]" required>
-                                        <option value="">Select Academic Year</option>
-                                        @foreach ($academic_years as $year)
-                                            <option value="{{ $year->academic_year }}">{{ $year->academic_year }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" class="form-control" name="academic_year[]" placeholder="e.g. 2025/2026" required>
                                 </div>
                                 <div class="col-md-6 form-group">
                                     <label>Level Class</label>
@@ -107,7 +102,7 @@
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <button type="button" class="btn btn-success" id="add-student-btn">
-                            <i class="fa fa-plus"></i> Tambah Form Siswa
+                            <i class="fa fa-plus"></i> Add Student Form
                         </button>
                     </div>
 
@@ -126,10 +121,10 @@
             const container = document.getElementById('student-forms-container');
             const addBtn = document.getElementById('add-student-btn');
             
-            // Template untuk form input dinamis 
+            // Template for dynamic student input form
             const templateBlock = container.querySelector('.student-block').cloneNode(true);
             
-            // Mereset value input template form
+            // Reset template form input values
             templateBlock.querySelectorAll('input').forEach(input => input.value = '');
             templateBlock.querySelectorAll('select').forEach(select => select.value = '');
             templateBlock.querySelectorAll('textarea').forEach(textarea => textarea.value = '');
@@ -138,7 +133,7 @@
             function updateTitlesAndButtons() {
                 const blocks = container.querySelectorAll('.student-block');
                 blocks.forEach((block, index) => {
-                    block.querySelector('.student-title').textContent = 'Data Siswa ' + (index + 1);
+                    block.querySelector('.student-title').textContent = 'Student ' + (index + 1) + ' Data';
                     
                     // logic show button delete if more than 1 form
                     const removeBtn = block.querySelector('.remove-student-btn');

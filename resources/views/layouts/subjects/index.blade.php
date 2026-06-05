@@ -52,10 +52,10 @@
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
                                             @if ($subject->report_group_key)
-                                                {{-- Grouped RS/PKN: Tombol Assign Guru --}}
+                                                {{-- Grouped RS/PKN: Assign Religious Studies/Civic Education Teacher --}}
                                                 <a href="{{ route('admin.subjects.assignTeachers', $subject->subject_id) }}"
-                                                    class="btn btn-info text-white" title="Assign Guru Agama & PKN">
-                                                    <i class="fa fa-users"></i> Assign Guru
+                                                    class="btn btn-info text-white" title="Assign Religious Studies/Civic Education Teacher">
+                                                    <i class="fa fa-users"></i> Assign Teacher
                                                 </a>
                                             @else
                                                 {{-- Standard: Tombol Edit biasa --}}

@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Parent Form Input</h4>
+                    <h4 class="card-title">Add Parent</h4>
                     <a href="{{ route('admin.parents.index') }}" class="text-dark text-decoration-none" title="Back to List">
                         <i class="mdi mdi-arrow-left"></i> Parents
                     </a>
@@ -41,16 +41,16 @@
                         <h5 class="mb-3">New Account Information</h5>
                         <div class="row">
                             <div class="col-md-4 form-group">
-                                <label for="username">Username Baru</label>
+                                <label for="username">New Username</label>
                                 <input type="text" name="username" class="form-control" id="username" placeholder="Username" value="{{ old('username') }}">
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="email">Email Baru</label>
+                                <label for="email">New Email</label>
                                 <input type="email" name="email" class="form-control" id="email" placeholder="email@example.com" value="{{ old('email') }}">
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="password">Password Baru</label>
-                                <input type="password" name="password" class="form-control" id="password" placeholder="Min. 8 Chars">
+                                <label for="password">New Password</label>
+                                <input type="password" name="password" class="form-control" id="password" placeholder="Min. 8 Characters">
                             </div>
                         </div>
                     </div>
@@ -98,11 +98,7 @@
                         <div class="row">
                             <div class="col-md-3 form-group">
                                 <label for="academic_year">Academic Year</label>
-                                <select name="academic_year" class="form-select" id="academic_year">
-                                    @foreach($academic_years as $ay)
-                                        <option value="{{ $ay->academic_year }}" {{ old('academic_year') == $ay->academic_year ? 'selected' : '' }}>{{ $ay->academic_year }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" name="academic_year" class="form-control" id="academic_year" placeholder="e.g. 2025/2026" value="{{ old('academic_year') }}" required>
                             </div>
                             <div class="col-md-4 form-group">
                                 <label for="level_class">Level Class</label>

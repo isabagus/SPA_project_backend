@@ -49,7 +49,7 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'academic_year.*' => 'required|string|exists:academic_years,academic_year',
+            'academic_year.*' => 'required|string|max:20',
             'level_class.*'   => 'required|string|exists:classes,level_class',
             'religion_name.*' => 'required|string|exists:religions,religion_name',
             'nis.*'           => 'required|string|max:20|unique:students,nis',
@@ -105,7 +105,7 @@ class StudentController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'academic_year' => 'required|string|exists:academic_years,academic_year',
+            'academic_year' => 'required|string|max:20',
             'level_class'   => 'required|string|exists:classes,level_class',
             'religion_name' => 'required|string|exists:religions,religion_name',
             'nis'           => 'required|string|max:20|unique:students,nis,' . $id . ',student_id',

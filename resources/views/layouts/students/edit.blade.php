@@ -28,11 +28,7 @@
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label>Academic Year</label>
-                            <select class="form-select" name="academic_year" required>
-                                @foreach ($academic_years as $year)
-                                    <option value="{{ $year->academic_year }}" {{ $data->academic_year == $year->academic_year ? 'selected' : '' }}>{{ $year->academic_year }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" name="academic_year" value="{{ $data->academic_year }}" placeholder="e.g. 2025/2026" required>
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Level Class</label>

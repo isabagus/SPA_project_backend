@@ -9,8 +9,8 @@
                         <i class="mdi mdi-arrow-left"></i> Dashboard
                     </a>
                 </div>
-                <p class="card-description"> Add Subject:
-                    <a href="{{ route('admin.mentors.create') }}">Form input</a>
+                <p class="card-description"> Add Mentor:
+                    <a href="{{ route('admin.mentors.create') }}">Add Mentor</a>
                 </p>
                 {{-- Form Search --}}
                 <form action="{{ route('admin.mentors.index') }}" class="d-flex col-md-4">

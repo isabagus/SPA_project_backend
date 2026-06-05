@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Mentor Form Input</h4>
+                    <h4 class="card-title">Add Mentor</h4>
                     <a href="{{ route('admin.mentors.index') }}" class="text-dark text-decoration-none" title="Back to List">
                         <i class="mdi mdi-arrow-left"></i> Mentors
                     </a>
@@ -40,16 +40,16 @@
                         <h5 class="mb-3">New Account Information</h5>
                         <div class="row">
                             <div class="col-md-4 form-group">
-                                <label for="username">Username Baru</label>
+                                <label for="username">New Username</label>
                                 <input type="text" name="username" class="form-control" id="username" placeholder="Username" value="{{ old('username') }}">
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="email">Email Baru</label>
+                                <label for="email">New Email</label>
                                 <input type="email" name="email" class="form-control" id="email" placeholder="email@example.com" value="{{ old('email') }}">
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="password">Password Baru</label>
-                                <input type="password" name="password" class="form-control" id="password" placeholder="Min. 8 Chars">
+                                <label for="password">New Password</label>
+                                <input type="password" name="password" class="form-control" id="password" placeholder="Min. 8 Characters">
                             </div>
                         </div>
                     </div>

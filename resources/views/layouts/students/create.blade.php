@@ -4,12 +4,12 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Student Form Input</h4>
+                    <h4 class="card-title">Add Students</h4>
                     <a href="{{ route('admin.students.index') }}" class="text-dark text-decoration-none" title="Back to List">
                         <i class="mdi mdi-arrow-left"></i> Students
                     </a>
                 </div>
-                <p class="card-description"> Add Multiple Students </p>
+                <p class="card-description"> Add multiple students to the system </p>
                 
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -40,18 +40,18 @@
                     <div id="student-forms-container">
                         <!-- Single Student Block -->
                         <div class="student-block border p-3 mb-3 position-relative rounded">
-                            <h5 class="mb-3 student-title">Student 1 Data</h5>
+                            <h5 class="mb-3 student-title">Student 1 Information</h5>
                             <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-student-btn" style="display: none;"><i class="fa fa-times"></i> Remove</button>
                             
                             <div class="row">
-                                <div class="col-md-6 form-group">
+                                <div class="col-md-6 form-group mb-3">
                                     <label>Academic Year</label>
                                     <input type="text" class="form-control" name="academic_year[]" placeholder="e.g. 2025/2026" required>
                                 </div>
-                                <div class="col-md-6 form-group">
-                                    <label>Level Class</label>
+                                <div class="col-md-6 form-group mb-3">
+                                    <label>Class Level</label>
                                     <select class="form-select" name="level_class[]" required>
-                                        <option value="">Select Level Class</option>
+                                        <option value="">Select Class Level</option>
                                         @foreach ($level_classes as $class)
                                             <option value="{{ $class->level_class }}">{{ $class->level_class }}</option>
                                         @endforeach
@@ -60,15 +60,15 @@
                             </div>
                             
                             <div class="row">
-                                <div class="col-md-3 form-group">
+                                <div class="col-md-3 form-group mb-3">
                                     <label>NIS</label>
                                     <input type="text" class="form-control" name="nis[]" placeholder="NIS" required>
                                 </div>
-                                <div class="col-md-3 form-group">
-                                    <label>Name Student</label>
-                                    <input type="text" class="form-control" name="name_student[]" placeholder="Name Student" required>
+                                <div class="col-md-3 form-group mb-3">
+                                    <label>Student Name</label>
+                                    <input type="text" class="form-control" name="name_student[]" placeholder="Student Name" required>
                                 </div>
-                                <div class="col-md-3 form-group">
+                                <div class="col-md-3 form-group mb-3">
                                     <label>Gender</label>
                                     <select class="form-select" name="gender[]" required>
                                         <option value="">Select Gender</option>
@@ -76,7 +76,7 @@
                                         <option value="Female">Female</option>
                                     </select>
                                 </div>
-                                <div class="col-md-3 form-group">
+                                <div class="col-md-3 form-group mb-3">
                                     <label>Religion</label>
                                     <select class="form-select" name="religion_name[]" required>
                                         <option value="">Select Religion</option>
@@ -87,12 +87,12 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>Address</label>
                                 <textarea class="form-control" name="address[]" placeholder="Address" rows="2" required></textarea>
                             </div>
                             
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label>Phone Number</label>
                                 <input type="text" class="form-control" name="phone_number[]" placeholder="Phone Number" required>
                             </div>

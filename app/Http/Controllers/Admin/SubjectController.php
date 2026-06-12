@@ -95,7 +95,7 @@ class SubjectController extends Controller
         if ($exists) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['duplicate' => "Subject '{$request->category_subject}' untuk kelas ini di {$request->term} sudah ada."]);
+                ->withErrors(['duplicate' => "Subject '{$request->category_subject}' for this class in {$request->term} already exists."]);
         }
 
         $levelClass = LevelClass::with('mentor.user')->find($request->class_id);
@@ -205,10 +205,10 @@ class SubjectController extends Controller
 
         if ($isRsPkn) {
             return redirect()->route('admin.subjects.index')
-                ->with('success', 'Template RS & PKN berhasil di-generate! Silakan klik "Assign Guru" untuk menugaskan guru agama.');
+                ->with('success', 'RS & PKN template successfully generated! Please click "Assign Teacher" to assign religion teachers.');
         }
 
-        return redirect()->route('admin.subjects.index')->with('success', 'Subject, Kategori, dan Kriteria berhasil disimpan!');
+        return redirect()->route('admin.subjects.index')->with('success', 'Subject, Category, and Criteria successfully saved!');
     }
 
     // ================================================================
@@ -220,7 +220,7 @@ class SubjectController extends Controller
         $subject = Subject::findOrFail($id);
 
         if (!$subject->report_group_key) {
-            return redirect()->route('admin.subjects.index')->withErrors(['error' => 'Subject ini bukan bagian dari grup RS & PKN.']);
+            return redirect()->route('admin.subjects.index')->withErrors(['error' => 'This subject is not part of the RS & PKN group.']);
         }
 
         $groupSubjects = Subject::with(['rubrics.teacher'])
@@ -238,7 +238,7 @@ class SubjectController extends Controller
         $subject = Subject::findOrFail($id);
 
         if (!$subject->report_group_key) {
-            return redirect()->route('admin.subjects.index')->withErrors(['error' => 'Subject ini bukan bagian dari grup RS & PKN.']);
+            return redirect()->route('admin.subjects.index')->withErrors(['error' => 'This subject is not part of the RS & PKN group.']);
         }
 
         $request->validate([
@@ -257,7 +257,7 @@ class SubjectController extends Controller
             }
         });
 
-        return redirect()->route('admin.subjects.index')->with('success', 'Guru berhasil ditugaskan ke semua subjek RS & PKN!');
+        return redirect()->route('admin.subjects.index')->with('success', 'Teachers successfully assigned to all RS & PKN subjects!');
     }
 
     // ================================================================
@@ -271,7 +271,7 @@ class SubjectController extends Controller
         // Block edit untuk grouped subjects — arahkan ke Assign Teachers
         if ($subject->report_group_key) {
             return redirect()->route('admin.subjects.assignTeachers', $subject->subject_id)
-                ->with('info', 'Subjek grup RS & PKN diarahkan ke halaman Assign Guru.');
+                ->with('info', 'RS & PKN group subject redirected to Assign Teacher page.');
         }
 
         $terms = Term::all();
@@ -346,7 +346,7 @@ class SubjectController extends Controller
             }
         });
 
-        return redirect()->route('admin.subjects.index')->with('success', 'Subject, Kategori, dan Kriteria berhasil diupdate!');
+        return redirect()->route('admin.subjects.index')->with('success', 'Subject, Category, and Criteria successfully updated!');
     }
 
     public function destroy($id)
@@ -360,6 +360,6 @@ class SubjectController extends Controller
             $subject->delete();
         }
 
-        return redirect()->route('admin.subjects.index')->with('success', 'Subject berhasil dihapus!');
+        return redirect()->route('admin.subjects.index')->with('success', 'Subject successfully deleted!');
     }
 }

@@ -29,7 +29,7 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table class="table table-striped text-center">
+                    <table class="table table-striped text-center text-nowrap">
                         <thead>
                             <tr>
                                 <th>No</th>

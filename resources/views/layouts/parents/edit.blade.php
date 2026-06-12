@@ -25,7 +25,7 @@
                     @csrf
                     @method('PUT')
                     
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="user_id">Select User Account</label>
                         <select name="user_id" class="form-control" id="user_id" required>
                             <option value="">-- Select User --</option>
@@ -37,7 +37,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="student_id">Select Student (Child)</label>
                         <select name="student_id" class="form-control select2" id="student_id" required style="width: 100%;">
                             <option value="">-- Select Student --</option>
@@ -49,7 +49,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="name_parent">Parent Name</label>
                         <input type="text" name="name_parent" class="form-control" id="name_parent" placeholder="Full Name" value="{{ old('name_parent', $parent->name_parent) }}" required>
                     </div>

@@ -67,8 +67,11 @@ class StudentController extends Controller
                 // Validasi: Pastikan kelas sudah memiliki mentor (karena kolom mentor_id di DB adalah NOT NULL)
                 if (is_null($class->mentor_id)) {
                     DB::rollBack();
-                    return redirect()->back()->with('error', "Gagal: Kelas {$class->level_class} belum memiliki Mentor. Silakan assign Mentor ke kelas tersebut melalui menu Kelas terlebih dahulu.")->withInput();
+                    return redirect()->back()->with('error', "Failed: Class {$class->level_class} does not have a Mentor. Please assign a Mentor to this class first.")->withInput();
                 }
+
+                // Ensure the academic year exists in `academic_years` table so FK constraint won't fail
+                AcademicYear::firstOrCreate(['academic_year' => $request->academic_year[$index]]);
 
                 Student::create([
                     'academic_year' => $request->academic_year[$index],
@@ -85,10 +88,10 @@ class StudentController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('admin.students.index')->with('success', 'Data siswa berhasil disimpan!');
+            return redirect()->route('admin.students.index')->with('success', 'Student data successfully saved!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Gagal menyimpan data: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Failed to save data: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -121,8 +124,11 @@ class StudentController extends Controller
 
             // Validasi: Pastikan kelas sudah memiliki mentor
             if (is_null($class->mentor_id)) {
-                return redirect()->back()->with('error', "Gagal: Kelas {$class->level_class} belum memiliki Mentor.")->withInput();
+                return redirect()->back()->with('error', "Failed: Class {$class->level_class} does not have a Mentor.")->withInput();
             }
+
+            // Ensure the academic year exists in `academic_years` table so FK constraint won't fail
+            AcademicYear::firstOrCreate(['academic_year' => $request->academic_year]);
 
             $student->update([
                 'academic_year' => $request->academic_year,
@@ -139,13 +145,13 @@ class StudentController extends Controller
 
             return redirect()->route('admin.students.index')->with('success', 'Student data successfully updated!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memperbarui data: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Failed to update data: ' . $e->getMessage())->withInput();
         }
     }
     public function destroy($id)
     {
         $student = Student::findOrFail($id);
         $student->delete();
-        return redirect()->route('admin.students.index')->with('success', 'Student Data successfully delete');
+        return redirect()->route('admin.students.index')->with('success', 'Student data successfully deleted.');
     }
 }

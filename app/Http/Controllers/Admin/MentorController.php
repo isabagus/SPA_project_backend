@@ -87,7 +87,7 @@ class MentorController extends Controller
             return redirect()->route('admin.mentors.index')->with('success', 'Mentor Created Successfully with user account.');
         } catch (\Exception $e) {
             \DB::rollBack();
-            return redirect()->back()->with('error', 'Gagal membuat mentor: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Failed to create mentor: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -135,14 +135,19 @@ class MentorController extends Controller
             $classId = $validated['class_id'];
 
             // 1. Reset class_id yang sebelumnya diampu oleh mentor ini (jika sistem 1 mentor 1 kelas)
+            $oldClasses = LevelClass::where('mentor_id', $mentorId)->pluck('class_id')->toArray();
             LevelClass::where('mentor_id', $mentorId)->update(['mentor_id' => null]);
+            \App\Models\Student::whereIn('class_id', $oldClasses)->update(['mentor_id' => null]);
 
             // 2. Set mentor baru ke class yang dipilih
             $class = LevelClass::findOrFail($classId);
             $class->mentor_id = $mentorId;
             $class->save();
 
-            return redirect()->route('admin.mentors.index')->with('success', 'Mentor assigned to class successfully.');
+            // Sync students' mentor_id
+            \App\Models\Student::where('class_id', $classId)->update(['mentor_id' => $mentorId]);
+
+            return redirect()->route('admin.mentors.index')->with('success', 'Mentor assigned to class successfully and student records synced.');
         } catch (Throwable $th) {
             return redirect()->route('admin.mentors.index')->with('error', 'Error: ' . $th->getMessage());
         }

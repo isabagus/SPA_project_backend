@@ -47,6 +47,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('reports/students/{class_id}/{academic_year}', [ReportController::class, 'listStudents'])->name('reports.students')->where('academic_year', '.*');
             Route::get('reports/detail/{id}', [ReportController::class, 'show'])->name('reports.show');
             Route::get('reports/subject/{id}', [ReportController::class, 'subjectDetail'])->name('reports.subject_detail');
+            Route::get('reports/subject/{id}/export', [ReportController::class, 'exportPdf'])->name('reports.export');
+            Route::get('reports/subject/{id}/print', [ReportController::class, 'printReport'])->name('reports.print');
+            Route::put('reports/subject/{id}/update', [ReportController::class, 'updateSubjectReport'])->name('reports.update_subject_detail');
             Route::delete('reports/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
         });
     });

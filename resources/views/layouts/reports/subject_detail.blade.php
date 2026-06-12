@@ -27,28 +27,70 @@
                     </div>
                 </div>
 
+                {{-- Form Penilaian (CRUD mode jika request('edit') == 1) --}}
+                @if(request('edit') == 1)
+                <form action="{{ route('admin.reports.update_subject_detail', $report->report_id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                @endif
+
                 {{-- Tabel Penilaian (Rubrik) --}}
                 <div class="assessment-section mb-4">
                     <table class="table table-bordered">
+                        <colgroup>
+                            <col width="80%">
+                            <col width="20%">
+                        </colgroup>
                         <thead class="bg-light">
                             <tr>
                                 <th class="py-3 uppercase">Assessment Criteria</th>
-                                <th class="py-3 text-center uppercase" width="120">Level</th>
+                                <th class="py-3 text-center uppercase">Level</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($report->reportDetails as $detail)
-                                <tr>
-                                    <td class="py-4 px-4">
-                                        <h6 class="font-weight-bold mb-2">{{ $detail->criteria->criteria_name ?? 'Criteria' }}</h6>
-                                        <p class="text-justify mb-0" style="line-height: 1.6; color: #333;">
-                                            {{ $detail->criteria->description ?? 'No description available' }}
-                                        </p>
-                                    </td>
-                                    <td class="text-center align-middle">
-                                        <h4 class="mb-0 font-weight-bold">{{ number_format($detail->score, 2) }}</h4>
+                            @php
+                                $groupedDetails = $report->reportDetails->groupBy(function($detail) {
+                                    return $detail->rubric_id ?? ($detail->criteria->rubric_id ?? 0);
+                                });
+                            @endphp
+
+                            @forelse ($groupedDetails as $rubricId => $details)
+                                @php
+                                    $firstDetail = $details->first();
+                                    $rubric = $firstDetail->rubric ?? ($firstDetail->criteria->category ?? null);
+                                    $rubricName = $rubric->rubric_name ?? 'General Rubric';
+                                @endphp
+                                <tr class="bg-light">
+                                    <td colspan="2" class="py-3 px-4">
+                                        <h5 class="font-weight-bold text-uppercase mb-0" style="font-style: italic; color: #1f2937;">
+                                            {{ $rubricName }}
+                                        </h5>
                                     </td>
                                 </tr>
+                                @foreach ($details as $detail)
+                                    <tr>
+                                        <td class="py-4 px-4">
+                                            <h6 class="font-weight-bold mb-2">{{ $detail->criteria->criteria_name ?? 'Criteria' }}</h6>
+                                            @if(request('edit') == 1)
+                                                <div class="form-group mt-2 mb-0">
+                                                    <label class="small font-weight-bold text-muted">Assessment Comment / Subject Description:</label>
+                                                    <textarea name="descriptions[{{ $detail->id }}]" class="form-control" rows="3" style="line-height: 1.5;">{{ $detail->description_subject ?: ($detail->criteria->default_description ?? '') }}</textarea>
+                                                </div>
+                                            @else
+                                                <p class="text-justify mb-0" style="line-height: 1.6; color: #333;">
+                                                    {{ $detail->description_subject ?: ($detail->criteria->default_description ?? 'No description available') }}
+                                                </p>
+                                            @endif
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            @if(request('edit') == 1)
+                                                <input type="number" name="scores[{{ $detail->id }}]" class="form-control text-center font-weight-bold mx-auto" style="width: 100px; font-size: 1.2rem;" step="0.01" min="1.00" max="3.00" value="{{ $detail->score }}" required>
+                                            @else
+                                                <h4 class="mb-0 font-weight-bold">{{ number_format($detail->score, 2) }}</h4>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
                             @empty
                                 <tr>
                                     <td colspan="2" class="text-center py-5">No detailed assessment available</td>
@@ -80,9 +122,13 @@
                         
                         <div class="mt-4">
                             <h6 class="font-weight-bold uppercase mb-2">Mentor Feedback:</h6>
-                            <p class="border p-3 font-italic" style="min-height: 80px; border-radius: 5px;">
-                                "{{ $report->mentor_note ?? 'Good progress shown.' }}"
-                            </p>
+                            @if(request('edit') == 1)
+                                <textarea name="mentor_note" class="form-control font-italic" style="min-height: 100px; border-radius: 5px; line-height: 1.5;" placeholder="Good progress shown.">{{ $report->mentor_note }}</textarea>
+                            @else
+                                <p class="border p-3 font-italic" style="min-height: 80px; border-radius: 5px; background-color: #ffffff;">
+                                    "{{ $report->mentor_note ?? 'Good progress shown.' }}"
+                                </p>
+                            @endif
                         </div>
                     </div>
                     <div class="col-md-6 d-flex flex-column align-items-center justify-content-end pb-3">
@@ -94,14 +140,33 @@
                 </div>
 
                 {{-- Action Buttons (Hide when Printing) --}}
-                <div class="mt-5 d-flex justify-content-end no-print">
-                    <button onclick="history.back()" class="btn btn-secondary mr-2">
-                        <i class="mdi mdi-arrow-left"></i> Back
-                    </button>
-                    <button onclick="window.print()" class="btn btn-primary">
-                        <i class="mdi mdi-printer"></i> Print to PDF
-                    </button>
+                <div class="mt-5 d-flex justify-content-end no-print" style="gap: 12px;">
+                    @if(request('edit') == 1)
+                        <a href="{{ route('admin.reports.subject_detail', $report->report_id) }}" class="btn btn-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="mdi mdi-content-save"></i> Save Changes
+                        </button>
+                    @else
+                        <button onclick="history.back()" class="btn btn-secondary">
+                            <i class="mdi mdi-arrow-left"></i> Back
+                        </button>
+                        <a href="{{ route('admin.reports.subject_detail', $report->report_id) }}?edit=1" class="btn btn-warning text-white">
+                            <i class="mdi mdi-pencil"></i> Edit Scores & Comments
+                        </a>
+                        <a href="{{ route('admin.reports.print', $report->report_id) }}" target="_blank" class="btn btn-primary">
+                            <i class="mdi mdi-printer"></i> Print Report
+                        </a>
+                        <a href="{{ route('admin.reports.export', $report->report_id) }}" class="btn btn-success">
+                            <i class="mdi mdi-download"></i> Export PDF
+                        </a>
+                    @endif
                 </div>
+
+                @if(request('edit') == 1)
+                </form>
+                @endif
             </div>
         </div>
     </div>

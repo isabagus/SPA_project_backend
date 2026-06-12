@@ -62,4 +62,76 @@ class ReportController extends Controller
         $report = Reports::with(['student', 'subject', 'reportDetails.criteria'])->findOrFail($id);
         return view('layouts.reports.subject_detail', compact('report'));
     }
+
+    // Export PDF for Admin
+    public function exportPdf($id) {
+        $report = Reports::with([
+            'student', 
+            'subject.teacher', 
+            'reportDetails.criteria.category.teacher',
+            'reportDetails.criteria.category.subject',
+            'reportDetails.rubric.teacher',
+            'reportDetails.rubric.subject'
+        ])->findOrFail($id);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.student_report', compact('report'));
+        $filename = 'Report-' . $report->student->name_student . '-' . $report->subject->category_subject . '.pdf';
+        return $pdf->download($filename);
+    }
+
+    // Print Report for Admin (Browser Print Layout)
+    public function printReport($id) {
+        $report = Reports::with([
+            'student', 
+            'subject.teacher', 
+            'reportDetails.criteria.category.teacher',
+            'reportDetails.criteria.category.subject',
+            'reportDetails.rubric.teacher',
+            'reportDetails.rubric.subject'
+        ])->findOrFail($id);
+        return view('pdf.student_report_print', compact('report'));
+    }
+
+    // Update Subject Report for Admin (CRUD)
+    public function updateSubjectReport(\Illuminate\Http\Request $request, $id) {
+        $report = Reports::findOrFail($id);
+        
+        $request->validate([
+            'scores' => 'required|array',
+            'scores.*' => 'required|numeric|min:1|max:3',
+            'descriptions' => 'nullable|array',
+            'mentor_note' => 'nullable|string',
+        ]);
+
+        \DB::transaction(function() use ($request, $report) {
+            $totalScore = 0;
+            $count = 0;
+
+            foreach ($request->scores as $detailId => $score) {
+                $detail = ReportDetail::where('report_id', $report->report_id)
+                    ->where('id', $detailId)
+                    ->first();
+                
+                if ($detail) {
+                    $desc = $request->descriptions[$detailId] ?? '';
+                    $detail->update([
+                        'score' => $score,
+                        'description_subject' => $desc
+                    ]);
+                    $totalScore += $score;
+                    $count++;
+                }
+            }
+
+            if ($request->has('mentor_note')) {
+                $report->mentor_note = $request->mentor_note;
+            }
+
+            if ($count > 0) {
+                $report->average_value = round($totalScore / $count, 2);
+            }
+            $report->save();
+        });
+
+        return redirect()->route('admin.reports.subject_detail', $id)->with('success', 'Report details updated successfully!');
+    }
 }

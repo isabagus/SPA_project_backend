@@ -13,9 +13,9 @@
                     <a href="{{ route('admin.mentors.create') }}">Add Mentor</a>
                 </p>
                 {{-- Form Search --}}
-                <form action="{{ route('admin.mentors.index') }}" class="d-flex col-md-4">
+                <form action="{{ route('admin.mentors.index') }}" class="d-flex col-12 col-md-4 mb-3">
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search data mentor"
+                        <input type="text" name="search" class="form-control" placeholder="Search mentor name..."
                             id="searchInput" value="{{ request('search') }}">
                         <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
                     </div>
@@ -26,11 +26,11 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table class="table table-striped text-center">
+                    <table class="table table-striped text-center text-nowrap">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th> Name Mentor</th>
+                                <th>Mentor Name</th>
                                 <th> Email </th>
                                 <th>Phone Number</th>
                                 <th>Mentor of</th>
@@ -57,7 +57,7 @@
                                                 class="btn btn-warning text-white">Edit</a>
                                             <form action="{{ route('admin.mentors.destroy', $mentor->mentor_id) }}"
                                                 method="POST"
-                                                onsubmit="return confirm('Delete this mentor? {{ $mentor->name }}')">
+                                                onsubmit="return confirm('Delete this mentor? {{ $mentor->name_mentor }}')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger text-white">Delete</button>

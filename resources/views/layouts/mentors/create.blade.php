@@ -11,7 +11,7 @@
                         <i class="mdi mdi-arrow-left"></i> Mentors
                     </a>
                 </div>
-                <p class="card-description"> Add User </p>
+                <p class="card-description"> Add new mentor details </p>
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -23,7 +23,7 @@
                 @endif
                 <form class="forms-sample" method="POST" action="{{ route('admin.mentors.store') }}">
                     @csrf
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="user_id">Select User Account</label>
                         <select name="user_id" class="form-control" id="user_id">
                             <option value="">-- Create New Account --</option>
@@ -39,29 +39,29 @@
                     <div id="new_account_fields" class="border p-3 mb-3 rounded bg-white">
                         <h5 class="mb-3">New Account Information</h5>
                         <div class="row">
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="username">New Username</label>
                                 <input type="text" name="username" class="form-control" id="username" placeholder="Username" value="{{ old('username') }}">
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="email">New Email</label>
                                 <input type="email" name="email" class="form-control" id="email" placeholder="email@example.com" value="{{ old('email') }}">
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="password">New Password</label>
                                 <input type="password" name="password" class="form-control" id="password" placeholder="Min. 8 Characters">
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="name_mentor">Name Mentor</label>
+                    <div class="form-group mb-3">
+                        <label for="name_mentor">Mentor Name</label>
                         <input type="text" name="name_mentor" class="form-control" id="name_mentor" placeholder="Mentor Name" value="{{ old('name_mentor') }}" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="nip">NIP</label>
                         <input type="text" name="nip" class="form-control" id="nip" placeholder="NIP" value="{{ old('nip') }}">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="phone_number">Phone Number</label>
                         <input type="text" name="phone_number" class="form-control" id="phone_number" placeholder="Phone Number" value="{{ old('phone_number') }}">
                     </div>

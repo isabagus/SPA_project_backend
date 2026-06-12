@@ -25,7 +25,7 @@
                     @csrf
                     @method('PUT')
                     
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="user_id">Select User Account</label>
                         <select name="user_id" class="form-control" id="user_id" required>
                             <option value="">-- Select User --</option>
@@ -37,17 +37,17 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="name_mentor">Name Mentor</label>
+                    <div class="form-group mb-3">
+                        <label for="name_mentor">Mentor Name</label>
                         <input type="text" name="name_mentor" class="form-control" id="name_mentor" placeholder="Mentor Name" value="{{ old('name_mentor') ?? $mentor->name_mentor }}" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="nip">NIP</label>
                         <input type="text" name="nip" class="form-control" id="nip" placeholder="NIP" value="{{ old('nip') ?? $mentor->nip }}">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="phone_number">Phone Number</label>
                         <input type="text" name="phone_number" class="form-control" id="phone_number" placeholder="Phone Number" value="{{ old('phone_number') ?? $mentor->phone_number }}">
                     </div>

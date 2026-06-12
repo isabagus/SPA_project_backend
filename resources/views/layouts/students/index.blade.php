@@ -11,29 +11,28 @@
                 </div>
                 {{-- <p class="card-description"><a href="#" class="btn btn-success text-white btn-sm"><i class="mdi mdi-plus"></i> Add Student</a> 
                  --}}
-                <p class="card-description">Add Subject:
-                    <a href=" {{ route('admin.students.create') }}"> Form input</a>
-                </p>
+                <p class="card-description">Add Student:
+                    <a href=" {{ route('admin.students.create') }}"> Register Student</a>
                 </p>
                 {{-- Form Search --}}
-                <form action="{{ route('admin.students.index') }}" class="d-flex col-md-4">
+                <form action="{{ route('admin.students.index') }}" class="d-flex col-12 col-md-4 mb-3">
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" placeholder="Search data student"
+                        <input type="text" name="search" class="form-control" placeholder="Search student name..."
                             id="searchInput" value="{{ request('search') }}">
                         <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
                     </div>
                 </form>
 
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-striped text-nowrap">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th> Name </th>
-                                <th> Level Class </th>
+                                <th> Class Level </th>
                                 <th> Religion </th>
                                 <th> Gender </th>
-                                <th> Year Academy </th>
+                                <th> Academic Year </th>
                                 <th>Parent</th>
                                 <th> Mentor </th>
                                 <th>Address</th>
@@ -63,7 +62,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
-                                                onclick="return confirm('Are sure delete this student data {{ $st->name_student }}?')"
+                                                onclick="return confirm('Are you sure you want to delete student {{ $st->name_student }}?')"
                                                 class="btn btn-danger text-white"><i class="fa fa-trash-alt"></i>
                                                 Delete
                                             </button>
@@ -72,7 +71,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5">No data available</td>
+                                    <td colspan="11">No data available</td>
                                 </tr>
                             @endforelse
                         </tbody>

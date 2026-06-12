@@ -86,6 +86,9 @@ class ParentController extends Controller
             if (!$studentId) {
                 $levelClass = LevelClass::find($request->class_id);
 
+                // Ensure the academic year exists so DB FK won't block the insert
+                AcademicYear::firstOrCreate(['academic_year' => $request->academic_year]);
+
                 $student = Student::create([
                     'name_student' => $request->name_student,
                     'gender' => $request->gender,

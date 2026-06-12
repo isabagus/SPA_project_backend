@@ -10,7 +10,7 @@
                     </a>
                 </div>
                 <p class="card-description"> Add Subject:
-                    <a href="{{ route('admin.subjects.create') }}">Form input</a>
+                    <a href="{{ route('admin.subjects.create') }}">Add Subject</a>
                 </p>
 
                 @if (session('success'))
@@ -25,14 +25,14 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table class="table table-striped text-center">
+                    <table class="table table-striped text-center text-nowrap">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th> Subjects </th>
-                                <th> Year </th>
+                                <th> Subject Name </th>
+                                <th> Class Level </th>
                                 <th> Term </th>
-                                <th> Detail Rubric</th>
+                                <th> Rubric Detail</th>
                                 <th> Actions </th>
                             </tr>
                         </thead>

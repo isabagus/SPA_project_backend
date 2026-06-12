@@ -24,7 +24,7 @@
                 <form class="forms-sample" method="POST" action="{{ route('admin.parents.store') }}">
                     @csrf
                     
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="user_id">Select User Account</label>
                         <select name="user_id" class="form-select" id="user_id">
                             <option value="">-- Create New Account --</option>
@@ -40,22 +40,22 @@
                     <div id="new_account_fields" class="border p-3 mb-3 rounded bg-white">
                         <h5 class="mb-3">New Account Information</h5>
                         <div class="row">
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="username">New Username</label>
                                 <input type="text" name="username" class="form-control" id="username" placeholder="Username" value="{{ old('username') }}">
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="email">New Email</label>
                                 <input type="email" name="email" class="form-control" id="email" placeholder="email@example.com" value="{{ old('email') }}">
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="password">New Password</label>
                                 <input type="password" name="password" class="form-control" id="password" placeholder="Min. 8 Characters">
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="student_id">Select Student (Child)</label>
                         <select name="student_id" class="form-select select2" id="student_id" style="width: 100%;">
                             <option value="">-- Create New Student --</option>
@@ -71,36 +71,36 @@
                     <div id="new_student_fields" class="border p-3 mb-3 rounded bg-white">
                         <h5 class="mb-3">New Student Information</h5>
                         <div class="row">
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-6 form-group mb-3">
                                 <label for="name_student">Student Name</label>
                                 <input type="text" name="name_student" class="form-control" id="name_student" placeholder="Full Name" value="{{ old('name_student') }}">
                             </div>
-                            <div class="col-md-3 form-group">
+                            <div class="col-md-3 form-group mb-3">
                                 <label for="gender">Gender</label>
                                 <select name="gender" class="form-select" id="gender">
                                     <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
                                     <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 form-group">
+                            <div class="col-md-3 form-group mb-3">
                                 <label for="phone_number_student">Student Phone</label>
                                 <input type="text" name="phone_number" class="form-control" id="phone_number_student" placeholder="Phone Number" value="{{ old('phone_number') }}">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="address">Address</label>
                             <textarea name="address" class="form-control" id="address" rows="2">{{ old('address') }}</textarea>
                         </div>
-                        <div class="form-group">
-                            <label for="address">NIS</label>
-                            <textarea name="nis" class="form-control" id="nis" rows="2">{{ old('nis') }}</textarea>
+                        <div class="form-group mb-3">
+                            <label for="nis">NIS</label>
+                            <input type="text" name="nis" class="form-control" id="nis" placeholder="NIS" value="{{ old('nis') }}">
                         </div>
                         <div class="row">
-                            <div class="col-md-3 form-group">
+                            <div class="col-md-3 form-group mb-3">
                                 <label for="academic_year">Academic Year</label>
                                 <input type="text" name="academic_year" class="form-control" id="academic_year" placeholder="e.g. 2025/2026" value="{{ old('academic_year') }}" required>
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="level_class">Level Class</label>
                                 <select name="class_id" class="form-select" id="level_class">
                                     <option value="">-- Select Class --</option>
@@ -109,7 +109,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group mb-3">
                                 <label for="religion_name">Religion</label>
                                 <select name="religion_name" class="form-select" id="religion_name">
                                     @foreach($religions as $rel)
@@ -120,7 +120,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="name_parent">Parent Name</label>
                         <input type="text" name="name_parent" class="form-control" id="name_parent" placeholder="Full Name" value="{{ old('name_parent') }}" required>
                     </div>

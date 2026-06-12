@@ -77,7 +77,12 @@ class MentorService
     {
         // 1. Security Check
         $student = Student::where('student_id', $studentId)
-            ->where('mentor_id', $mentorId)
+            ->where(function($query) use ($mentorId) {
+                $query->where('mentor_id', $mentorId)
+                      ->orWhereHas('levelClass', function($q) use ($mentorId) {
+                          $q->where('mentor_id', $mentorId);
+                      });
+            })
             ->firstOrFail();
 
         // 2. Ambil semua subjek yang ada di kelas siswa tersebut
@@ -113,11 +118,12 @@ class MentorService
             ->keyBy('subject_id');
 
         // 4. Gabungkan: Tampilkan subjek meskipun belum ada report-nya
-        return $filteredSubjects->map(function ($subject) use ($existingReports, $studentId) {
+        return $filteredSubjects->map(function ($subject) use ($existingReports, $studentId, $student) {
             if ($existingReports->has($subject->subject_id)) {
                 $report = $existingReports->get($subject->subject_id);
                 // Pastikan subject di dalam report adalah subject yang lengkap dengan teacher
                 $report->subject = $subject;
+                $report->student = $student;
                 return $report;
             }
 
@@ -144,6 +150,7 @@ class MentorService
                 'average_value' => 0,
                 'academic_year' => '-',
                 'subject' => $subject,
+                'student' => $student,
                 'report_details' => $report_details
             ];
         })->values();
@@ -156,7 +163,12 @@ class MentorService
     {
         // Security Check: Pastikan siswa ini di bawah bimbingan mentor ini
         $student = Student::where('student_id', $studentId)
-            ->where('mentor_id', $mentorId)
+            ->where(function($query) use ($mentorId) {
+                $query->where('mentor_id', $mentorId)
+                      ->orWhereHas('levelClass', function($q) use ($mentorId) {
+                          $q->where('mentor_id', $mentorId);
+                      });
+            })
             ->firstOrFail();
 
         return Reports::where('report_id', $reportId)
@@ -292,7 +304,12 @@ class MentorService
     {
         // Security Check: Pastikan siswa ini di bawah bimbingan mentor ini
         $student = Student::where('student_id', $studentId)
-            ->where('mentor_id', $mentorId)
+            ->where(function($query) use ($mentorId) {
+                $query->where('mentor_id', $mentorId)
+                      ->orWhereHas('levelClass', function($q) use ($mentorId) {
+                          $q->where('mentor_id', $mentorId);
+                      });
+            })
             ->firstOrFail();
 
         if ($detailId == 0 && $subjectId && $criteriaId) {

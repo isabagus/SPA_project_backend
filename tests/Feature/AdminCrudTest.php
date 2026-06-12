@@ -42,7 +42,7 @@ class AdminCrudTest extends TestCase
     }
 
     /** @test */
-    public function it_can_create_mentor_and_assign_to_class()
+    public function test_it_can_create_mentor_and_assign_to_class()
     {
         $mentorData = [
             'name_mentor' => 'Sarah Smith',
@@ -82,7 +82,7 @@ class AdminCrudTest extends TestCase
     }
 
     /** @test */
-    public function it_can_create_student_bulk()
+    public function test_it_can_create_student_bulk()
     {
         // Setup Mentor and Class first
         $mentor = Mentor::create([
@@ -114,7 +114,7 @@ class AdminCrudTest extends TestCase
     }
 
     /** @test */
-    public function it_can_create_teacher_and_subject()
+    public function test_it_can_create_teacher_and_subject()
     {
         // 1. Create Teacher
         $teacherData = [
@@ -156,7 +156,7 @@ class AdminCrudTest extends TestCase
     }
 
     /** @test */
-    public function it_can_delete_student()
+    public function test_it_can_delete_student()
     {
         $mentor = Mentor::create([
             'user_id' => User::create(['username' => 'm3', 'email' => 'm3@m.com', 'password' => 'p', 'role' => 'mentor'])->user_id,
@@ -183,7 +183,7 @@ class AdminCrudTest extends TestCase
     }
 
     /** @test */
-    public function it_can_create_parent_and_link_to_student()
+    public function test_it_can_create_parent_and_link_to_student()
     {
         // Setup Student
         $mentor = Mentor::create([

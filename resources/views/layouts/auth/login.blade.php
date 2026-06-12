@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - E-Report</title>
+    <title>Admin Login - E-Report</title>
     
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -68,7 +68,7 @@
                     <div class="flex items-center justify-between mt-6">
                         <label class="label cursor-pointer justify-start gap-2">
                             <input type="checkbox" name="remember" class="checkbox checkbox-sm checkbox-primary" />
-                            <span class="label-text text-slate-600 font-medium">Ingat saya</span>
+                            <span class="label-text text-slate-600 font-medium">Remember me</span>
                         </label>
                     </div>
 

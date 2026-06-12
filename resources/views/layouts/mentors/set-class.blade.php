@@ -26,7 +26,7 @@
                     @method('PUT')
 
                     
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="mentor_id">Select Mentor</label>
                         <select name="mentor_id" class="form-control" id="mentor_id" required>
                             <option value="">-- Select Mentor --</option>
@@ -38,7 +38,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="class_id">Select Class</label>
                         <select name="class_id" class="form-control" id="class_id" required>
                             <option value="">-- Select Class --</option>

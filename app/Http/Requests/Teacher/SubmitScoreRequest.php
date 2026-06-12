@@ -22,7 +22,7 @@ class SubmitScoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'academic_year'                => 'required|string|exists:academic_years,academic_year',
+            'academic_year'                => 'required|string|max:20',
             'scores'                       => 'required|array|min:1',
             'scores.*.criteria_id'         => 'required|integer|exists:rubric_criteria,criteria_id',
             'scores.*.score'               => 'nullable|numeric|min:1|max:3',

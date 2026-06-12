@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\Parent\ParentStudentController;
 use App\Http\Controllers\Api\V1\Parent\ParentReportController;
 
 use App\Http\Controllers\V1\MentorController;
+use App\Http\Controllers\Api\V1\Mentor\MentorRubricController;
 
 Route::prefix('v1')->group(function () {
     // Public Routes
@@ -31,6 +32,10 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/auth/check', [UserPortalController::class, 'checkAuth']);
 
+        // General report PDF export route for all authenticated API users (Parent, Mentor, Teacher)
+        Route::get('/reports/{reportId}/export', [ParentReportController::class, 'exportPdf']);
+        Route::get('/reports/{reportId}', [ParentReportController::class, 'showReport']);
+
 
         Route::middleware('role:mentor')->prefix('mentor')->group(function (){
             Route::get('/classes', [MentorController::class, 'getClasses']);
@@ -40,6 +45,17 @@ Route::prefix('v1')->group(function () {
             Route::get('/students/{studentId}/academic-report', [MentorController::class, 'getAcademicReport']);
             Route::get('/students/{studentId}/academic-report/{reportId}', [MentorController::class, 'getSubjectDetail']);
             Route::put('/students/{studentId}/academic-report/detail/{detailId}', [MentorController::class, 'updateReportDetail']);
+
+            // Master Rubrik Management (Mentor Access)
+            Route::get('/subjects', [MentorRubricController::class, 'getSubjects']);
+            Route::get('/subjects/{subjectId}/rubrics', [MentorRubricController::class, 'index']);
+            Route::post('/subjects/{subjectId}/rubrics', [MentorRubricController::class, 'storeCategory']);
+            Route::put('/rubrics/{rubricId}', [MentorRubricController::class, 'updateCategory']);
+            Route::delete('/rubrics/{rubricId}', [MentorRubricController::class, 'destroyCategory']);
+
+            Route::post('/rubrics/{rubricId}/criteria', [MentorRubricController::class, 'storeCriteria']);
+            Route::put('/criteria/{criteriaId}', [MentorRubricController::class, 'updateCriteria']);
+            Route::delete('/criteria/{criteriaId}', [MentorRubricController::class, 'destroyCriteria']);
         });
 
         Route::middleware('role:teacher')->prefix('teacher')->group(function () {
@@ -52,15 +68,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/subjects/{subjectId}/students/{studentId}/scores', [TeacherScoreController::class, 'show']);
             Route::post('/subjects/{subjectId}/students/{studentId}/scores', [TeacherScoreController::class, 'store']);
 
-            // Master Rubrik Management
+            // Master Rubrik Management (Read-Only)
             Route::get('/subjects/{subjectId}/rubrics', [TeacherRubricController::class, 'index']);
-            Route::post('/subjects/{subjectId}/rubrics', [TeacherRubricController::class, 'storeCategory']);
-            Route::put('/rubrics/{rubricId}', [TeacherRubricController::class, 'updateCategory']);
-            Route::delete('/rubrics/{rubricId}', [TeacherRubricController::class, 'destroyCategory']);
-
-            Route::post('/rubrics/{rubricId}/criteria', [TeacherRubricController::class, 'storeCriteria']);
-            Route::put('/criteria/{criteriaId}', [TeacherRubricController::class, 'updateCriteria']);
-            Route::delete('/criteria/{criteriaId}', [TeacherRubricController::class, 'destroyCriteria']);
+            // Teacher is not allowed to mutate rubrics anymore
         });
 
         Route::middleware('role:parent')->prefix('parent')->group(function () {

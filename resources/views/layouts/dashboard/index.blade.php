@@ -1,6 +1,6 @@
 @extends('base')
 @section('content')
-    <h1 class="welcome-text"><span class="text-black fw-bold">Dashboard Admin</span></h1>
+    <h1 class="welcome-text"><span class="text-black fw-bold">Admin Dashboard</span></h1>
     <div class="d-sm-flex align-items-center justify-content-between border-bottom">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
@@ -55,22 +55,22 @@
                                         </div>
                                     </div>
                                     <div class="row mt-3">
-                                        <div class="col-md-3">
+                                        <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
                                             <a href="{{ route('admin.students.create') }}" class="btn btn-primary btn-lg text-white mb-0 me-0 w-100">
                                                 <i class="mdi mdi-account-plus"></i> Add Student
                                             </a>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
                                             <a href="{{ route('admin.teachers.create') }}" class="btn btn-info btn-lg text-white mb-0 me-0 w-100">
                                                 <i class="mdi mdi-school"></i> Add Teacher
                                             </a>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
                                             <a href="{{ route('admin.subjects.create') }}" class="btn btn-success btn-lg text-white mb-0 me-0 w-100">
                                                 <i class="mdi mdi-book-plus"></i> Add Subject
                                             </a>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-sm-6 col-md-3 mb-3 mb-md-0">
                                             <a href="{{ route('admin.mentors.setClass') }}" class="btn btn-warning btn-lg text-white mb-0 me-0 w-100">
                                                 <i class="mdi mdi-settings"></i> Assign Mentors
                                             </a>

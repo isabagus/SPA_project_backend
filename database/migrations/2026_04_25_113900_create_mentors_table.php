@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('mentor_id');
             $table->foreignId('user_id')->constrained('users','user_id');
             $table->string('name_mentor', 255);
-            $table->string('nip', 23);
-            $table->string('phone_number', 15);
+            $table->string('nip', 23)->nullable();
+            $table->string('phone_number', 15)->nullable();
             $table->timestamps();
 
         });

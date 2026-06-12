@@ -155,7 +155,7 @@
                         <a href="{{ route('admin.reports.subject_detail', $report->report_id) }}?edit=1" class="btn btn-warning text-white">
                             <i class="mdi mdi-pencil"></i> Edit Scores & Comments
                         </a>
-                        <a href="{{ route('admin.reports.print', $report->report_id) }}" target="_blank" class="btn btn-primary">
+                        <a href="{{ route('admin.reports.print', $report->report_id) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
                             <i class="mdi mdi-printer"></i> Print Report
                         </a>
                         <a href="{{ route('admin.reports.export', $report->report_id) }}" class="btn btn-success">

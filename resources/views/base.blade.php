@@ -11,7 +11,7 @@
             <div class="ps-lg-3">
               <div class="d-flex align-items-center justify-content-between">
                 <p class="mb-0 fw-medium me-3 buy-now-text">Free 24/7 customer support, updates, and more with this template!</p>
-                <a href="https://www.bootstrapdash.com/product/star-admin-pro/" target="_blank" class="btn me-2 buy-now-btn border-0">Buy Now</a>
+                <a href="https://www.bootstrapdash.com/product/star-admin-pro/" target="_blank" rel="noopener noreferrer" class="btn me-2 buy-now-btn border-0">Buy Now</a>
               </div>
             </div>
             <div class="d-flex align-items-center justify-content-between">
